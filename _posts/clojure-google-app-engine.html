@@ -1,0 +1,226 @@
+
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">Что имеем </h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+Писать на Java вообще и на Java для Google App Engine в
+частности&mdash;занятие далекое от интуитивных представлений о приятном
+программировании. Разработчика ожидают мегатонны штампованного кода (в
+этом вся Java) и долгий (невыносимо долгий для человека, развращенного
+REPL) цикл разработки Edit-Compile-Run с постоянными перезапусками
+локального веб-сервера. Clojure избавляет программиста от этих
+недостатков&mdash;он получает возможность постепенно отлаживать своё
+веб-приложение в одной сессии, без перезапуска локального сервера
+разработки, и писать лаконичный код на языке предметной области, а не
+копипастить непотребство.
+</p>
+<p>
+За две недели, прошедшие с последней публикации чуда не
+случилось. Инфраструктура для разработки не появилась как по мановению
+волшебной палочки, поэтому чтобы продолжить свое повествование мне
+пришлось самому сесть за штудирование GAE SDK и кусочков кода,
+разбросанных по десятку ресурсов и написать добрую пару сотен строчек
+кода. Мои старания увенчались успехом и я явил свету маленькую, но
+практичную библиотеку для запуска локального веб-сервера GAE с
+поддержкой авторизации (авторизация была большой загвоздкой).
+</p>
+<p>
+Сам я веб-программировании&mdash;не в зуб ногой. Никакого опыта. Поэтому
+осваиваться буду в процессе написания своего маленького
+веб-приложения.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">Что надо </h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+Среднестатистический современный лиспер использует инструмент по
+последней моде ранних 80-ых. Читателю сего блога, желающего
+проследовать моим путем создания веб-приложения понадобятся следующие
+программы:
+</p><dl>
+<dt>Emacs</dt><dd>
+За неимением лучшего послужит интегрированной средой
+разработки на лиспе. Желательно ознакомиться с моими
+статьями "Настройка Emacs для программирования на Clojure"
+и "Emacs Starter Kit" перед началом использования.
+</dd>
+<dt>Консоль</dt><dd>
+Разумеется консоль в UNIX&mdash;Mac OS X или Linux. Под
+Windows воспользоваться инструментарием будет тяжеловато.
+</dd>
+<dt>Chrome/Firefox/Safari</dt><dd>
+Мы пишем веб-приложение, без браузера тут
+делать нечего.
+</dd>
+<dt><a href="http://github.com/technomancy/leiningen">Leiningen</a></dt><dd>
+Пакетный менеджер для Clojure, средство сборки и
+тестирования проекта.
+</dd>
+<dt>GIT</dt><dd>
+Система контроля версий, которой я пользуюсь. Разрабатывать
+даже небольшое приложение без контроля версий&mdash;гиблое
+дело. Код приложения я опубликую на гитхабе.
+</dd>
+<dt><a href="http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Java">Google App Engine Java SDK</a></dt><dd>
+Пакет jar'ов от Google: библиотеки для
+онлайновой и оффлайновой разработки, скрипты для запуска
+приложения на локальном сервере и для заливки собранного
+приложения на Google App Engine. Скачать SDK нужно обязательно,
+но особо заморачиваться не стоит: все необходимые jar'ы обеспечит
+leiningen, SDK нужен лишь ради скриптов для заливки.
+</dd>
+<dt>Google App Engine Python SDK</dt><dd>
+Не лишним, хотя и не обязательным
+будет скачать SDK питона&mdash;в нем есть несколько фич, которых нет
+в Java SDK, потому как поддержка последнего появилась у гугла
+позже.
+</dd>
+<dt>Google Account</dt><dd>
+Нужна регистрация на гугле, без этого&mdash;никак. Вы
+же используете GMail?
+
+</dd>
+</dl>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">Как идет работа </h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+Работа над веб-приложением от создания и до запуска в облаке
+организована следующим образом:
+</p>
+<ol>
+<li>
+Создание приложения.
+</li>
+<li>
+Запуск лисп-машины (ой, простите, джава-машины :) и локального
+GAE-сервера в ней. Интерактивная разработка в лучших
+традициях&mdash;каждое внесенное в код изменение обретает силу здесь и
+сейчас. Никаких перекомпиляций и перезапусков.
+</li>
+<li>
+Компиляция отлаженного приложения и размещение оного в облаке.
+
+</li>
+</ol>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Создание приложения </h2>
+<div class="outline-text-2" id="text-4">
+
+
+
+</div>
+
+<div id="outline-container-4.1" class="outline-3">
+<h3 id="sec-4.1">Там </h3>
+<div class="outline-text-3" id="text-4.1">
+
+
+<p>
+На облачной стороне элементарно&mdash;все происходит в один шаг, и
+заострять на этом внимание не стоит: нужно войти под Google-аккаунтом
+на <a href="https://appengine.google.com/">App Engine</a> и зарегестрироваться через SMS; выбрать имя приложения и
+щелкнуть кнопочку создать.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4.2" class="outline-3">
+<h3 id="sec-4.2">Здесь </h3>
+<div class="outline-text-3" id="text-4.2">
+
+
+<p>
+Веб-приложение создается на компьютере программиста, а это чуточку
+сложнее чем просто ткнуть пару кнопок. Приложение представляет собой
+набор файлов: скомпилированных, статических, настроечных и
+библиотечных, оно организовано в файловую структуру, называемую
+WAR&mdash;Web Application Archive.
+</p>
+
+
+
+<pre class="example">project.clj
+README
+src
+test
+war
+  resources
+    css
+      stylesheet.css
+    img
+      favicon.png
+  WEB-INF
+    classes
+    lib
+    appengine-web.xml
+    web.xml
+</pre>
+
+
+
+
+
+
+
+
+<p>
+Всё что находится в директории war
+будет загружено на сервер. Отдельно идут исходники в директории, они на сервер не
+загружаются.
+</p>
+<p>
+&mdash;статических (CSS страницы, JavaScript, картинки и
+прочее), настроек (имя приложения,
+</p>
+<p>
+An app can also include static files, such as images, CSS stylesheets, and browser
+JavaScript. App Engine serves these files directly to clients in response to requests for
+corresponding URLs without invoking any code. The app’s configuration specifies
+which of its files are static, and which URLs to use for those files.
+The application configuration includes metadata about the app, such as its application
+ID and version number. When you deploy the app to App Engine, all of the app’s files,
+including the code, configuration files, and static files, are uploaded and associated
+with the application ID and version number mentioned in the configuration. An app
+can also have configuration files specific to the services, such as for datastore indexes,
+task queues, and scheduled tasks. These files are associated with the app in general,
+not a specific version of the app.
+</p>
+<p>
+~/Sources ~/Applications/lein new dv-chan
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">Шаблон проекта </h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+Веб-приложение для JVM и Google App Engine имеет следующую структуру:
+</p></div>
+</div>

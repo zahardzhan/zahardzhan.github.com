@@ -1,0 +1,24 @@
+* Твиты
+После пары лет использования Эмакса вполне нормально забыть все его комбинации. Вы же не помните как дышать, правда?
+Магические методы __init__ и __new__ носят особый, уличный
+характер... IMB Py Metaclass link
+
+* Статьи
+
+Seibel: Which is sort of ironic given the way the commands move out of
+your brain and into your fingers. I’m sure you have experienced the
+phenomenon of having someone ask you what is the key-binding for
+something that you use a thousand times a day, and you can’t say.
+
+Steele: Actually my wife had that experience. Maybe one of the reasons I
+was less aware of it is that I’m not a particularly good touch typist. But she’d
+been away from Emacs for 20 years and then I made one available on her
+Macintosh. And she sat down, typed in some stuff, and then said, “How do I
+save this? I forget how to save a file.” And then she realized her fingers had
+done it and she didn’t know what she’d typed. So she did it again and
+watched her fingers and said, “Oh yes, Control-X Control-S.” But she
+literally couldn’t remember what the commands were.
+
+Idea: indeterministic protocol.
+etherpad
+realtime
