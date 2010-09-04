@@ -1,12 +1,12 @@
-#+startup: showall indent
-#+startup: hidestars
-#+begin_html
+#+STARTUP: SHOWALL INDENT
+#+STARTUP: HIDESTARS
+#+BEGIN_HTML
 ---
 ---
 layout: post
-title: Emacs 23 в Ubuntu.
+title: Emacs 23 в Ubuntu
 ---
-#+end_html
+#+END_HTML
 
 Недавно вышел свежий Emacs 23.2, в главных фичах которого - поддержка
 шрифтовых настроек гнома, т.е. шрифты в нём - *такие же*, как и во

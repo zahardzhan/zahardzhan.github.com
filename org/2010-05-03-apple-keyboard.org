@@ -1,12 +1,12 @@
-#+startup: showall indent
-#+startup: hidestars
-#+begin_html
+#+STARTUP: SHOWALL INDENT
+#+STARTUP: HIDESTARS
+#+BEGIN_HTML
 ---
 ---
 layout: post
-title: Яблочная клавиатура.
+title: Яблочная клавиатура
 ---
-#+end_html
+#+END_HTML
 
 Долгие годы верой и правдой служила мне безымянная китайская
 клавиатура. Не сказать, что она меня подвела - до сих пор в идеальном
