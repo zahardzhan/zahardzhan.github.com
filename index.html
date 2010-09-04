@@ -2,19 +2,37 @@
 layout: default
 title: Bullshit mode on. Пишу куда ветер дует.
 ---
-
-<div id="home">
-  <h1>Blog Posts</h1>
+<div class="blog-posts">
+  <h1>Блог</h1>
+  <p>Основные темы этого блога — динамические языки и добротный
+    инструментарий для программирования.</p>
   <ul class="posts">
     {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
-  
-  <h1>Open Source Projects</h1>
-  <ul class="posts">
-    <li><a href="http://github.com/zahardzhan/hooks/">Hooks:</a> Hooks
-    for Clojure functions.</li>
-  </ul>
 </div>
+
+<div class="right">
+  <h1>С недавних пор zahardzhan пишет здесь о жизни,
+    программировании, и о том, куда ветер дует.</h1>
   
+  <!-- div class="divider" style="margin: 0 0 15px 0;"></div -->
+    
+  <div class="projects">
+    <div class="project">
+      <img src="http://download.savannah.gnu.org/releases/emacs/icons/emacs6-128.png"
+           alt="Emacs Starter Kit" align="right"
+           width="128" height="128" border="0">
+      <a href="/2010/emacs-starter-kit.html">
+        <h2>Лучший способ начать использовать Emacs.</h2></a>
+      <a href="http://github.com/technomancy/emacs-starter-kit">Emacs Starter Kit</a> &mdash; собранная с любовью конфигурация для быстрого начала работы и удобной настройки.
+    </div>
+    
+    <!--div class="project">
+        <img src=".png" alt="" align="left" width="115" height="100" border="0">
+        <h2>Head.</h2>
+        body
+    </div-->
+  </div>
+</div>
