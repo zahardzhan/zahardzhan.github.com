@@ -16,6 +16,15 @@ a:visited       {color: #909;}
 a:visited:hover {color: #C00;}
 a:focus         {outline: none;}
 
+ul {list-style: square outside;}
+
+dt {
+    padding-bottom: 0.3em;
+}
+dd {
+    padding-bottom: 0.7em;
+}
+
 div.container {
     clear: both;
     overflow: hidden;
