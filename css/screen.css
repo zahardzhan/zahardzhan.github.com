@@ -69,11 +69,11 @@ article.post header h1 {
 article.post p {
     line-height: 130%;
 }
-article.post pre.example {
+article.post pre {
     background-color: #F5F5EA;
     padding: 0.7em 0.7em 0.7em;
 }
-article.post pre code {
+article.post pre.example {
     background-color: #F5F5EA;
     padding: 0.7em 0.7em 0.7em;
 }
