@@ -16,15 +16,6 @@ a:visited       {color: #909;}
 a:visited:hover {color: #C00;}
 a:focus         {outline: none;}
 
-ul {list-style: square outside;}
-
-dt {
-    padding-bottom: 0.3em;
-}
-dd {
-    padding-bottom: 0.7em;
-}
-
 div.container {
     clear: both;
     overflow: hidden;
@@ -68,6 +59,7 @@ div.blog-posts ul li {
 }
 
 article.post {
+    line-height: 130%;
     text-align: left;
     width: 570px;
     padding-left: 110px;
@@ -76,13 +68,26 @@ article.post header h1 {
     font-size: 150%;
 }
 article.post p {
+    margin: 1em 0em;
     line-height: 130%;
 }
-article.post pre {
-    background-color: #F5F5EA;
-    padding: 0.7em 0.7em 0.7em;
+article.post ul {list-style: square outside;}
+article.post li p {
+    margin-top: 0.5em;
+    margin-bottom: 0em;
 }
-article.post pre.example {
+article.post li + li {
+    margin-top: 0.7em;
+}
+article.post dt {}
+article.post dd p {
+    margin-top: 0.5em;
+    margin-bottom: 0em;
+}
+article.post dd + dt {
+    margin-top: 0.7em;
+}
+article.post pre, article.post pre.example {
     background-color: #F5F5EA;
     padding: 0.7em 0.7em 0.7em;
 }
