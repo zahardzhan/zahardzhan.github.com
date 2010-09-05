@@ -90,6 +90,7 @@ article.post dd + dt {
 article.post pre, article.post pre.example {
     background-color: #F5F5EA;
     padding: 0.7em 0.7em 0.7em;
+    overflow: auto;
 }
 
 div.right {
