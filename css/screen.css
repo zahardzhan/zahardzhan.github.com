@@ -1,5 +1,7 @@
 html, body {margin: 0 auto; padding: 0; background: black;}
-html, body, div, table { display: block;}
+html, body, div { display: block;}
+
+html, body, p, div.container {line-height: 130%;}
 
 strong, b {font-weight: bolder;}
 
@@ -26,6 +28,8 @@ div.title a, div.title a:hover, div.title a:visited, div.title a:visited:hover, 
     color: white; 
     text-decoration: none;
 }
+
+table.site {text-align: center;}
 
 table.site.header {background: black;}
 
@@ -67,6 +71,7 @@ div.projects {
     width: 480px;
 }
 div.project {margin-bottom: 35px;}
+div.project a {text-decoration: none;}
 div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
 
 article.post {
