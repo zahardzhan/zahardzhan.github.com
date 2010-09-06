@@ -72,7 +72,7 @@ div.projects {
 }
 div.project {margin-bottom: 35px;}
 div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
-div.project h2 a {text-decoration: none;}
+div.project a > h2 {text-decoration: none;}
 
 article.post {
     line-height: 130%;
