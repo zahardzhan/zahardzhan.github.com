@@ -3,7 +3,7 @@ html, body, div { display: block;}
 
 strong, b {font-weight: bolder;}
 
-p {line-height: 130%;}
+div.container, p {line-height: 130%;}
 
 a:link          {color: #05C;}
 a:hover         {color: #C00;}
@@ -66,13 +66,13 @@ div.projects {
     font-size: 14px;
     line-height: 1,3em;
     margin-bottom: 25px;
-    margin-top: 20px;
+    margin-top: 15px;
     text-align: left;
     width: 480px;
 }
 div.project {margin-bottom: 35px;}
-div.project a {text-decoration: none;}
 div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
+div.project h2 a {text-decoration: none;}
 
 article.post {
     line-height: 130%;
