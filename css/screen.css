@@ -75,8 +75,8 @@ div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
 div.project a.project.title {text-decoration: none;}
 
 div.post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
-div.post div.post.header {padding-top: 60px; padding-bottom: 60px;}
-div.post div.post.header h1 {font-size: 150%;}
+div.post div.header {padding-top: 40px; padding-bottom: 30px;}
+div.post div.header h1 {font-size: 150%;}
 div.post p {margin: 1em 0em; line-height: 130%;}
 div.post ul {list-style: square outside;}
 div.post li p {margin-top: 0.5em; margin-bottom: 0em;}
