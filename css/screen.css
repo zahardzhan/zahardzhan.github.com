@@ -1,9 +1,9 @@
 html, body {margin: 0 auto; padding: 0; background: black;}
 html, body, div { display: block;}
 
-html, body, p, div.container {line-height: 130%;}
-
 strong, b {font-weight: bolder;}
+
+p {line-height: 130%;}
 
 a:link          {color: #05C;}
 a:hover         {color: #C00;}
@@ -16,7 +16,7 @@ div.container {
     overflow: hidden; 
     margin: 0 auto; 
     padding: 0 10px;
-    text-align: center; 
+    text-align: center;
     width: 980px;
 }
 
