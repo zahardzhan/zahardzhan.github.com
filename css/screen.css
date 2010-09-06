@@ -1,14 +1,7 @@
-body {
-    margin: 0 auto;
-    padding: 0;
-    color: #111;
-    background-color: #111;
-    text-align: center;
-}
+html, body {margin: 0 auto; padding: 0; background: black;}
+html, body, div, table { display: block;}
 
-div#site {
-    background-color: white;
-}
+strong, b {font-weight: bolder;}
 
 a:link          {color: #05C;}
 a:hover         {color: #C00;}
@@ -17,46 +10,64 @@ a:visited:hover {color: #C00;}
 a:focus         {outline: none;}
 
 div.container {
-    clear: both;
-    overflow: hidden;
-    margin: 0px auto;
-    text-align: center;
+    clear: both; 
+    overflow: hidden; 
+    margin: 0 auto; 
+    padding: 0 10px;
+    text-align: center; 
     width: 980px;
 }
-header.site {
-    background-color: black; 
-    color: white;
-    height: 70px;
-}
-div.title {
-    font-size: 42px;
-    font-variant: small-caps;
+
+div.title a, div.title a:hover, div.title a:visited, div.title a:visited:hover, div.title a:focus {
     float: right;
     padding-right: 30px;
-    padding-top: 10px;
-}
-header div.title a {
-    color: white;
+    font-size: 42px; 
+    font-variant: small-caps; 
+    color: white; 
     text-decoration: none;
 }
 
-div.blog-posts {
-    float: left;
-    width: 400px;
+table.site.header {background: black;}
+
+table.site.body {background: white; color #111;}
+
+table.site.footer {color: #CCC;}
+table.site.footer a {color: white;}
+table.site.footer strong {color: white;}
+table.site.footer div.bar {font-family: helvetica, arial, sans-serif; font-size: 14px; margin: 20px 0;}
+
+div.left {float: left; text-align: left; width: 400px;}
+div.left h1 {font-family: helvetica, arial; font-weight: bold; font-size: 35px;}
+div.left ul {list-style: none outside; padding-left: 0;}
+div.left ul li {padding-bottom: 0.7em;}
+
+div.right {float: right; width: 530px;}
+div.right h1 {
+    color: #222;
+    font-family: georgia, times;
+    font-size: 22px;
+    font-weight: normal;
+    letter-spacing: normal;
+    line-height: 1,2em;
+    margin: 21px 0px 30px;
+    padding: 0px;
     text-align: left;
 }
-div.blog-posts h1 {
-    font-family: helvetica, arial;
-    font-weight: bold;
-    font-size: 35px;
+
+div.right div.divider {border-top: 1px solid #CCC; clear: both; margin: 0 0 15px 0;}
+
+div.projects {
+    float: left;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    line-height: 1,3em;
+    margin-bottom: 25px;
+    margin-top: 20px;
+    text-align: left;
+    width: 480px;
 }
-div.blog-posts ul {
-    list-style: none outside;
-    padding-left: 0;
-}
-div.blog-posts ul li {
-    padding-bottom: 0.7em;
-}
+div.project {margin-bottom: 35px;}
+div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
 
 article.post {
     line-height: 130%;
@@ -92,65 +103,3 @@ article.post pre, article.post pre.example {
     padding: 0.7em 0.7em 0.7em;
     overflow: auto;
 }
-
-div.right {
-    float: right;
-    width: 530px;
-}
-div.right h1 {
-    font-family: georgia, times;
-    font-size: 22px;
-    font-weight: normal;
-    letter-spacing: normal;
-    line-height: 1,2em;
-    margin: 21px 0px 30px;
-    padding: 0px;
-    text-align: left;
-}
-
-div.divider {
-    border-top: 1px solid #CCC;
-    clear: both;
-    margin: 25px 0px;
-}
-
-div.projects {
-    float: left;
-    font-family: Georgia, serif;
-    font-size: 14px;
-    line-height: 1,3em;
-    margin-bottom: 25px;
-    /* margin-top: 20px; */
-    text-align: left;
-    width: 480px; /* 530px; */
-}
-div.project {
-    margin-bottom: 35px;
-}
-div.project img + a {
-    color: inherit;
-    text-decoration: none;
-}
-div.project h2 {
-    line-height: 1,3em;
-    font-weight: normal;
-}
-
-footer.site {
-    background-color: #111;
-    border-top: 1px solid black;
-    clear: both;
-    color: #CCC;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-footer.site div.bar {
-    clear: both;
-    font-family: helvetica, arial, sans-serif;
-    font-size: 14px;
-    text-align: center;
-}
-footer.site div.bar a {
-    color: white;
-}
-footer.site div.bar strong {color: white;}
