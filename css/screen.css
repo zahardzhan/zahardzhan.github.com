@@ -74,36 +74,16 @@ div.project {margin-bottom: 35px;}
 div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
 div.project a.project.title {text-decoration: none;}
 
-article.post {
-    line-height: 130%;
-    text-align: left;
-    width: 570px;
-    padding-left: 110px;
-}
-article.post header h1 {
-    font-size: 150%;
-}
-article.post p {
-    margin: 1em 0em;
-    line-height: 130%;
-}
-article.post ul {list-style: square outside;}
-article.post li p {
-    margin-top: 0.5em;
-    margin-bottom: 0em;
-}
-article.post li + li {
-    margin-top: 0.7em;
-}
-article.post dt {}
-article.post dd p {
-    margin-top: 0.5em;
-    margin-bottom: 0em;
-}
-article.post dd + dt {
-    margin-top: 0.7em;
-}
-article.post pre, article.post pre.example {
+div.post {line-height: 130%; text-align: left; width: 570px; margin-left: 110px;}
+div.post div.post.header {margin-top: 60px; margin-bottom: 60px;}
+div.post div.post.header h1 {font-size: 150%;}
+div.post p {margin: 1em 0em; line-height: 130%;}
+div.post ul {list-style: square outside;}
+div.post li p {margin-top: 0.5em; margin-bottom: 0em;}
+div.post li + li {margin-top: 0.7em;}
+div.post dd p {margin-top: 0.5em; margin-bottom: 0em;}
+div.post dd + dt {margin-top: 0.7em;}
+div.post pre, div.post pre.example {
     background-color: #F5F5EA;
     padding: 0.7em 0.7em 0.7em;
     overflow: auto;
