@@ -27,7 +27,7 @@ title: Emacs 23 в Ubuntu
 Устанавливаем необходимые для самостоятельной сборки программы:
 </p>
 <pre class="example">
-sudo aptitude install build-essential 
+sudo aptitude install build-essential libxpm-dev libgif-dev libtiff-dev libjpeg-dev libgtk2.0-dev libdbus-1-dev texinfo
 </pre>
 
 
@@ -35,12 +35,12 @@ sudo aptitude install build-essential
 Качаем исходники:
 </p>
 <pre class="example">
-?????
+wget http://ftp.gnu.org/gnu/emacs/emacs-23.2.tar.bz2
 </pre>
 
 
 <p>
-Распаковываем, и в директории с исходниками выполняем:
+Распаковываем архив, и в директории с исходниками выполняем:
 </p>
 <pre class="example">
 sudo ./configure --with-x-toolkit=gtk --with-xft --prefix=/home/haru/Apps
