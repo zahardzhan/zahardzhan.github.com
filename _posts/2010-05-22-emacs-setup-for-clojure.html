@@ -1,0 +1,390 @@
+
+
+---
+layout: post
+title: Настройка Emacs для программирования на Clojure
+---
+
+<p>
+В статье я расскажу как сделать из Emacs'а удобную среду для
+программирования на языке Clojure. Рассчитываю на то, что вы
+используете Debian или Ubuntu в качестве своей операционной системы.
+</p>
+<p>
+Clojure это современный диалект лиспа. Простой и мощный язык
+программирования общего назначения с упором на функциональный стиль,
+широкой поддержкой возможностей для многопоточного программирования и,
+конечно, родным для лиспа представлением кода как данных и
+наоборот. Clojure работает поверх виртуальной машины Java и
+виртуальной машины Common Language Runtime — части пакета Microsoft
+.NET Framework.
+</p>
+
+<div id="outline-container-1" class="outline-3">
+<h3 id="sec-1">Java </h3>
+<div class="outline-text-3" id="text-1">
+
+
+<p>
+В репозитории есть несколько альтернативных реализаций — OpenJDK и Sun
+Java — ставим любую на свой вкус, но обязательно последнюю, 6-ую.
+</p>
+<pre class="example">
+sudo aptitude install sun-java6-jdk
+</pre>
+
+
+<p>
+Однако, надо соблюсти осторожность при использовании OpenJDK — в
+swank-clojure есть пренеприятный баг при подключении к java-машине из
+Slime. Однажды у меня возникла с ним проблема, и дабы разрешить её я
+использовал следующее заклинание:
+</p>
+<pre class="example">
+sudo sed -i 's/net.ipv6.bindv6only\ =\ 1/net.ipv6.bindv6only\ =\ 0/'  /etc/sysctl.d/bindv6only.conf &amp;amp;&amp;amp; sudo invoke-rc.d procps restart
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-3">
+<h3 id="sec-2">Emacs </h3>
+<div class="outline-text-3" id="text-2">
+
+
+<p>
+Emacs устанавливается командой
+</p>
+<pre class="example">
+sudo aptitude install emacs
+</pre>
+
+
+<p>
+В Ubuntu ставится самый последний, 23-ий Emacs, в Debian же, в
+стабильном репозитории Lenny лежит старый, 22-ой, а свежий нужно
+ставить из тестируемого репозитория Squeeze или
+<a href="http://emacs.orebokech.com/">репозитория</a> со снапшотами.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-3">
+<h3 id="sec-3">ELPA </h3>
+<div class="outline-text-3" id="text-3">
+
+
+<p>
+Как говорится, Emacs — не только редактор, но и весьма себе неплохая
+ОС, и как у всякой хорошей оси у него есть свой собственный пакетный
+менеджер а'ля apt, только устанавливает он специально заготовленные
+пакеты-расширения эмакса.
+</p>
+<p>
+Лучшее решение, на мой взгляд &mdash; установить пакет с базовыми
+настройками <a href="http://zahardzhan.github.com/2010/emacs-starter-kit.html">Emacs Starter Kit</a> &mdash; в него включен ELPA и множество
+других полезных вещей, которые сэкономят огромное количество вашего
+времени. В противном случае, на сайте <a href="http://tromey.com/elpa/install.html">ELPA</a> приведена инструкция по
+установке: копируем этот код
+</p>
+
+
+
+<pre class="src src-EMACS-LISP">(let ((buffer (url-retrieve-synchronously
+      <span style="color: #8b2252;">"http://tromey.com/elpa/package-install.el"</span>)))
+  (save-excursion
+    (set-buffer buffer)
+    (goto-char (point-min))
+    (re-search-forward <span style="color: #8b2252;">"^$"</span> nil 'move)
+    (eval-region (point) (point-max))
+    (kill-buffer (current-buffer))))
+</pre>
+
+
+
+
+<p>
+в scratch буфер эмакса, наводим курсор на последнюю скобку, и жмём
+<b>C-x C-e</b>, чтобы запустить код — он автоматически скачает файл
+<code>package.el</code> в <code>~/.emacs.d/elpa/package.el</code> и отредактирует основной
+файл с настройками <code>~/.emacs</code>, чтобы менеджер пакетов и всё, что он
+понаустанавливал потом запускалось при старте эмакса.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-3">
+<h3 id="sec-4">Swank-clojure и clojure-mode </h3>
+<div class="outline-text-3" id="text-4">
+
+
+<p>
+Swank-clojure это расширение для Emacs, которое позволяет исользовать
+в нём Slime на пару с Clojure. А сlojure-mode — это режим эмакса для
+удобного редактирования исходников на Clojure, он даёт подсветку
+элементов синтаксиса, ключевых слов и табуляцию лиспокода в лучших
+традициях. Оба этих пакета ставятся через ELPA и тянут за собой Slime
+оттуда же как зависимость. Это ничего, но если нужна поддержка других
+лиспов, будь то Common Lisp или Scheme, надо будет поставить Slime еще
+и через Git или репозиторий операционной системы.
+</p>
+<p>
+В Emacs'е откроте список пакетов ELPA
+</p>
+<pre class="example">
+M-x package-list-packages
+</pre>
+
+
+<p>
+и выберите клавишей <b>i</b> пакеты (если выбрали не то — клавиша <b>u</b>
+отменит выбор)
+</p>
+<ul>
+<li>
+clojure-mode
+</li>
+<li>
+clojure-test-mode
+</li>
+<li>
+slime
+</li>
+<li>
+slime-repl
+</li>
+<li>
+swank-clojure
+
+</li>
+</ul>
+
+<p>Нажмите <b>x</b> чтобы установить то, что выбрали. Как скачается и
+установится — можно закрыть Emacs и продолжить.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-3">
+<h3 id="sec-5">Запуск REPL'а Clojure с целью поиграться </h3>
+<div class="outline-text-3" id="text-5">
+
+
+<p>
+Собственно, мы установили всё что нужно для того, чтобы запустить
+Clojure, кроме самой Clojure. Тут нас поджидает приятный момент — всё
+остальное будет устанавливаться автоматически, без нашего на то
+вмешательства. Запустим Emacs и поиграем с Clojure в репле командой 
+</p>
+<pre class="example">
+M-x slime
+</pre>
+
+
+<p>
+по ходу дела в директорию <code>~/.swank-clojure</code> скачается 3 jar-пакета —
+сама clojure, стандартная библиотека clojure-contrib и swank-clojure.
+</p>
+<p>
+Это была всего лишь базовая установка, однако чтобы извлечь из Clojure
+больше пользы и создать свой собственный проект, а не просто потыкать
+REPL, нужно установить еще несколько программ, без которых ну никак не
+обойтись в разработке.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-3">
+<h3 id="sec-6">Git </h3>
+<div class="outline-text-3" id="text-6">
+
+
+<p>
+Git — распределённая система управления версиями файлов, созданная
+Линусом Торвальдсом для управления разработкой ядра Linux. Ко всему
+она тоже понадобится, ибо большая часть проектов Clojure-коммьюнити,
+включая саму Clojure, используют эту систему контроля версий, и почти
+все они хостятся на <a href="http://github.com/">гитхабе</a>.
+</p>
+<pre class="example">
+sudo aptitude install git-core
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-3">
+<h3 id="sec-7">Maven и Аnt </h3>
+<div class="outline-text-3" id="text-7">
+
+
+<p>
+Это фреймворки для сборки Java-проектов. Используются как платформа
+для leiningen.
+</p>
+<p>
+Установим их
+</p>
+<pre class="example">
+sudo aptitude install ant maven2
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-3">
+<h3 id="sec-8">Leiningen </h3>
+<div class="outline-text-3" id="text-8">
+
+
+<p>
+Leiningen — это система сборки для проектов на Clojure, созданная,
+чтобы лисперы не морочили голову с родными для платформы Java
+системами сборки, которые имеют пристрастие к обильным XML-конфигам, в
+которых чёрт ногу сломит. В лейнингене Clojure-проект описывается в
+одном файле на самой же Clojure в виде простой удобочитаемой
+конструкции. Еще поддерживаются плугины, например, для
+автодокументации в стиле документации с официального сайта
+<a href="http://clojure.org">clojure</a>.
+</p>
+<p>
+Скачайте скрипт
+</p>
+<pre class="example">
+wget http://github.com/technomancy/leiningen/blob/master/bin/lein
+</pre>
+
+
+<p>
+и скопируйте его в какую-нибудь директорию, что прописана в пути PATH,
+лучше всего в <code>/usr/local/bin/</code>, и дайте право на выполнение <code>+x</code>
+</p>
+<pre class="example">
+sudo cp lein /usr/local/bin/lein
+sudo chmod +x /usr/local/bin/lein
+</pre>
+
+
+<p>
+Лейнинген устанавливает себя сам
+</p>
+<pre class="example">
+lein self-install
+</pre>
+
+
+<p>
+И директория <code>~/.m2</code> отныне станет кэшем для всех автоматически скачаных
+jar'ов.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-3">
+<h3 id="sec-9">Работа со Slime </h3>
+<div class="outline-text-3" id="text-9">
+
+
+<p>
+Практически вся разработка проекта проходит в REPL'е Slime, и есть
+несколько способов открыть проект в нём.
+</p>
+<p>
+Способ первый — использовать команду эмакса c указанием пути к проекту
+</p>
+<pre class="example">
+M-x swank-clojure-project
+</pre>
+
+
+<p>
+Способ второй — в директории проекта выполнить команду 
+</p>
+<pre class="example">
+lein swank
+</pre>
+
+
+<p>
+что запустит REPL на порту 4005, к которому можно будет подключиться из эмакса командой
+</p>
+<pre class="example">
+M-x slime-connect
+</pre>
+
+
+<p>
+После подключения получаем REPL Clojure с автоматически установленными
+Java classpath и да прибудет с нами сила!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-3">
+<h3 id="sec-10">Работа с Clojure и Common Lisp </h3>
+<div class="outline-text-3" id="text-10">
+
+
+<p>
+Slime, идущий в поставке ELPA урезан настолько, что годен только для
+работы с Clojure. Если от эмакса требуется работа с другими лиспами,
+придется поставить полноценный Slime из git-репозитория
+</p>
+<pre class="example">
+git clone git://github.com/nablaone/slime.git ~/.emacs.d/slime
+</pre>
+
+
+<p>
+и прописать в <code>~/.emacs</code> следующие строки
+</p>
+
+
+
+<pre class="src src-EMACS-LISP">(add-to-list 'load-path <span style="color: #8b2252;">"~/.emacs.d/slime"</span>)
+(add-to-list 'load-path <span style="color: #8b2252;">"~/.emacs.d/slime/contrib"</span>)
+
+(setq slime-backend <span style="color: #8b2252;">"~/.emacs.d/slime/swank-loader.lisp"</span>)
+
+(load <span style="color: #8b2252;">"slime-autoloads"</span>)
+
+(require 'slime)
+(require 'slime-autoloads)
+
+(eval-after-load <span style="color: #8b2252;">"slime"</span>
+  `(progn
+     (slime-setup '(slime-repl))
+     (custom-set-variables
+      '(inhibit-splash-screen t)
+      '(slime-complete-symbol*-fancy t)
+      '(slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+      '(slime-net-coding-system 'utf-8-unix)
+      '(slime-startup-animation nil)
+      '(slime-lisp-implementations '((sbcl (<span style="color: #8b2252;">"/usr/bin/sbcl"</span>)))))))
+</pre>
+
+
+
+
+<p>
+что позволит запускать и SBCL и Clojure командами
+</p>
+<pre class="example">
+M-- M-x slime sbcl
+M-- M-x slime clojure
+</pre>
+
+</div>
+</div>

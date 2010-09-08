@@ -1,0 +1,82 @@
+
+
+---
+layout: post
+title: Hello, Deadlock!
+---
+
+<p>
+Программная транзакционная память в Clojure предоставляет программисту
+простые, мощные и безопасные инструменты для многопоточного
+программирования. Эти инструменты сконструированы с учетом типичных
+ошибок и проблем в многопоточных программах. Например, Clojure STM
+гарантирует что взаимные блокировки никогда не возникнут в процессе её
+работы.
+</p>
+<p>
+Но даже не смотря на то, что STM что-то гарантирует, при должном
+навыке можно умудриться нарваться на добрую парочку старых добрых
+граблей многопоточного программирования.
+</p>
+<p>
+<i>Взаимная блокировка</i>, <i>deadlock</i>, возникает в многопоточной среде
+когда несколько потоков находятся в состоянии бесконечного ожидания
+ресурсов, захваченных самими этими потоками.
+</p>
+<p>
+Например, для агента
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">a</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">agent</span> nil<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+
+<p>
+попытка организовать взаимную блокировку в лоб обречена на провал —
+STM нам этого не позволит — агент не может ожидать окончания
+выполнения действия в самом действии:
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">send-off</span> a #<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">do</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">await</span> a<span style="color: #8c8c8c;">)</span> %<span style="color: #8c8c8c;">))</span>
+
+&gt; <span style="color: #8c8c8c;">(</span>agent-error a<span style="color: #8c8c8c;">)</span>
+#&lt;Exception java.lang.Exception: Can't await in agent action&gt;
+</pre>
+
+
+
+
+<p>
+<code>future</code> выносит ожидание окончания выполнения дейтсвия агента в
+отдельный поток, который затем блокируется в потоке действия — происходит
+взаимоблокировка потоков.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">send-off</span> a #<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">do</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">deref</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">future</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">await</span> a<span style="color: #8c8c8c;">)))</span> %<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+
+<p>
+Вуаля — наш агент впал в кому, и больше на сообщения не реагирует:
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">send-off</span> a <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">constantly</span> true<span style="color: #8c8c8c;">))</span>
+
+&gt; a
+#&lt;Agent@asdf: nil&gt;
+</pre>
+
+
+
