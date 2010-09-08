@@ -86,4 +86,4 @@ div.post dd + dt {margin-top: 0.7em;}
 div.post pre, div.post pre.example {background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; overflow: auto;}
 div.post div.figure {margin: 1em 0em; text-align: center;}
 div.post div.figure p {text-align: center; font-style: italic; font-size: smaller; text-indent: 0;}
-div.post div#disqus_thread {margin-top: 20px;}
+div.post div#disqus_thread {padding-top: 20px;}
