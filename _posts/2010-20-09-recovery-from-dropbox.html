@@ -1,90 +1,106 @@
-#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
-#+STARTUP: SHOWALL INDENT
-#+STARTUP: HIDESTARS
-#+BEGIN_HTML
 ---
 ---
 layout: post
 title: Восстановление из Dropbox
 ---
-#+END_HTML
 
+<p>
 Нестабильность современного десктопного линукса повергает меня в
 пучины отчаяния. Это я о Ubuntu и её производных. Конечно, глупо винить в этом разработчиков, при том что я
 сам не приложил усилий к улучшению ситуации. В некотором роде
-сегоднешняя нестабильность --- плата за удобство для конечно
+сегоднешняя нестабильность &mdash; плата за удобство для конечно
 пользователя. Ubuntu настолько проста и удобна, что я уже давно
 использую её как основную систему на нетбуке и на его стационарном
 собрате (ASRock ION по сути тот же нетбук, только в 2 раза больше и мощнее).
-
+</p>
+<p>
 В моей Ubuntu 10.04 LTS на ION за несколько месяцев активного
 использования поотваливались почти все апплеты с панели GNOME, а у
 Jolicloud Linux (фактически, Ubuntu 9.04) спустя месяц использования
 отвалился заглавный экран, он же Google Chrome в режиме «окна-рабочего
 стола». Но это меркнет на фоне того, что у нового нетбука после совсем
-«мягкого» удара полетел жесткий диск --- всего через 3 месяца после
+«мягкого» удара полетел жесткий диск &mdash; всего через 3 месяца после
 покупки.
-
+</p>
+<p>
 Черт возьми, современное железо и домашний софт хрупче стекла:
 разваливаются на глазах от дуновения ветерка. Не то что старое доброе
 железо 2000-ых и стабильный софт из дебиана. На нижней полке шкафа, в
 черном чемоданчике, лежит жесткий диск Seagate Medalist на 3
 гигабайта, и последний раз когда я его включал (а надо сказать, я
-пользовался им /очень/ долго) он работал идеально. В том же
+пользовался им <i>очень</i> долго) он работал идеально. В том же
 чемоданчике лежат еще 4 диска, более современные, но не выдержавшие
 испытание временем.
-
+</p>
+<p>
 В моих руках нынешнее железо не выживает долее полугода, и я принимаю
 это как факт. В былые времена добро, хранимое на жестких дисках
 было «священной коровой». Многогигабайтная коллекция музыки, фильмов,
 и анимэ тщательно собиралась, выменивалась и именовалась, а потеря её
 была настоящей трагедией. Сейчас же мой ежемесячный трафик в среднем —
 около 50 гигабайт (и это на 250 килобитах, да :). Объем диска
-ноутбука --- 250 гигабайт. Если я буду сохранять весь скаченый из Сети
+ноутбука &mdash; 250 гигабайт. Если я буду сохранять весь скаченый из Сети
 мусор, то место кончится за пол года. Как раз к очередной
 запланированой смерти жесткого диска или выходу новой версии Ubuntu и
 разрушению старой.
-
-Пришла облачная эпоха и все вернулось на круги своя --- персональный
+</p>
+<p>
+Пришла облачная эпоха и все вернулось на круги своя &mdash; персональный
 компьютер снова превратился в терминал-приставку, а «мейнфрейм» стал всей
 Сетью. Правда «кэш-памяти» (HDD) пока довольно много, но в моих
 тараканях это оправдано малым каналом.
-
+</p>
+<p>
 По-настоящему ценной информации на моем компьютере нет. Есть немного
-такой, потерять которую было бы неприятно --- её совсем немного,
+такой, потерять которую было бы неприятно &mdash; её совсем немного,
 буквально с десяток мегабайт исходников и этот блог. Но и потерять её
 не так то просто. Она продублирована на моих компьютерах и на двух
 репозиториях в Сети: Github и Dropbox (да, я храню git-репозитории в
 svn-репозитории :). Мусор и прочие медиа размазаны по торрентам на
-тысячах компьютеров --- здесь не о чем волноваться.
-
+тысячах компьютеров &mdash; здесь не о чем волноваться.
+</p>
+<p>
 Самая насущная проблема маленьких терминалообразных компьютеров это
 быстрое приведение в рабочее состояние. Тотальная поломка или покупка
 нового компьютера не должна стать проблемой.
-
+</p>
+<p>
 Для быстрого восстановления я использую Dropbox и маленький скрипт —
 он позволяет привести компьютер в порядок буквально в «один клик». Для
 этого достаточно старого доброг Makefile, код которого приведен ниже.
+</p>
+<p>
+Репозиторий Dropbox находится в директории <code>~/Dropbox</code>. В
+<code>~/Dropbox/Dotfiles</code> хранятся все основные настройки моих компьютеров.
+</p>
 
-Репозиторий Dropbox находится в директории =~/Dropbox=. В
-=~/Dropbox/Dotfiles= хранятся все основные настройки моих компьютеров.
-#+begin_src makefile
-HOME=$(shell echo $$HOME)
-DOTFILES=$(HOME)/Dropbox/Dotfiles
-#+end_src
 
+<pre class="src src-makefile"><span style="color: #a0522d;">HOME</span>=$(<span style="color: #a0522d;">shell</span> echo $$HOME)
+<span style="color: #a0522d;">DOTFILES</span>=$(<span style="color: #a0522d;">HOME</span>)/Dropbox/Dotfiles
+</pre>
+
+
+
+<p>
 На самом верхнем уровне директории именованы по машинам к которым
 относятся настройки.
-#+begin_src makefile
-UNIVERSAL=universal
-NODE=$(shell uname --nodename)
-#+end_src
+</p>
 
+
+<pre class="src src-makefile"><span style="color: #a0522d;">UNIVERSAL</span>=universal
+<span style="color: #a0522d;">NODE</span>=$(<span style="color: #a0522d;">shell</span> uname --nodename)
+</pre>
+
+
+
+<p>
 Работа скрипта заключается в замене известных домашних
 поддиректорий и файлов настроек на ссылки на соответствующие файлы в
-=~/Dropbox/Dotfiles=
-#+begin_example
-~                      ~ на netbook
+<code>~/Dropbox/Dotfiles</code>
+</p>
+
+
+<pre class="example">~                      ~ на netbook
   Dropbox
     Dotfiles
       universal
@@ -105,31 +121,40 @@ NODE=$(shell uname --nodename)
           config
           subfont.ttf
           ...
-#+end_example
+</pre>
 
+
+
+<p>
 Удаляем текущие файлы и создаем ссылки в репозиторий.
-#+begin_src makefile
-all:
-	rm -f   $(HOME)/.config/user-dirs.dirs
-	rm -f   $(HOME)/.face
-	rm -f   $(HOME)/.gitconfig
-	rm -fRv $(HOME)/.fonts
-	rm -fRv $(HOME)/.ssh
-	rm -fRv $(HOME)/.mplayer
-	rm -fRv $(HOME)/.m2
-	rm -f   $(HOME)/.Xdefaults
-	rm -f   $(HOME)/.zshrc
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/config/user-dirs.dirs $(HOME)/.config/user-dirs.dirs
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/face       $(HOME)/.face
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/gitconfig  $(HOME)/.gitconfig
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/fonts      $(HOME)/.fonts
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/ssh        $(HOME)/.ssh
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/m2         $(HOME)/.m2
-	ln -fs $(DOTFILES)/$(NODE)/mplayer         $(HOME)/.mplayer
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/Xdefaults  $(HOME)/.Xdefaults
-	ln -fs $(DOTFILES)/$(UNIVERSAL)/zshrc      $(HOME)/.zshrc
-#+end_src
+</p>
 
+
+<pre class="src src-makefile"><span style="color: #0000ff;">all</span>:
+        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.config/user-dirs.dirs
+        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.face
+        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.gitconfig
+        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.fonts
+        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.ssh
+        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.mplayer
+        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.m2
+        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.Xdefaults
+        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.zshrc
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/config/user-dirs.dirs $(<span style="color: #a0522d;">HOME</span>)/.config/user-dirs.dirs
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/face       $(<span style="color: #a0522d;">HOME</span>)/.face
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/gitconfig  $(<span style="color: #a0522d;">HOME</span>)/.gitconfig
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/fonts      $(<span style="color: #a0522d;">HOME</span>)/.fonts
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/ssh        $(<span style="color: #a0522d;">HOME</span>)/.ssh
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/m2         $(<span style="color: #a0522d;">HOME</span>)/.m2
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">NODE</span>)/mplayer         $(<span style="color: #a0522d;">HOME</span>)/.mplayer
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/Xdefaults  $(<span style="color: #a0522d;">HOME</span>)/.Xdefaults
+        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/zshrc      $(<span style="color: #a0522d;">HOME</span>)/.zshrc
+</pre>
+
+
+
+<p>
 Теперь, если я на одной из машин слегка поправлю файл настройки —
 изменение моментально сохранится в облаке и станет доступно на всех
 машинах, а там хоть трава не расти.
+</p>
