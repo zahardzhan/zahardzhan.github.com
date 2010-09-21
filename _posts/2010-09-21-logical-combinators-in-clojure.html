@@ -1,0 +1,236 @@
+---
+layout: post
+title: Функциональные комбинаторы fn/and, fn/or и fn/not в Clojure
+---
+
+<p>
+В процессе написания на Clojure своего маленького, но полезного софта,
+а также благодаря титаническим усилиям авторов журнала «Практика
+функционального программирования» (особенно, 3-го выпуска) на поприще
+лечения функционально-шоковой терапией (шоковой по причине хаскеля,
+вестимо) оопнуто-императивного мозга ко мне пришло понимание особой
+полезности и удобства применения функций-комбинаторов других функций.
+</p>
+<p>
+Пускай это звучит заумно, но объяснение на пальцах полностью
+раскрывает суть этой простой вещи. Представим, есть у нас две
+функции-предиката, которые возвращают только истину или ложь —
+предикаты «жив?», <code>alive?</code> и «мёртв?», <code>dead?</code>. Нам нужно из этих
+предикатов составить третий предикат, проверяющий сложное условие,
+например — «не-жив-не-мёртв?», <code>nor-dead-nor-alive?</code> (не факт, что
+этот предикат всегда будет возвращать <i>false</i>, учитывая динамичность
+Clojure и особенности применения, но тем не менее). Берем эти
+предикаты и конструируем эту функцию так, как мы обычно это делаем
+</p>
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">nor-dead-nor-alive?</span> [x] 
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">and</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">not</span> dead? x<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">not</span> alive? x<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+Взор немного смущает частое употребление икса, и это при том, что это
+единственный аргумент для всех функций. Для избавления от этой напасти
+воспользуемся комбинаторами функций.  Комбинаторы по сути своей — это
+функции высшего порядка, они получают функций, делают с ними нечто и
+возвращают функцию. Они позволят определить функцию «не-жив-не-мёртв?»
+не как функцию от <i>x</i> с явными вызовами функций «жив?» и «мёртв?» с
+аргументом <i>x</i>, а как обычную переменную, значение которой — функция,
+в которую комбинаторы скомбинировали функции «жив?» и «мёртв?»
+</p>
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">nor-dead-nor-alive?</span> <span style="color: #8c8c8c;">(</span>fn/and <span style="color: #8c8c8c;">(</span>fn/not dead?<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>fn/not alive?<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+Может это и не лучший пример для комбинаторов, в плане небольшого
+шума, который добавляют префиксы <code>fn/</code>, да и проблем с документацией
+добавит, но он достаточно прост, чтобы показать саму концепцию. В
+большинстве случаев использование комбинаторов позволит избавиться от
+приличного объема копипасты, что приведет к более понятному коду с
+ясно выраженной сутью вычисления.
+</p>
+
+<div id="outline-container-1" class="outline-4">
+<h4 id="sec-1">Практичный пример. </h4>
+<div class="outline-text-4" id="text-1">
+
+<p>Прошлый пример с функциями «жив?» и «мёртв?» был довольно игрушечным,
+на этот раз приведу пример из маленькой полезной программы, которую я
+написал для себя. Это качалка с местного файлообменника, внутри
+которой пачка асинхронных агентов делает своё нелёгкое сетевое
+дело. Агенты организованы в окружение, они могут быть живыми —
+предикат <code>alive?</code>, иметь некий таг — ацессор <code>tag</code>, и принадлежать к
+некоторому типу агентов — ацессор <code>type</code>. Мне нужна была функция для
+выбора «следующего живого агента того же типа, но без тага». Вот
+реализация с комбинатором:
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">next-alive-untagged-after</span> [ag]
+  <span style="color: #8c8c8c;">(</span>next-after-when <span style="color: #8c8c8c;">(</span>fn/and alive? 
+                           <span style="color: #8c8c8c;">(</span>fn/not tag<span style="color: #8c8c8c;">)</span>
+                           <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">partial</span> same type ag<span style="color: #8c8c8c;">))</span>
+                   <span style="color: #8c8c8c;">(</span>self ag<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>env ag<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+и без комбинатора
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">next-alive-untagged-after</span> [ag]
+  <span style="color: #8c8c8c;">(</span>next-after-when <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [x] <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">and</span> <span style="color: #8c8c8c;">(</span>alive? x<span style="color: #8c8c8c;">)</span> 
+                                <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">not</span> <span style="color: #8c8c8c;">(</span>tag x<span style="color: #8c8c8c;">))</span> 
+                                <span style="color: #8c8c8c;">(</span>same type ag x<span style="color: #8c8c8c;">)))</span>
+                   <span style="color: #8c8c8c;">(</span>self ag<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>env ag<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+Очевидно, в версии без комбинаторов мусора больше.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-4">
+<h4 id="sec-2">Реализация комбинаторов. </h4>
+<div class="outline-text-4" id="text-2">
+
+<p>Комбинаторов много хороших и разных, но в статье и большей части
+своего кода я использовал только три наиболее полезных «логических»
+комбинатора — <code>fn/and</code>, <code>fn/or</code> и <code>fn/not</code>. Оригинальный код этих
+комбинаторов я вычитал в замечательной книге Пола Грэма «On Lisp» (<a href="http://lib.store.yahoo.net/lib/paulgraham/onlisp.lisp">там</a>
+еще много подобных плюшек). <a href="http://github.com/zahardzhan/fn">Реализация их на Clojure</a> чуть более
+функциональна и проще для понимания благодаря деструктуризации
+аргументов функций и тому, что это Lisp-1 (не нужен <code>funcall</code>).
+</p>
+<p>
+Нижеследующий код определяет пространство имен <b>fn</b>, чтобы
+использовать этот модуль в своих программах укажите в зависимостях
+leiningen
+</p>
+<pre class="example">
+[fn "1.0.0"]
+</pre>
+
+
+<p>
+Определение пространства имен заслуживает особых комментариев.
+</p>
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">ns</span> fn
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:refer-clojure</span> <span style="color: #7a378b;">:exclude</span> [not and or]<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+<p>
+Этот код определяет пространство имён <code>fn</code>. В Clojure это имя
+зарезервировано под фундаментальный макрос, конструктор функций, но
+это не создаст проблем при использовании. Другое дело, что без
+префикса <code>fn/</code> комбинаторами невозможно будет воспользоваться в
+обычном коде, однако, пораскинув мыслью, всё становится на свои
+места — хорошие имена разлетаются как горячие пирожки, на всех не
+напасёшься, префикс же подчёркивает функциональный аспект при
+употреблении этих конструкций. <code>:refer-clojure :exclude</code> исключает
+импорт имён <i>and</i>, <i>or</i> и <i>not</i> из пространства имён ядра языка
+clojure.core. Задействовать эту маленькую библиотеку в своей программе
+можно лишь с помощью <code>require</code>; <code>use</code> работать не будет из-за
+перекрытия имен.
+</p>
+<p>
+Заранее определим имена функций в нашем модуле
+</p>
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">declare</span> not and or<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+<p>
+Устройство этих функций весьма хитрó — за простой идеей и тремя
+строками кода скрывается целый клубок накрепко связаных друг с другом
+рекурсий. Подобные вещи не очень хорошо могут сказываться на
+производительности, поэтому имеет смысл реализовать эти комбинаторы
+как макросы, чего я делать не буду :)
+</p>
+<p>
+Комбинатор <code>fn/not</code> это старый добрый <code>complement</code>, для удобстава
+возвращающий «пересечение» комплементарных функций, если его вызвать
+с несколькими аргументами
+</p>
+<pre class="example">
+(fn/not f) =&gt; (complement f)
+(fn/not f g h ...) =&gt; (and (fn/not f) (fn/not g) (fn/not h) ...)
+</pre>
+
+
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">not</span>
+  <span style="color: #8c8c8c;">(</span>[f] <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">complement</span> f<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span>[f &amp; fs] <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">and</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">not</span> f<span style="color: #8c8c8c;">)</span>
+                 <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> and <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">map</span> not fs<span style="color: #8c8c8c;">)))))</span>
+</pre>
+
+
+
+<p>
+Комбинатор <code>fn/and</code> возвращает «пересечение» функций — функцию,
+которая возвращает что-либо (<i>non-nil</i>), только если все пересекаемые
+функции возвращают что-либо:
+</p>
+<pre class="example">
+(and f g h ...) =&gt; (fn [xs] (and (f xs) (g xs) (h xs) ...))
+</pre>
+
+
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">and</span>
+  <span style="color: #8c8c8c;">(</span>[f] f<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>[f &amp; fs] <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> [chain <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> and fs<span style="color: #8c8c8c;">)</span>]
+              <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [&amp; xs] <span style="color: #8c8c8c;">(</span>clojure.core/<span style="color: #a020f0;">and</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> f xs<span style="color: #8c8c8c;">)</span>
+                                           <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> chain xs<span style="color: #8c8c8c;">))))))</span>
+</pre>
+
+
+
+<p>
+Комбинатор <code>fn/or</code> возвращает «объединение» функций — функцию, которая
+возвращает что-либо, когда хотя бы одна функция из объединяемых
+возвращает что-либо:
+</p>
+<pre class="example">
+(or f g h ...) =&gt; (fn [xs] (or (f xs) (g xs) (h xs) ...))
+</pre>
+
+
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">or</span>
+  <span style="color: #8c8c8c;">(</span>[f] f<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>[f &amp; fs] <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> [chain <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> or fs<span style="color: #8c8c8c;">)</span>]
+               <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [&amp; xs] <span style="color: #8c8c8c;">(</span>clojure.core/<span style="color: #a020f0;">or</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> f xs<span style="color: #8c8c8c;">)</span>
+                                           <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> chain xs<span style="color: #8c8c8c;">))))))</span>
+</pre>
+
+
+</div>
+</div>
