@@ -1,0 +1,1900 @@
+#+TITLE: Emacs Starter Kit
+#+SEQ_TODO: PROPOSED TODO STARTED | DONE DEFERRED REJECTED
+#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
+#+STARTUP: SHOWALL INDENT HIDESTARS
+#+BABEL: :noweb none
+#+BEGIN_HTML
+---
+layout: post
+title: Программа Emacs Starter Kit
+---
+#+END_HTML
+
+В прошлой статье я рассказал об очень позитивных впечатлениях Дональда
+Кнута от созданной им методологии «литературного программирования»,
+которые не покидают его на протяжении последних двадцати лет. Мои
+впечатления так же весьма позитивны. Однако, я посетовал, что
+литературное программирование совсем не используется в сообществе
+программистов, и в особенности — в мире Open Source. Дабы не быть
+голословным, представлю вашему вниманию программу Emacs Starter Kit,
+которую я постарался сделать настолько литературной, насколько это
+возможно. Но я не супермэн и не могу действительно хорошо объяснить
+код, который писали несколько сотен человек, к тому же я совсем не
+силен в Emacs Lisp, поэтому лучшее пояснение я дал тому коду, который
+написал сам; если вы сильны в программировании Emacs и если у вас есть
+идеи и предложения по улучшению, дополнению, исправлению и объяснению
+приведенного здесь когда — милости прошу — форкайте и пульте коммиты;
+комментируйте здесь и пишите мне на почту.
+
+Итак, /это статья является Emacs Lisp-программой/, основной частью
+пакета настроек Emacs Starter Kit, который служит мне и еще как
+минимум двум тысячам человек в качестве основного конфигурационного
+файла редактора Emacs. /Этот/ файл хранится в [[http://github.com/zahardzhan/emacs-starter-kit][моем git-репозитории]] на
+гитхабе. Мой репозиторий является форком [[http://github.com/eschulte/emacs-starter-kit][репозитория eschulte]],
+литературный конфиг которого я перевел и дополнил. Его репозиторий
+является в свою очередь форком [[http://github.com/technomancy/emacs-starter-kit][репозитория technomacy]], автора
+оригинального Kit.
+
+1. *Emacs.* Большая и сложная программа. Ему как ничему другому подходит
+   это определение. Эмакс был создан очень давно в лаборатории
+   искуственного интллекта MIT, он несет в себе гены очень своеобразной
+   культуры лисп-хакеров былых времен. С тех пор он не раз переписывался,
+   улучшался, дополнялся и обрастал тысячами расширений в течение
+   десятков лет. Эмакс, если и был когда-то мощным текстовым редактором,
+   сейчас стал некоей универсальной программой, в нём можно делать
+   абсолютно всё что угодно, если это хотя бы немного затрагивает собой
+   задачу отображения или редактирования текста, и даже больше. Людям
+   знáющим универсальность играет на руку, ведь одной программой можно
+   делать тысячу разных дел, при этом не прилагая усилий для переучивания
+   к разным интерфейсам. Людей, впервые запустивших эмакс подобная
+   универсальность и непривычный интерфейс поначалу пугает. Научиться
+   пользоваться эмаксом, понять его идею и проникнуться ею задача
+   непростая, трудоемкая и долгая.
+   
+   Напутствие начинающим пользователям подобного рода врядли вызовет у
+   них энтузиазм, скорее наоборот, и тут главное начать — часто эмакс
+   становится чем-то вроде игрушки.
+
+2. Настройка эмакса это своего рода декоративно-прикладное искусство,
+   она — одновременно благословение и проклятье пользователя. В
+   отличие от /vi/, главная прелесть которого, на мой взгляд, в том,
+   что в нём всё «из коробки» прекрасно настроено — бери да пользуйся,
+   эмакс в своем изкоробочном состоянии далеко не так хорош и удобен,
+   как мог бы быть. С первого же запуска начинается эпопея: эмаксер
+   затачивает редактор под себя, ставит расширения, заводит свои
+   конфигурационные файлы, подсматривает кусочки кода у других, по
+   крупицам собирает свои собственные настройки по всей сети — со
+   временем накапливается приличная база кода. И всё бы ничего, но
+   процесс доводки до более-менее юзабельного состояния очень долог —
+   на это могут уйти целые месяцы и даже годы (на самом деле настройка
+   эмакса не прекращается никогда).
+   
+   Всё то время, что я пользовался эмаксом я именно так и поступал:
+   собирал конфиг по кусочкам из тысячи разных мест — форумы, [[http://www.linux.org.ru][ЛОР]],
+   [[http://habrahabr.ru][хабр]], [[http://www.emacswiki.org/][эмакс-вики]], статьи, репозитории с настройками продвинутых
+   пользователей, страница [[http://alexott.net/][Alex'а Ott'а]], и прочее. В итоге конфиг
+   разросся до неприличных размеров и превратился в страшную кашу. В
+   общем, всё было плохо пока я не наткнулся на замечательный
+   скринкаст [[http://peepcode.com/products/meet-emacs][Meet Emacs]]. В скринкасте автор не усердствует с базовой
+   настройкой, а сразу после установки эмакса копирует в свою
+   директорию =.emacs.d= репозиторий emacs-starter-kit. Сперва я
+   скептически отнёсся к такому подходу, но попробовав Starter Kit
+   раз, удалив, и попробовав во второй раз я проникся: его оказалось
+   достаточно чтобы просто пользоваться эмаксом, не задумываясь о его
+   серьезных улучшениях. Всё что мне осталось — установить через
+   пакетный менеджер эмакса и операционной системы необходимые мне
+   расширения, да добавить настройки шрифтов и клавиатуры для нетбука
+   и настольного компьютера.
+
+3. *Emacs Starter Kit* это пакет базовых настроек редактора Emacs, он
+   идеален для быстрого начала работы, дополнения своими настройками и
+   переноса между компьютерами.
+
+   Оригинальный [[http://github.com/technomancy/emacs-starter-kit/][Emacs Starter Kit]], ныне «центральный репозиторий»
+   оного — это личный конфиг [[http://technomancy.us][Фила Хагельберга]], собранный им за долгие
+   годы использования эмакса. Сейчас же Kit — это сотни форков и тысячи
+   следящих за ним на гитхабе.
+
+4. *Установка.* Emacs Starter Kit рассчитан на работу с Emacs от 22-ой
+   версии и выше. Чтобы установить Emacs воспользуйтесь пакетным
+   менеджером вашего дистрибутива; пользователи Mac OS X могут
+   получить Emacs с сайта [[http://www.apple.com/downloads/macosx/unix_open_source/carbonemacspackage.html][Apple]], или собрать напрямую из [[http://savannah.gnu.org/projects/emacs/][исходного кода]],
+   следуя инструкциям в файле =nextstep/INSTALL=. Пользователи Windows
+   могут скачать установщик с сайта [[http://ftp.gnu.org/gnu/emacs/windows/emacs-22.3-bin-i386.zip][GNU]]. 
+
+   Также вам понадобится система контроля версий *git* и система
+   компьютерной верстки *TeX* (хотя она и необязательна).
+
+5. Установка Emacs Starter Kit элементарна: клонируйте git-репозиторий
+   с гитхаба в директорию =.emacs.d=; но перед эти сохраните старые
+   настройки и удалите =.emacs=:
+
+   : git clone http://github.com/zahardzhan/emacs-starter-kit.git ~/.emacs.d
+   
+   Затем установите [[http://www.kernel.org/pub/software/scm/git/docs/user-manual.html#submodules][git-сабмодули]] сторонних пакетов
+   
+   #+begin_src sh :tangle no
+   cd ~/.emacs.d/
+   git submodule init
+   git submodule update
+   #+end_src
+   
+   и соберите последние версии Org-mode и [[http://www.gnu.org/software/auctex/][Auctex]]
+   
+   #+begin_src sh :tangle no
+   cd ~/.emacs.d/src/org/
+   make
+   #+end_src
+   
+   #+begin_src sh :tangle no
+   cd ~/.emacs.d/src/auctex
+   ./configure && make
+   #+end_src
+
+6. Запустите Emacs.
+
+7. Если вы хотите оставить свои старые настройки в =~/.emacs.d= на месте и
+   просто попробовать Starter Kit, запустите его следующей командой:
+
+   : emacs -q -l ~/emacs-starter-kit/init.el   
+
+8. После того как закончите установку вам, возможно, потребуется
+   перезапустить Emacs несколько раз — во время загрузки пакетов с [[* Emacs Lisp Package Archive][ELPA]]
+   происходят ошибки разбора HTML — просто проигнорируйте их.
+
+9. Если после очередного обновления вы потеряете некоторые
+   автозагрузчики, что даст знать о себе сообщениями об ошибках типа
+   «void function: foobar», попробуйте использовать команду =M-x
+   regen-autoloads=.
+
+10. *Устройство.* Директория =.emacs.d= Kit'а устроена следующим образом:
+
+    #+BEGIN_EXAMPLE
+    .emacs.d/
+      ...
+      ... системные
+      ...
+      elpa/
+      elpa-to-submit/
+      src/
+      init.el
+      loaddefs.el
+      package.el
+      starter-kit.org
+      ...
+      ... пользовательские
+      ...
+      username.el
+      username.org
+      username/
+        config1.el
+        config2.org
+        config3.el
+        ...
+      system-name.el
+      system-name.org
+    #+END_EXAMPLE
+
+    Пакетный менеджер [[* Emacs Lisp Package Archive][ELPA]] находится в файле [[file:package.el][package.el]]. Он
+    усанавливает пакеты в директорию [[file:elpa/][elpa/]].
+
+    Библиотеки, которые ожидают отправки в ELPA передаются вместе со
+    Starter Kit'ом в директории [[file:elpa-to-submit/][elpa-to-submit/]]. Эти файлы хранятся
+    там временно до тех пор пока кто-нибудь не удосужится превратить
+    их в нормальные пакеты. Как только они будут отправлены в ELPA, их
+    можно будет удалить. Автозагрузчики для этих библиотек хранятся в
+    файле [[file:loaddefs.el][loaddefs.el]]. Это позволяет им загружаться по требованию, а
+    не при старте.
+
+    Самый главный файл — это =init.el=, с него начинается загрузка. Он
+    загружает Org-mode и передает управление /этому/ файлу. Дальнейшая
+    загрузка происходит в порядке выполнения Emacs Lisp-кода в этом
+    файле. В последнюю очередь загружаются /пользовательские файлы/.
+
+11. *Настройка.* Для многих пользователей настройки приведенные
+    здесь станут базой для собственных. Starter Kit предоставляет
+    места для дополнительных настроек, специфичных для пользователей и
+    для машин, на которых будет запущен Emacs. Эти места устроены
+    таким образом, что позволяют легко управлять своими настройками и
+    с легкостью, без конфликтов, получать обновления из основного
+    репозитория.
+
+    Чтобы сделать первый шаг к своим настройкам — создайте ветку
+    репозитория Starter Kit для локальных изменений с помощью команды
+    =git branch=. Оставьте главную ветку для получения обновлений и
+    храните персональную информацию в своей ветке.
+
+12. Свои настройки вы можете хранить в /файле названым именем вашего
+    пользователя/, с расширением =.el= или =.org= на конце. Если вы не
+    уверены насчет имени пользователя — выполните в консоли команду
+
+     #+begin_src sh :tangle no
+     echo $USER
+     #+end_src
+
+13. Если ваша конфигурация слишком велика для одного файла — можете
+    разбить её на несколько файлов и сохранить в /директории с именем
+    вашего пользователя/. Если такая директория существует — она будет
+    добавлена к загрузочным путям и любые Emacs Lisp-файлы и файлы
+    Org-mode с включенными кусками Emacs Lisp-кода будут загружены.
+
+14. Если вам нужны разные настройки для разных машин — храните их в
+    /файлах названых именем хоста/ с расширением =.el= или =.org=.
+
+    Чтобы узнать имя хоста выполните в консоли команду
+
+    #+begin_src sh :tangle no
+    hostname
+    #+end_src
+
+15. Прежде чем браться за создание своей конфигурации я рекомендую вам
+    посмотреть секцию [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Customization.html#Customization][Customization]] в руководстве по GNU Emacs. Оно
+    доступно непосредственно в самом Emacs по команде =M-x info= и
+    сочетанию *С-h i*.
+
+    Прочтите секцию [[http://www.gnu.org/software/emacs/elisp/html_node/Key-Binding-Conventions.html][Key Binding Conventions]] руководства — это поможет
+    вам избежать проблем при определении своих сочетаний клавиш.
+
+    Starter Kit идет с набором цветовых тем. Смотрите инструкции по
+    установке тем в секции [[file:starter-kit-misc.org::*Color%20Themes][Цветовые темы]].
+
+16. *Установка дополнительных библиотек.* В Starter Kit включено много
+    полезных Emacs Lisp-библиотек, но, возможно, вам захочется
+    установить еще несколько. Предпочтите установку библиотек из
+    /Emacs Lisp Package Archive/, [[http://tromey.com/elpa][ELPA]], установке из других мест — это
+    избавит вас от необходимости вручную поддерживать зависимости и
+    обновлять установленные библиотеки при появлении новых версий. В
+    недалеком светлом будущем все пакеты будут устанавливаться через
+    ELPA — он будет включен в 24-ую версию Emacs.
+
+    Для установки пакетов вызовите меню установки и удаления командой
+    =M-x package-list-packages=. Используйте клавишу *i* для отметки и
+    *x* для установки отмеченых пакетов.
+
+17. Если библиотека не доступна через ELPA вы можете поместить её
+    исходный код в директорию =src=. Любые находящиеся там пакеты
+    будут автоматически добавлены к загрузочным путям при старте
+    Emacs.
+
+18. *Содействие.* Если вы знаете толк в Emacs — попробуйте Starter Kit
+    в качестве замены вашим нынешним настройкам. И если есть нечто без
+    чего вы не можете жить — добавте это в Kit или дайте мне об этом
+    знать, чтобы я это добавил.
+
+    Помогите улучшить /эту/ программу: подскажите в дополнении,
+    исправлении и объяснении кода.
+
+    Приветствуется помощь в отправке новых библиотек в ELPA. Есть два
+    способа: взять новые библиотеки, подготовить их к ELPA и забросить
+    в директорию elpa-to-submit; или взять файлы из elpa-to-submit, и
+    убедившись в корректности зависимостей, отправить их мэйнтеинеру
+    ELPA. О том как это осуществить можно узнать на
+    http://tromey.com/elpa/upload.html.
+
+19. *Распространение.* Файлы идущие в комплекте Starter Kit
+    распространяются под теми же лицензиями что и Emacs, если не
+    указано противное. Смотрите детали в файле =COPYING=.
+
+20. *Реалиция Emacs Starter Kit.* Ниже следует Emacs Lisp-код, который
+    выполняется при каждом старте Emacs. Мы начинем с определения
+    загрузочных файлов и установки загрузочных путей.
+
+    #+begin_src emacs-lisp 
+    (setq dotfiles-dir (file-name-directory
+                       (or load-file-name (buffer-file-name))))
+  
+    (add-to-list 'load-path dotfiles-dir)
+    (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
+    (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
+  
+    (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
+    (setq package-user-dir (concat dotfiles-dir "elpa"))
+    (setq custom-file (concat dotfiles-dir "custom.el"))
+    #+end_src
+
+21. Повсеместно используемые пакеты загружаются при старте Emacs, а не
+    по требованию, т.к. они используются практически во всех сессиях.
+
+    #+begin_src emacs-lisp 
+    (require 'cl)
+    (require 'saveplace)
+    (require 'ffap)
+    (require 'uniquify)
+    (require 'ansi-color)
+    (require 'recentf)
+    #+end_src
+
+22. Порт для совместимости с Emacs 22.
+
+    #+begin_src emacs-lisp 
+    (unless (functionp 'locate-dominating-file)
+    (defun locate-dominating-file (file name)
+      "Look up the directory hierarchy from FILE for a file named NAME.
+       Stop at the first parent directory containing a file NAME,
+       and return the directory.  Return nil if not found."
+       ;; We used to use the above locate-dominating-files code, but the
+       ;; directory-files call is very costly, so we're much better off doing
+       ;; multiple calls using the code in here.
+       ;;
+       ;; Represent /home/luser/foo as ~/foo so that we don't try to look for
+       ;; `name' in /home or in /.
+     (setq file (abbreviate-file-name file))
+     (let ((root nil)
+           (prev-file file)
+           ;; `user' is not initialized outside the loop because
+           ;; `file' may not exist, so we may have to walk up part of the
+           ;; hierarchy before we find the "initial UID".
+           (user nil)
+           try)
+       (while (not (or root
+                       (null file)
+                       ;; FIXME: Disabled this heuristic because it is sometimes
+                       ;; inappropriate.
+                       ;; As a heuristic, we stop looking up the hierarchy of
+                       ;; directories as soon as we find a directory belonging
+                       ;; to another user.  This should save us from looking in
+                       ;; things like /net and /afs.  This assumes that all the
+                       ;; files inside a project belong to the same user.
+                       ;; (let ((prev-user user))
+                       ;;   (setq user (nth 2 (file-attributes file)))
+                       ;;   (and prev-user (not (equal user prev-user))))
+                       (string-match locate-dominating-stop-dir-regexp file)))
+         (setq try (file-exists-p (expand-file-name name file)))
+         (cond (try (setq root file))
+               ((equal file (setq prev-file file
+                                  file (file-name-directory
+                                        (directory-file-name file))))
+                (setq file nil))))
+       root))
+
+     (defvar locate-dominating-stop-dir-regexp
+       "\\`\\(?:[\\/][\\/][^\\/]+\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'"))
+    #+end_src
+
+23. Функция для загрузки файлов =starter-kit-*=. Нигде не
+    используется — весь код Kit хранится в /этом/ файле.
+
+    #+begin_src emacs-lisp 
+    (defun starter-kit-load (file)
+      "This function is to be used to load starter-kit-*.org files."
+      (org-babel-load-file (expand-file-name file
+                                             dotfiles-dir)))
+    #+end_src
+
+24. *Менеджер пакетов ELPA.* Загружаем пакетный менеджер.
+
+    #+begin_src emacs-lisp 
+    (require 'package)
+    (package-initialize)
+    #+end_src
+
+25. Пакеты которые перечислены в списке =starter-kit-packages= будут
+    автоматически получены и установлены из ELPA при первом запуске
+    Emacs.
+
+    #+begin_src emacs-lisp
+    (defvar starter-kit-packages (list 'idle-highlight
+                                       'ruby-mode
+                                       'inf-ruby
+                                       'js2-mode
+                                       'css-mode
+                                       'yasnippet-bundle
+                                       'gist
+                                       'paredit))
+    #+end_src
+
+26. Устанавливаем пакеты из списка =starter-kit-packages=. Это
+    потребует сетевого подключения. Во время выполнения этого кода
+    вам, возможно, придется несколько раз перезапустить Emacs из-за
+    ошибок при получении пакетов.
+
+    #+begin_src emacs-lisp :noweb yes
+    (when 
+          <<starter-kit-is-online?>>
+      (unless package-archive-contents 
+         (package-refresh-contents))
+      <<install-starter-kit-packages-from-elpa>>)
+    #+end_src
+
+27. Проверка доступа в Сеть. При работе в Windows функция
+    =network-interface-list= недоступна, поэтому мы предполагаем что
+    доступ в Сеть таки есть.
+
+    #+srcname: starter-kit-is-online?
+    #+begin_src emacs-lisp :tangle no
+    (if (and (functionp 'network-interface-list)
+             (network-interface-list))
+        (some (lambda (iface) 
+                (unless (equal "lo" (car iface))
+                  (member 'up (first (last (network-interface-info (car iface)))))))
+              (network-interface-list))
+        t)
+    #+end_src
+
+28. Установка из ELPA пакетов из списка =starter-kit-packages=.
+
+    #+srcname: install-starter-kit-packages-from-elpa
+    #+begin_src emacs-lisp :tangle no
+    (dolist (package starter-kit-packages)
+      (unless (or (member package package-activated-list)
+                  (functionp package))
+        (message "Installing %s" (symbol-name package))
+        (package-install package)))
+    #+end_src
+
+29. Обход трудновоспроизводимого бага ELPA.
+
+    #+begin_src emacs-lisp
+    (autoload 'paredit-mode "paredit")
+    #+end_src
+
+30. *Установка загрузочных путей и файлов.* По-умолчанию загружается
+    пользовательский файл =custom.el=, его нет в комплекте Kit'a.
+
+    #+begin_src emacs-lisp 
+    (load custom-file 'noerror)
+    #+end_src
+
+31. Обход бага Mac OS X в котором имя системы является полным именем
+    домена.
+
+    #+begin_src emacs-lisp 
+    (when (eq system-type 'darwin)
+      (setq system-name (car (split-string system-name "\\."))))
+    #+end_src
+
+32. Определение файлов настроек, специфичных для пользователя и
+    машины. Вы можете держать соответствующие настройки в простых
+    emacs-lisp файлах и в файлах org-mode, таких как /этот/.
+
+    #+begin_src emacs-lisp 
+    (setq system-specific-config (concat dotfiles-dir system-name ".el")
+          system-specific-literate-config (concat dotfiles-dir system-name ".org")
+          user-specific-config (concat dotfiles-dir user-login-name ".el")
+          user-specific-literate-config (concat dotfiles-dir user-login-name ".org")
+          user-specific-dir (concat dotfiles-dir user-login-name))
+    (add-to-list 'load-path user-specific-dir)
+    #+end_src
+
+33. Пакеты emacs-lisp, загруженные из директории =src= замещают те,
+    что установленны через ELPA. Это полезно если вы используете самые
+    свежие версии пакетов или если их нет в ELPA.
+
+    #+begin_src emacs-lisp
+    (setq elisp-source-dir (concat dotfiles-dir "src"))
+    (add-to-list 'load-path elisp-source-dir)
+    #+end_src
+
+34. *Определения функций.* Далее следуют определения часто
+    используемых в Starter Kit функций.
+
+    #+begin_src emacs-lisp
+    (require 'thingatpt)
+    (require 'imenu)
+    #+end_src
+
+35. Указываем URL и открываем новый буфер с содержанием оного.
+
+    #+begin_src emacs-lisp
+    (defun view-url ()
+      "Open a new buffer containing the contents of URL."
+      (interactive)
+      (let* ((default (thing-at-point-url-at-point))
+             (url (read-from-minibuffer "URL: " default)))
+        (switch-to-buffer (url-retrieve-synchronously url))
+        (rename-buffer url t)
+        (cond ((search-forward "<?xml" nil t) (xml-mode))
+              ((search-forward "<html" nil t) (html-mode)))))
+    #+end_src
+
+36. Обновляет индекс imenu и затем использует ido для выбора и
+    перехода к символу. Символы которые совпадают с текстом под
+    курсором появляются в первых позициях в списке дополнения.
+
+    #+begin_src emacs-lisp 
+    (defun ido-imenu ()
+      "Update the imenu index and then use ido to select a symbol to navigate to.
+       Symbols matching the text at point are put first in the completion list."
+      (interactive)
+      (imenu--make-index-alist)
+      (let ((name-and-pos '())
+            (symbol-names '()))
+        (flet ((addsymbols (symbol-list)
+                           (when (listp symbol-list)
+                             (dolist (symbol symbol-list)
+                               (let ((name nil) (position nil))
+                                 (cond
+                                  ((and (listp symbol) (imenu--subalist-p symbol))
+                                   (addsymbols symbol))
+                                  
+                                  ((listp symbol)
+                                   (setq name (car symbol))
+                                   (setq position (cdr symbol)))
+                                  
+                                  ((stringp symbol)
+                                   (setq name symbol)
+                                   (setq position (get-text-property 1 'org-imenu-marker symbol))))
+                                 
+                                 (unless (or (null position) (null name))
+                                   (add-to-list 'symbol-names name)
+                                   (add-to-list 'name-and-pos (cons name position))))))))
+          (addsymbols imenu--index-alist))
+        ;; If there are matching symbols at point, put them at the beginning of `symbol-names'.
+        (let ((symbol-at-point (thing-at-point 'symbol)))
+          (when symbol-at-point
+            (let* ((regexp (concat (regexp-quote symbol-at-point) "$"))
+                   (matching-symbols (delq nil (mapcar (lambda (symbol)
+                                                         (if (string-match regexp symbol) symbol))
+                                                       symbol-names))))
+              (when matching-symbols
+                (sort matching-symbols (lambda (a b) (> (length a) (length b))))
+                (mapc (lambda (symbol) (setq symbol-names (cons symbol (delete symbol symbol-names))))
+                      matching-symbols)))))
+        (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
+               (position (cdr (assoc selected-symbol name-and-pos))))
+          (goto-char position))))
+    #+end_src
+
+37. У нас есть несколько функций для включения разнообразных режимов
+    при открытии буферов с исходным кодом. Здесь мы определяем эти
+    функции и последовательно добавляем их в ловушку =coding-hook=;
+    \lambda-функции не используются — у нас нет гарантии того что они
+    уже не добавлены в ловушку.
+
+    #+begin_src emacs-lisp
+    (defvar coding-hook nil
+      "Hook that gets run on activation of any programming mode.")
+    #+end_src
+
+    #+begin_src emacs-lisp 
+    (defun local-column-number-mode ()
+      (make-local-variable 'column-number-mode)
+      (column-number-mode t))
+    
+    (defun local-comment-auto-fill ()
+      (set (make-local-variable 'comment-auto-fill-only-comments) t)
+      (auto-fill-mode t))
+    
+    (defun turn-on-hl-line-mode ()
+      (if window-system (hl-line-mode t)))
+    
+    (defun turn-on-save-place-mode ()
+      (setq save-place t))
+    
+    (defun turn-on-whitespace ()
+      (whitespace-mode t))
+    #+end_src
+
+    #+begin_src emacs-lisp 
+    (add-hook 'coding-hook 'local-column-number-mode)
+    #+end_src
+    
+    #+begin_src emacs-lisp 
+    (add-hook 'coding-hook 'local-comment-auto-fill)
+    #+end_src
+
+    Подсветка текущей строки отключена.
+    
+    #+begin_src emacs-lisp :tangle no
+    (add-hook 'coding-hook 'turn-on-hl-line-mode)
+    #+end_src
+    
+    #+begin_src emacs-lisp
+    (add-hook 'coding-hook 'pretty-lambdas)
+    #+end_src
+
+38. Запуск ловушки =coding-hook= включает в буфере соответствующие
+    режимы для удобной работы с исходным кодом.
+
+    #+begin_src emacs-lisp
+    (defun run-coding-hook ()
+      "Enable things that are convenient across all coding buffers."
+      (run-hooks 'coding-hook))
+    #+end_src
+
+39. Заменяет отступы табами на отступы пробелами во всем буфере.
+    
+    #+begin_src emacs-lisp
+    (defun untabify-buffer ()
+      (interactive)
+      (untabify (point-min) (point-max)))
+    #+end_src
+
+40. Автоматически расставляет отступы во всем буфере.
+    
+    #+begin_src emacs-lisp
+    (defun indent-buffer ()
+      (interactive)
+      (indent-region (point-min) (point-max)))
+    #+end_src
+
+41. Приводит отступы во всем буфере в порядок.
+    
+    #+begin_src emacs-lisp
+    (defun cleanup-buffer ()
+      "Perform a bunch of operations on the whitespace content of a buffer."
+      (interactive)
+      (indent-buffer)
+      (untabify-buffer)
+      (delete-trailing-whitespace))
+    #+end_src
+
+42. Находит файлы которые редактировали в прошлый раз с помощью ido.
+    
+    #+begin_src emacs-lisp
+    (defun recentf-ido-find-file ()
+      "Find a recent file using ido."
+      (interactive)
+      (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+        (when file
+          (find-file file))))
+    #+end_src
+
+43. Заменяет /lambda/ на \lambda.
+
+    #+begin_src emacs-lisp
+    (defun pretty-lambdas ()
+      (font-lock-add-keywords
+       nil `(("(?\\(lambda\\>\\)"
+              (0 (progn (compose-region (match-beginning 1) (match-end 1)
+                                        ,(make-char 'greek-iso8859-7 107))
+                        nil))))))
+    #+end_src
+
+44. Заменяет предыдущее символьное выражение лиспа на результат его
+    вычисления.
+
+    #+begin_src emacs-lisp 
+    (defun eval-and-replace ()
+      "Replace the preceding sexp with its value."
+      (interactive)
+      (backward-kill-sexp)
+      (condition-case nil
+          (prin1 (eval (read (current-kill 0)))
+                 (current-buffer))
+        (error (message "Invalid expression")
+               (insert (current-kill 0)))))
+   #+end_src
+
+45. Перекомпилирует файлы инициализации.
+  
+    #+begin_src emacs-lisp 
+    (defun recompile-init ()
+      "Byte-compile all your dotfiles again."
+      (interactive)
+      (byte-recompile-directory dotfiles-dir 0)
+      ;; TODO: remove elpa-to-submit once everything's submitted.
+      (byte-recompile-directory (concat dotfiles-dir "elpa-to-submit/" 0)))
+    #+end_src
+
+46. Регенерирует и загружает файл автозагрузки.
+      
+    #+begin_src emacs-lisp 
+    (defun regen-autoloads (&optional force-regen)
+      "Regenerate the autoload definitions file if necessary and load it."
+      (interactive "P")
+      (let ((autoload-dir (concat dotfiles-dir "/elpa-to-submit"))
+            (generated-autoload-file autoload-file))
+        (when (or force-regen
+                  (not (file-exists-p autoload-file))
+                  (some (lambda (f) (file-newer-than-file-p f autoload-file))
+                        (directory-files autoload-dir t "\\.el$")))
+          (message "Updating autoloads...")
+          (let (emacs-lisp-mode-hook)
+            (update-directory-autoloads autoload-dir))))
+      (load autoload-file))
+    #+end_src
+
+47. Чрезвычайно полезная функция — используйте её если вам нужно
+    отредактировать системные файлы от имени суперпользователя.
+    
+    #+begin_src emacs-lisp 
+    (defun sudo-edit (&optional arg)
+      (interactive "p")
+      (if arg
+          (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+        (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+    #+end_src
+
+48. Вставляет /lorem ipsum/.
+
+    #+begin_src emacs-lisp 
+    (defun lorem ()
+      "Insert a lorem ipsum."
+      (interactive)
+      (insert "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
+              "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim"
+              "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
+              "aliquip ex ea commodo consequat. Duis aute irure dolor in "
+              "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+              "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+              "culpa qui officia deserunt mollit anim id est laborum."))
+    #+end_src
+
+49. Забуривает буфер, если если это текущий буфер, в противном случае
+    вызывает функцию.
+
+    #+begin_src emacs-lisp 
+    (defun switch-or-start (function buffer)
+      "If the buffer is current, bury it, otherwise invoke the function."
+      (if (equal (buffer-name (current-buffer)) buffer)
+          (bury-buffer)
+        (if (get-buffer buffer)
+            (switch-to-buffer buffer)
+          (funcall function))))
+    #+end_src
+
+50. Вставляет текущую дату.
+    
+    #+begin_src emacs-lisp 
+    (defun insert-date ()
+      "Insert a time-stamp according to locale's date and time format."
+      (interactive)
+      (insert (format-time-string "%c" (current-time))))
+    #+end_src
+
+51. Шутка. Бот для эмуляции парного программирования.
+    
+    #+begin_src emacs-lisp 
+    (defun pairing-bot ()
+      "If you can't pair program with a human, use this instead."
+      (interactive)
+      (message (if (y-or-n-p "Do you have a test for that? ") "Good." "Bad!")))
+    #+end_src
+
+52. Патч для игнорирования пробелов аннотацией.
+    
+    #+begin_src emacs-lisp 
+    (defun vc-git-annotate-command (file buf &optional rev)
+      (let ((name (file-relative-name file)))
+        (vc-git-command buf 0 name "blame" "-w" rev)))
+    #+end_src
+
+53. *Сочетания клавиш.* Многие оригинальные сочетания клавиш в Emacs
+    не отличаются особой эргономичностью и функциональностью. Эта
+    секция имеет своей целью исправление подобных недостатков.
+
+    Следует вспомнить, что Emacs — древнейшая ныне здравствующая и
+    широко используемая программа, и оригинальные сочетания клавиш
+    рассчитаны вовсе не на современные клавиатуры, а на клавиатуры
+    почивших 20 лет назад лисп-машин (например, в мануале по Zmacs для
+    Ti Explorer 1985 года можно найти те же самые комбинации, что
+    используются сейчас). Следует вспомнить и принять меры, иначе
+    незадачливый эмаксер рискует стать жертвой «синдрома эмаксового
+    мизинца» — из-за активного использования клавиши *Control*,
+    которую на современных клавиатурах жуть как неудобно нажимать
+    несколько сотен раз в час. Есть несколько способов сохранить
+    здоровье своих рук:
+
+    - Самый простой: поменять *Caps Lock* и *Control*. Если вы не
+      обладатель Happy Hacking Keyboard — меняйте, даже не думайте. Я
+      пользуюсь GNOME — в нем поменять не проблема — ищите опцию в
+      параметрах клавиатуры; в случае простого оконного менеджера
+      настройте клавиатуру в файле =/etc/X11/xorg.conf=.
+
+    - Купить нормальную эргономичную клавиатуру; такие выпускает
+      Kinesis. Есть парочка хороших клавиатур у Microsoft.
+
+54. *C-w* практически во всех эмуляторах терминалов удаляет слово
+    слева от курсора, в эмаксе же она не делает ничего хорошего. Здесь
+    она удаляет предыдущее слово или вырезает регион, если он
+    выделен — это очень удобно, *Backspace* становится практически не
+    нужен. Эта комбинация хорошо дополняет оригинальную *M-w* которая
+    копирует выделенный регион.
+
+    #+begin_src emacs-lisp
+    (defun backward-kill-word-or-kill-region (arg)
+      (interactive "p")
+      (if (region-active-p)
+          (kill-region (region-beginning) 
+                       (region-end))
+        (backward-kill-word arg)))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-w") 'backward-kill-word-or-kill-region)
+    
+    (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word-or-kill-region)
+    
+    (add-hook 'ido-setup-hook 
+              (lambda ()
+                (define-key ido-completion-map (kbd "C-w") 'ido-delete-backward-word-updir)))
+    #+end_src
+
+55. *C-q* имеет смысл сделать клавишей отмены; таким образом ряд
+    стандартных сочетаний, который в других системах расположен
+    внизу — *C-z*, *C-x*, *C-c* переезжает наверх — *C-q*, *C-w*,
+    *M-w*. К тому же отмена используется гораздо чаще чем
+    =quoted-insert=, который назначается на *C-z*.
+
+    *TODO*: Если кто подскажет как совместить эту клавишу с *C-g* я буду
+    очень благодарен.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-q") 'undo)
+    (global-set-key (kbd "C-z") 'quoted-insert)
+    #+end_src
+
+56. *C-x C-m* и *C-c C-m* заменяют *M-x*:
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x C-m") 'execute-extended-command)
+    (global-set-key (kbd "C-с C-m") 'execute-extended-command)
+    #+end_src
+
+57. *C-x C-k* убивает буфер. Гораздо легче это делать не отпуская
+    клавишу *Control* — так можно в /разы/ быстрее убить сразу
+    несколько буферов.
+
+    #+begin_src emacs-lisp
+    (defun kill-current-buffer ()
+      (interactive)
+      (kill-buffer (current-buffer)))
+    #+end_src
+
+    #+begin_src emacs-lisp    
+    (global-set-key (kbd "C-x C-k") 'kill-current-buffer)
+    #+end_src
+
+58. *C-s* и *C-r* привязаны к поиску по регэкспу вперёд и
+    назад. *C-M-s* и *C-M-r* ищут просто текст, без регекспов. Эти
+    клавиши используются не только для поиска в буфере, но и для
+    перехода к следующему или предыдущему элементу в минибуфере; а в
+    режиме ido — для переключения между буферами, для поиска и
+    открытия файла. И еще в режиме выделения региона.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+    (global-set-key (kbd "\C-r") 'isearch-backward-regexp)
+    (global-set-key (kbd "C-M-s") 'isearch-forward)
+    (global-set-key (kbd "C-M-r") 'isearch-backward)
+    #+end_src
+
+59. *S-Space* и *M-/* используются для умного автодополнения. Иногда
+    достаточно просто несколько раз нажать эту комбинацию и желаемый
+    текст чудесным образом напишется сам.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "M-/") 'hippie-expand)
+    (global-set-key (kbd "S-SPC") 'dabbrev-expand)
+    #+end_src
+
+60. *M-Space* — переключение между языками. Две легко доступные,
+    вплотную расположенные клавиши — это лучший вариант.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "M-SPC") 'toggle-input-method)
+    #+end_src
+
+61. *F3*, *F4*, *F4* — начало записи макроса, конец записи макроса,
+    вызов макроса.
+
+62. *С-x \* выравнивает код с помощью регулярных выражений.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x \\") 'align-regexp)
+    #+end_src
+
+63. *C-c n* очищает буфер.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-c n") 'cleanup-buffer)
+    #+end_src
+
+64. *F1* включает и отключает меню. Полезно для исследования новых
+    режимов Emacs.
+
+    #+begin_src emacs-lisp 
+    (global-set-key [f1] 'menu-bar-mode)
+    #+end_src
+
+65. *C--*, *C-+* и *C-=* уменьшают и увеличивают размер шрифта в
+    буфере.
+
+    #+begin_src emacs-lisp 
+    (define-key global-map (kbd "C-+") 'text-scale-increase)
+    (define-key global-map (kbd "C-=") 'text-scale-increase)
+    (define-key global-map (kbd "C--") 'text-scale-decrease)
+    #+end_src
+
+66. *C-x C-i* и *C-x Tab* позволяют перейти к определению символа в
+    буфере.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x C-i") 'ido-imenu)
+    #+end_src
+
+67. Сочетания для поиска файлов.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
+    (global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
+    (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+    (global-set-key (kbd "C-x C-p") 'find-file-at-point)
+    (global-set-key (kbd "C-c y") 'bury-buffer)
+    (global-set-key (kbd "C-c r") 'revert-buffer)
+    (global-set-key (kbd "M-`") 'file-cache-minibuffer-complete)
+    (global-set-key (kbd "C-x C-b") 'ibuffer)
+    #+end_src
+
+68. *Shift* со *стрелками* используется для перехода между окнами. 
+
+    #+begin_src emacs-lisp 
+    (windmove-default-keybindings)
+    #+end_src
+
+69. *C-x O* и *C-x C-o* — переход к предыдущему и к слудующему окну.
+
+    #+begin_src emacs-lisp 
+    (windmove-default-keybindings) ;; Shift+direction
+    (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
+    (global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 1)))
+    #+end_src
+
+70. *C-x ^* соединяет текущую строку с предыдущей.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x ^") 'join-line)
+    #+end_src
+
+71. *C-x m* запускает /eshell/ или переключается в уже активный.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x m") 'eshell)
+    #+end_src
+
+72. *C-x M* запускает новый /eshell/.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
+    #+end_src
+
+73. *C-x M-m* запускает системный шелл.
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x M-m") 'shell)
+    #+end_src
+
+74. *C-x h* — указать URL и просмотреть его содержимое в новом буфере,
+    см. [[(ref:view-url)][view-url]]. 
+
+    #+begin_src emacs-lisp 
+    (global-set-key (kbd "C-x h") 'view-url)
+    #+end_src
+
+75. *C-h a* вызывает /apropos/ — глобальный поиск по файлам помощи.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-h a") 'apropos)
+    #+end_src
+
+76. *C-c e* вычисляет выражение и заменяет его результатами вычисления.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-c e") 'eval-and-replace)
+    #+end_src
+
+77. Управление /Jabber'ом/.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-c j") (lambda () 
+                                    (interactive)
+                                    (switch-or-start 'jabber-connect "*-jabber-*")))
+    (global-set-key (kbd "C-c J") 'jabber-send-presence)
+    (global-set-key (kbd "C-c M-j") 'jabber-disconnect)
+    #+end_src
+
+78. Запуск /IRC/.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-c i") (lambda () 
+                                    (interactive) 
+                                    (switch-or-start (lambda () (rcirc-connect "irc.freenode.net"))
+                                                     "*irc.freenode.net*")))
+    #+end_src
+
+79. *C-c g* запускает /gnus/.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-c g") (lambda () (interactive) (switch-or-start 'gnus "*Group*")))
+    #+end_src
+
+80. *C-x g* запускает /magit/.
+
+    #+begin_src emacs-lisp
+    (global-set-key (kbd "C-x g") 'magit-status)
+    #+end_src
+
+81. Небольшой хак для git /add internally/ в VC.
+
+    #+begin_src emacs-lisp
+    (eval-after-load 'vc
+      (define-key vc-prefix-map "i" '(lambda () (interactive)
+                                       (if (not (eq 'Git (vc-backend buffer-file-name)))
+                                           (vc-register)
+                                         (shell-command (format "git add %s" buffer-file-name))
+                                         (message "Staged changes.")))))
+    #+end_src
+
+82. *C-o* активирует /occur/ во время поиска.
+
+    #+begin_src emacs-lisp
+    (define-key isearch-mode-map (kbd "C-o")
+      (lambda () (interactive)
+        (let ((case-fold-search isearch-case-fold-search))
+          (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
+    #+end_src
+
+83. *C-c a* запускает [[http://orgmode.org/manual/Agenda-Views.html#Agenda-Views][Org-mode agenda]].
+
+    #+begin_src emacs-lisp
+    (define-key global-map "\C-ca" 'org-agenda)
+    #+end_src
+
+84. *C-c l* сохраняет [[http://orgmode.org/manual/Hyperlinks.html#Hyperlinks][ссылки]] для Org-mode, на будущее. Смотрите секцию
+    [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] в мануале Org-mode.
+
+    #+begin_src emacs-lisp
+    (define-key global-map "\C-cl" 'org-store-link)
+    #+end_src
+
+85. *C-x C-r* запускает /Rgrep/, который необычайно полезен в
+    многофайловых проектах. См. [[elisp:(describe-function%20'rgrep)][rgrep]].
+
+    #+begin_src emacs-lisp
+    (define-key global-map "\C-x\C-r" 'rgrep)
+    #+end_src
+
+86. *Цветовые темы.* Пакет [[http://www.nongnu.org/color-theme/][Цветовых тем]] дает возможность изменять,
+    сохранять и обмениваться цветовыми темами Emacs (/color
+    themes/). Чтобы посмотреть на доступные темы и применить
+    понравившуюся используйте команду =M-x
+    color-theme-select=. Дополнительную информацию ищите на страницах
+    [[http://www.emacswiki.org/emacs/ColorTheme][Emacs Wiki]].
+
+87. Этот код загружает цветовые темы, тем самым делая их доступными
+    по-умолчанию.
+
+    #+begin_src emacs-lisp
+    (add-to-list 'load-path
+                 (expand-file-name "color-theme"
+                                   (expand-file-name "src" dotfiles-dir)))
+    (require 'color-theme)
+    (eval-after-load "color-theme"
+      '(progn (color-theme-initialize)))
+    #+end_src
+
+88. Когда вы выберете полюбившуюся вам тему, добавте в файл со своими
+    настройками строку с именем вашей темы, например следующая строка
+
+    #+begin_src emacs-lisp :tangle no
+    (color-theme-charcoal-black)
+    #+end_src
+
+    включит в эмаксе тему /Charcoal Black/ при старте.
+
+89. *Графический интерфейс.* Нет скроллбара, нет тулбара, нет меню,
+    нет диалоговых окон. Всего этого нет, ибо принесено в жертву
+    экономии движения. Графические элементы управления требуют мышь, а
+    чтобы дотянуться до мыши нужно оторвать руку от клавиатуры. В
+    случае меню еще потратить уйму времени на поиск нужного пункта. От
+    того, что эти элементы управления отключены — от пользователя не
+    убудет — функционал отключеных элементов продублирован в
+    интерфейсе. Во время редактирования если и используются меню, то
+    это меню текущих режимов, а они доступны в полоске
+    /modeline/. Скроллбар прекрасно заменяется стандартными клавишами
+    для перемещения по буферу и колёсиком мыши. Тулбар же просто не
+    нужен — выполнить любое действие проще через кейбиндинг.
+
+    Следующий код устанавливает заголовок фрейма и отключает элементы
+    графического интерфейса, если оный присутствует.
+
+    #+begin_src emacs-lisp :noweb yes
+    (when window-system
+      <<setup-frame-title>>
+      <<turn-off-graphical-user-interface-elements>>)
+    #+end_src
+
+90. Установка заголовка фрейма.
+
+    #+srcname: setup-frame-title
+    #+begin_src emacs-lisp :tangle no
+    (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+    #+end_src
+
+91. Отключенение элементов графического интерфейса: полосы прокрутки,
+    панели инструментов, графических подсказок и мерцания курсора.
+
+    #+srcname: turn-off-graphical-user-interface-elements
+    #+begin_src emacs-lisp :tangle no
+    (when (fboundp 'scroll-bar-mode)
+      (scroll-bar-mode nil)
+      (setq default-vertical-scroll-bar nil))
+    (when (fboundp 'tool-bar-mode)
+      (tool-bar-mode nil))
+    (tooltip-mode nil)
+    (blink-cursor-mode nil)
+    #+end_src
+
+92. Отключение меню.
+
+    #+begin_src emacs-lisp 
+    (when (fboundp 'menu-bar-mode)
+      (menu-bar-mode nil))
+    #+end_src
+
+93. Мерцание по краям буфера при выполнении неправильной команды.
+
+    #+begin_src emacs-lisp
+    (setq visible-bell t)
+    #+end_src
+
+94. Установка разного рода дополнительных настроек оконной системы и
+    буфера.
+
+    #+begin_src emacs-lisp 
+    (mouse-wheel-mode t)
+    
+    (setq echo-keystrokes 0.1
+          font-lock-maximum-decoration t
+          inhibit-startup-message t
+          transient-mark-mode t
+          color-theme-is-global t
+          delete-by-moving-to-trash t
+          shift-select-mode nil
+          truncate-partial-width-windows nil
+          uniquify-buffer-name-style 'forward
+          whitespace-style '(trailing lines space-before-tab
+                                      indentation space-after-tab)
+          whitespace-line-column 100
+          ediff-window-setup-function 'ediff-setup-windows-plain
+          oddmuse-directory (concat dotfiles-dir "oddmuse")
+          xterm-mouse-mode t
+          save-place-file (concat dotfiles-dir "places"))
+    #+end_src
+
+95. Еще немного *разных настроек*.
+
+    #+begin_src emacs-lisp 
+    (set-default 'indent-tabs-mode nil)
+    (set-default 'indicate-empty-lines t)
+    (set-default 'imenu-auto-rescan t)
+  
+    (add-hook 'text-mode-hook 'turn-on-auto-fill)
+    (add-hook 'text-mode-hook 'turn-on-flyspell)
+  
+    (defalias 'yes-or-no-p 'y-or-n-p)
+    (random t) ;; Seed the random-number generator
+    #+end_src
+
+96. UTF-8 используется повсеместно.
+
+    #+begin_src emacs-lisp
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (prefer-coding-system 'utf-8)
+    #+end_src
+
+97. Хиппи-дополнение порою черезчур хиппи.
+
+    #+begin_src emacs-lisp
+    (delete 'try-expand-line hippie-expand-try-functions-list)
+    (delete 'try-expand-list hippie-expand-try-functions-list)
+    #+end_src
+
+98. Браузер в котором открываются ссылки. Используйте в своих
+    настройках одну из следующих строчек кода.
+
+    #+begin_src emacs-lisp :tangle no
+    (setq browse-url-browser-function 'browse-url-firefox)
+    (setq browse-url-browser-function 'browse-default-macosx-browser)
+    (setq browse-url-browser-function 'browse-default-windows-browser)
+    (setq browse-url-browser-function 'browse-default-kde)
+    (setq browse-url-browser-function 'browse-default-epiphany)
+    (setq browse-url-browser-function 'browse-default-w3m)
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "~/src/conkeror/conkeror")
+    #+end_src
+
+99. Компресированные файлы просто открываются.
+
+    #+begin_src emacs-lisp
+    (auto-compression-mode t)
+    #+end_src
+
+100. Включить подсветку синтаксиса для старых эмаксов.
+    
+     #+begin_src emacs-lisp
+     (global-font-lock-mode t)
+     #+end_src
+
+101. Хранить список ранее посещенных файлов.
+
+     #+begin_src emacs-lisp 
+     (recentf-mode 1)
+     #+end_src
+
+102. Подсвечивать совпадающие скобочки.
+
+     #+begin_src emacs-lisp 
+     (show-paren-mode 1)
+     #+end_src
+
+103. Не мешать директории с файлами.
+
+     #+begin_src emacs-lisp
+     (setq backup-directory-alist `(("." . ,(expand-file-name
+                                             (concat dotfiles-dir "backups")))))
+     #+end_src
+
+104. Ассоциировать режимы с расширениями файлов.    
+
+     #+begin_src emacs-lisp
+     (add-to-list 'auto-mode-alist '("COMMIT_EDITMSG$" . diff-mode))
+     (add-to-list 'auto-mode-alist '("\\.css$" . css-mode))
+     (require 'yaml-mode)
+     (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+     (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+     (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+     (add-to-list 'auto-mode-alist '("\\.js\\(on\\)?$" . js2-mode))
+     ;; (add-to-list 'auto-mode-alist '("\\.xml$" . nxml-mode))
+     #+end_src
+
+105. Обобщенные диффы (/unified diffs/) по-умолчанию.
+     
+     #+begin_src emacs-lisp
+     (setq diff-switches "-u")
+     #+end_src
+
+106. Немного косметики.
+     
+     #+begin_src emacs-lisp
+     (eval-after-load 'diff-mode
+       '(progn
+          (set-face-foreground 'diff-added "green4")
+          (set-face-foreground 'diff-removed "red3")))
+     
+     (eval-after-load 'magit
+       '(progn
+          (set-face-foreground 'magit-diff-add "green3")
+          (set-face-foreground 'magit-diff-del "red3")))
+     #+end_src
+
+107. *Ido.* Интеллектуальное дополнение.
+
+     #+begin_src emacs-lisp 
+     (when (> emacs-major-version 21)
+       (ido-mode t)
+       (setq ido-enable-prefix nil
+             ido-enable-flex-matching t
+             ido-create-new-buffer 'always
+             ido-use-filename-at-point t
+             ido-max-prospects 10))
+     #+end_src
+
+108. *Flyspell.* Большая часть кода перекочевала сюда из
+     [[http://www.emacswiki.org/emacs/FlySpell][Emacs Wiki]]. Этот код не включается в конечный файл.
+
+     Устанавливаем путь к /aspell/, возможно, его нет в =$PATH=.
+
+     #+begin_src emacs-lisp :tangle no
+     (setq exec-path (append exec-path '("/opt/local/bin")))
+     #+end_src
+
+     Выбираем программу для проверки орфографии.
+
+     #+begin_src emacs-lisp :tangle no
+       (setq ispell-program-name "aspell"
+             ispell-dictionary "english"
+             ispell-dictionary-alist
+             (let ((default '("[A-Za-z]" "[^A-Za-z]" "[']" nil
+                              ("-B" "-d" "english" "--dict-dir"
+                               "/Library/Application Support/cocoAspell/aspell6-en-6.0-0")
+                              nil iso-8859-1)))
+               `((nil ,@default)
+                 ("english" ,@default))))
+     #+end_src
+
+109. *Nxhtml.* [[http://ourcomments.org/Emacs/nXhtml/doc/nxhtml.html][Nxhtml]] это большой пакет утилит для веб-разработки и для
+     интеграции нескольких главных режимов Emacs в одном буфере.
+
+     В этой версии Starter Kit Nxhtml не установлен, информацию по
+     установке ищите на [[http://www.emacswiki.org/emacs/NxhtmlMode][EmacsWiki-Nxhtml]].
+
+110. *Регистры* дают вам возможность быстро прыгнуть к файлу или иной
+     локации. Используйте *C-x r j* с последующей буквой регистра (*i*
+     для файла =init.el=, *s* для этого файла) чтобы прыгнуть к нему.
+
+     Добавте сюда регистры для тех файлов, которые вы редактируете
+     чаще всего.
+
+     #+srcname: starter-kit-registers
+     #+begin_src emacs-lisp 
+       (dolist (r `((?i (file . ,(concat dotfiles-dir "init.el")))
+                    (?s (file . ,(concat dotfiles-dir "starter-kit.org")))
+                    (?r (file . ,(concat dotfiles-dir "starter-kit-registers.org")))))
+         (set-register (car r) (cadr r)))
+     #+end_src
+
+111. *Yasnippet.* [[http://code.google.com/p/yasnippet/][yasnippet]] это еще одни сниппеты для Emacs. За их
+     основу была взята система шаблонов /TextMate/. Чтобы приобщиться
+     к этому расширению — посмотрите [[http://www.youtube.com/watch?v%3DvOj7btx3ATg][видео на YouTube]] и прочтите [[http://yasnippet.googlecode.com/svn/trunk/doc/index.html][введение и учебник]].
+
+112. Загрузка yasnippet.
+
+     #+begin_src emacs-lisp
+     (add-to-list 'load-path
+                  (expand-file-name  "yasnippet"
+                                     (expand-file-name "src"
+                                                       dotfiles-dir)))
+     (require 'yasnippet)
+     (yas/initialize)
+     #+end_src
+
+113. Загрузка сниппетов из директории =./snippets/=.
+
+     #+begin_src emacs-lisp
+     (yas/load-directory (expand-file-name "snippets" dotfiles-dir))
+     #+end_src
+
+114. *Org-mode.* [[http://orgmode.org/][Org-Mode]] используется для хранения заметок, ведения
+     списков дел, планирования проектов, публикации в блог и вообще
+     для быстрой и удобной работы с чистым текстом. Org-mode можно
+     использовать для работы в качестве системы GTD или средства для
+     литературного программирования.
+
+     Чтобы узнать больше об Org-mode загляните на [[http://orgmode.org/worg/][worg]], большую вики
+     по Org-mode сделаную с помощью самого Org-mode и [[http://git-scm.com/][git]].
+
+115. Ловушка Org-Mode. Последняя версия yasnippet плохо работает с
+     Org-mode; следующая функция позволяет им хорошо работать вместе.
+
+     #+begin_src emacs-lisp
+     (defun yas/org-very-safe-expand ()
+       (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+     #+end_src
+
+     #+begin_src emacs-lisp
+     (add-hook 'org-mode-hook
+               (lambda ()
+                   (local-set-key "\M-\C-n" 'outline-next-visible-heading)
+                   (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
+                   (local-set-key "\M-\C-u" 'outline-up-heading)
+                   ;; table
+                   (local-set-key "\M-\C-w" 'org-table-copy-region)
+                   (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
+                   (local-set-key "\M-\C-l" 'org-table-sort-lines)
+                   ;; display images
+                   (local-set-key "\M-I" 'org-toggle-iimage-in-org)
+                   ;; yasnippet (using the new org-cycle hooks)
+                   (make-variable-buffer-local 'yas/trigger-key)
+                   (setq yas/trigger-key [tab])
+                   (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                   (define-key yas/keymap [tab] 'yas/next-field)))
+     #+end_src
+
+116. Загружаем библиотеку Babel; она содержит много полезных функций
+     которые могут быть использованы в блоках кода в /любом/
+     файле. Информацию о функциях вы найдете в самом файле библиотеки
+     [[file:src/org/contrib/babel/library-of-babel.org][library-of-babel.org]], сведения по использованию ищите на
+     [[http://orgmode.org/worg/org-contrib/babel/intro.php#library-of-babel][worg:library-of-babel]].
+
+     #+begin_src emacs-lisp
+     (org-babel-lob-ingest
+      (expand-file-name
+       "library-of-babel.org"
+       (expand-file-name
+        "babel"
+        (expand-file-name
+         "contrib"
+         (expand-file-name
+          "org"
+          (expand-file-name "src" dotfiles-dir))))))
+     #+end_src
+
+117. Убедимся, что последняя версия мануала Org-mode доступна по
+     команде =info= (она привязана к сочетанию *C-h i*). Для этого
+     сделаем директорию =doc/=, которая находится в пакете Org-mode,
+     первым элементом списка =Info-directory-list=.
+
+     #+begin_src emacs-lisp
+     (unless (boundp 'Info-directory-list)
+       (setq Info-directory-list Info-default-directory-list))
+     (setq Info-directory-list
+           (cons (expand-file-name
+                  "doc"
+                  (expand-file-name
+                   "org"
+                   (expand-file-name "src" dotfiles-dir)))
+                 Info-directory-list))
+     #+end_src
+
+118. Документация по Starter Kit. Этот код определяет проект
+     =starter-kit-project=, он используется для публикации
+     html-документации по Starter Kit.
+
+     #+begin_src emacs-lisp :results silent
+     (unless (boundp 'org-publish-project-alist)
+       (setq org-publish-project-alist nil))
+     (let ((this-dir (file-name-directory (or load-file-name buffer-file-name))))
+       (add-to-list 'org-publish-project-alist
+                    `("starter-kit-documentation"
+                      :base-directory ,this-dir
+                      :base-extension "org"
+                      :style "<link rel=\"stylesheet\" href=\"emacs.css\" type=\"text/css\"/>"
+                      :publishing-directory ,this-dir
+                      :index-filename "starter-kit.org"
+                      :auto-postamble nil)))
+     #+end_src
+
+119. *Eshell* это хорошая командная оболочка. Дополнительную
+     информацию ищите в [[http://www.emacswiki.org/emacs/CategoryEshell][вики]].
+
+     #+begin_src emacs-lisp
+     (setq eshell-cmpl-cycle-completions nil
+           eshell-save-history-on-exit t
+           eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+     
+     (eval-after-load 'esh-opt
+       '(progn
+          (require 'em-prompt)
+          (require 'em-term)
+          (require 'em-cmpl)
+          ;; TODO: for some reason requiring this here breaks it, but
+          ;; requiring it after an eshell session is started works fine.
+          ;; (require 'eshell-vc)
+          (setenv "PAGER" "cat")
+          (set-face-attribute 'eshell-prompt nil :foreground "turquoise1")
+          (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+                    '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+          (add-to-list 'eshell-visual-commands "ssh")
+          (add-to-list 'eshell-visual-commands "tail")
+          (add-to-list 'eshell-command-completions-alist
+                       '("gunzip" "gz\\'"))
+          (add-to-list 'eshell-command-completions-alist
+                       '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
+          (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
+     #+end_src
+
+120. В директории =eshell= хранятся определения /alias/ и история. Она
+     служит для тех же целей, что и файл =.bashrc= (если вы знакомы с
+     bash). Ниже устанавливаем значение переменной
+     =eshell-directory-name= так что она указывает на директорию
+     =~/.emacs.d/eshell=, в которой уже есть файл =alias= с парочкой
+     полезных алиасов.
+
+     #+begin_src emacs-lisp
+     (setq eshell-directory-name (expand-file-name "./" (expand-file-name "eshell" dotfiles-dir)))
+     #+end_src
+
+121. *Lisp.* Поддержим диалекты Emacs Lisp, Scheme, Common Lisp и
+     Clojure хорошими настройками. Для начала несколько комбинаций
+     клавиш для всех диалектов.
+
+     *Tab* и *C-\* автодополняют символы в лисп-программе.
+
+     #+begin_src emacs_lisp
+     (define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+     (define-key lisp-mode-shared-map (kbd "C-\\") 'lisp-complete-symbol)
+     #+end_src
+     
+     *Enter* работает как раньше и дополнительно автоматически
+     расставляет отступы.
+
+     #+begin_src emacs-lisp 
+     (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
+     #+end_src
+
+     *C-c v* вычисляет весь буфер.
+
+     #+begin_src emacs-lisp
+     (define-key lisp-mode-shared-map (kbd "C-c v") 'eval-buffer)
+     #+end_src
+
+122. Тусклые скобочки.
+
+     #+begin_src emacs-lisp
+     (defface esk-paren-face
+        '((((class color) (background dark))
+           (:foreground "grey50"))
+          (((class color) (background light))
+           (:foreground "grey55")))
+        "Face used to dim parentheses."
+        :group 'starter-kit-faces)
+     #+end_src
+
+123. *Paredit* это режим структурного редактирования лиспокода. Проще
+     говоря, он расставляет, переставляет и удаляет скобочки с учётом
+     семантики кода. Возможно, сразу его освоить не получиться, потому
+     как этот режим выполнен в лучших традициях эмакса с добрым
+     десятком зубодробительных комбинаций, но после длительного
+     использования и привыкания без него будет уже непросто.
+
+     Рекомендую освоить базовые комбинации клавиш — они доступны в
+     справке, дополнительно смотрите в [[http://www.emacswiki.org/emacs/ParEdit][вики]].
+
+     #+begin_src emacs-lisp
+     (defun turn-on-paredit ()
+       (paredit-mode +1))
+     #+end_src
+
+124. *Emacs Lisp.* Включаем режим показа документации elisp-функций в
+     минибуфере, запускаем ловушку =coding-hook= для включения
+     удобcтв при кодировании, включаем режим paredit.
+
+     #+begin_src emacs-lisp
+     (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+     (add-hook 'emacs-lisp-mode-hook 'run-coding-hook)
+     (add-hook 'emacs-lisp-mode-hook 'esk-remove-elc-on-save)
+     ;; (add-hook 'emacs-lisp-mode-hook 'idle-highlight)
+     (add-hook 'emacs-lisp-mode-hook 'turn-on-paredit)
+
+     (font-lock-add-keywords 'emacs-lisp-mode
+     			'(("(\\|)" . 'esk-paren-face)))
+     #+end_src
+
+125. Удаляет откомпилированный =.elc=-файл при сохранении
+     оригинального =.el=-файла.
+
+     #+begin_src emacs-lisp
+     (defun esk-remove-elc-on-save ()
+       "If you're saving an elisp file, likely the .elc is no longer valid."
+       (make-local-variable 'after-save-hook)
+       (add-hook 'after-save-hook
+                 (lambda ()
+                   (if (file-exists-p (concat buffer-file-name "c"))
+                       (delete-file (concat buffer-file-name "c"))))))
+     
+     #+end_src
+
+126. *Clojure.*
+
+     #+begin_src emacs-lisp
+     (add-hook 'clojure-mode-hook 'run-coding-hook)
+     ;; (add-hook 'clojure-mode-hook 'idle-highlight)
+     
+     (font-lock-add-keywords 'clojure-mode
+                             '(("(\\|)" . 'esk-paren-face)))
+     
+     (defface esk-clojure-trace-face
+        '((((class color) (background dark))
+           (:foreground "grey50"))
+          (((class color) (background light))
+           (:foreground "grey55")))
+        "Face used to dim parentheses."
+        :group 'starter-kit-faces)
+     
+     (setq esk-clojure-trace-face 'esk-clojure-trace-face)
+
+     (defun slime-jump-to-trace (&optional on)
+       "Jump to the file/line that the current stack trace line references.
+        Only works with files in your project root's src/, not in dependencies."
+       (interactive)
+       (save-excursion
+         (beginning-of-line)
+         (search-forward-regexp "[0-9]: \\([^$(]+\\).*?\\([0-9]*\\))")
+         (let ((line (string-to-number (match-string 2)))
+               (ns-path (split-string (match-string 1) "\\."))
+               (project-root (locate-dominating-file default-directory "src/")))
+           (find-file (format "%s/src/%s.clj" project-root
+                              (mapconcat 'identity ns-path "/")))
+           (goto-line line))))
+     
+     (eval-after-load 'slime
+       '(progn
+          (defalias 'sldb-toggle-details 'slime-jump-to-trace)
+          (defun sldb-prune-initial-frames (frames)
+            "Show all stack trace lines by default."
+            frames)))
+     
+     (eval-after-load 'find-file-in-project
+       '(add-to-list 'ffip-patterns "*.clj"))
+     #+end_src
+
+127. Подсвечиваем в дебагере полезные строки.
+     
+     #+begin_src emacs-lisp
+     (defun sldb-font-lock ()
+       (font-lock-add-keywords nil
+                               '(("[0-9]+: \\(clojure\.\\(core\\|lang\\).*\\)"
+                                  1 esk-clojure-trace-face)
+                                 ("[0-9]+: \\(java.*\\)"
+                                  1 esk-clojure-trace-face)
+                                 ("[0-9]+: \\(swank.*\\)"
+                                  1 esk-clojure-trace-face)
+                                 ("\\[\\([A-Z]+\\)\\]"
+                                  1 font-lock-function-name-face))))
+     
+     (add-hook 'sldb-mode-hook 'sldb-font-lock)
+     #+end_src
+
+128. Включаем paredit для редактировании исходников на Clojure.
+
+     #+begin_src emacs-lisp
+     (add-hook 'clojure-mode-hook 'turn-on-paredit)
+     #+end_src
+
+129. Команда =clojure-project= делает всю необходимую подготовку и
+     запускает указанный Clojure-проект в сессии SLIME.
+     
+     #+begin_src emacs-lisp
+     (defun clojure-project (path)
+       "Setup classpaths for a clojure project and starts a new SLIME session.
+     
+       Kills existing SLIME session, if any."
+       (interactive (list
+                     (ido-read-directory-name
+                      "Project root: "
+                      (locate-dominating-file default-directory "pom.xml"))))
+       (when (get-buffer "*inferior-lisp*")
+         (kill-buffer "*inferior-lisp*"))
+       (add-to-list 'swank-clojure-extra-vm-args
+                    (format "-Dclojure.compile.path=%s"
+                            (expand-file-name "target/classes/" path)))
+       (setq swank-clojure-binary nil
+             swank-clojure-jar-path (expand-file-name "target/dependency/" path)
+             swank-clojure-extra-classpaths
+             (append (mapcar (lambda (d) (expand-file-name d path))
+                             '("src/" "target/classes/" "test/"))
+                     (let ((lib (expand-file-name "lib" path)))
+                       (if (file-exists-p lib)
+                           (directory-files lib t ".jar$"))))
+             slime-lisp-implementations
+             (cons `(clojure ,(swank-clojure-cmd) :init swank-clojure-init)
+                   (remove-if #'(lambda (x) (eq (car x) 'clojure))
+                              slime-lisp-implementations)))
+       (save-window-excursion
+         (slime)))
+     #+end_src
+
+130. В исходниках Clojure =fn= заменяется на =ƒ= для красоты и
+     экономии места.
+
+     #+begin_src emacs-lisp
+     (eval-after-load 'clojure-mode
+       '(font-lock-add-keywords
+         'clojure-mode `(("(\\(fn\\>\\)"
+                          (0 (progn (compose-region (match-beginning 1)
+                                                    (match-end 1) "ƒ")
+                                    nil))))))
+     #+end_src
+
+131. *Scheme.*
+
+     #+begin_src emacs-lisp
+     (add-hook 'scheme-mode-hook 'run-coding-hook)
+     ;; (add-hook 'scheme-mode-hook 'idle-highlight)
+     (font-lock-add-keywords 'scheme-mode
+     			'(("(\\|)" . 'esk-paren-face)))
+     #+end_src
+
+132. *Common Lisp.*
+
+     #+begin_src emacs-lisp
+     (add-hook 'lisp-mode-hook 'run-coding-hook)
+     ;; (add-hook 'lisp-mode-hook 'idle-highlight)
+     (add-hook 'lisp-mode-hook 'turn-on-paredit)
+     (font-lock-add-keywords 'lisp-mode
+     			'(("(\\|)" . 'esk-paren-face)))
+     #+end_src
+
+133. *Haskell.* Красивые \lambda в Haskell-коде.
+
+     #+begin_src emacs-lisp
+     (defun pretty-lambdas-haskell ()
+       (font-lock-add-keywords
+        nil `((,(concat "(?\\(" (regexp-quote "\\") "\\)")
+               (0 (progn (compose-region (match-beginning 1) (match-end 1)
+                                         ,(make-char 'greek-iso8859-7 107))
+                         nil))))))
+     #+end_src
+
+134. Все эти прелести включаются при включении режима Haskell с
+     помощью ловушки =haskell-mode-hook=.
+
+     #+begin_src emacs-lisp
+     (add-hook 'haskell-mode-hook 'run-coding-hook)
+     (add-hook 'haskell-mode-hook 'pretty-lambdas-haskell)
+     #+end_src
+
+135. *Ruby*. Ниже идет код в поддержку [[http://www.ruby-lang.org/en/][Ruby]] — динамического языка с
+     открытым исходным кодом.
+
+     #+begin_src emacs-lisp
+     (eval-after-load 'ruby-mode
+       '(progn
+          ;; work around possible elpa bug
+          (ignore-errors (require 'ruby-compilation))
+          (setq ruby-use-encoding-map nil)
+          (add-hook 'ruby-mode-hook 'inf-ruby-keys)
+          (define-key ruby-mode-map (kbd "RET") 'reindent-then-newline-and-indent)
+          (define-key ruby-mode-map (kbd "C-c l") "lambda")))
+     #+end_src
+     
+     #+begin_src emacs-lisp
+     (global-set-key (kbd "C-h r") 'ri)
+     #+end_src
+
+136. И gamespec и rake-файлы — это всё Ruby, включаем для них
+     соответствующий режим.
+
+     #+begin_src emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+     (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+     (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
+     #+end_src
+
+137. Мы не хотим редактировать рубиновый байткод.
+
+     #+begin_src emacs-lisp
+     (add-to-list 'completion-ignored-extensions ".rbc")
+     #+end_src
+
+138. Rake.
+
+     #+begin_src emacs-lisp
+     (defun pcomplete/rake ()
+       "Completion rules for the `ssh' command."
+       (pcomplete-here (pcmpl-rake-tasks)))
+     
+     (defun pcmpl-rake-tasks ()
+        "Return a list of all the rake tasks defined in the current
+         projects.  I know this is a hack to put all the logic in the
+         exec-to-string command, but it works and seems fast"
+        (delq nil (mapcar '(lambda(line)
+     			(if (string-match "rake \\([^ ]+\\)" line) (match-string 1 line)))
+     		     (split-string (shell-command-to-string "rake -T") "[\n]"))))
+     
+     (defun rake (task)
+       (interactive (list (completing-read "Rake (default: default): "
+                                           (pcmpl-rake-tasks))))
+       (shell-command-to-string (concat "rake " (if (= 0 (length task)) "default" task))))
+     #+end_src
+
+139. Очищаем буфер с результатами компиляции после каждого тестового
+     запуска.
+
+     #+begin_src emacs-lisp
+     (eval-after-load 'ruby-compilation
+       '(progn
+          (defadvice ruby-do-run-w/compilation (before kill-buffer (name cmdlist))
+            (let ((comp-buffer-name (format "*%s*" name)))
+              (when (get-buffer comp-buffer-name)
+                (with-current-buffer comp-buffer-name
+                  (delete-region (point-min) (point-max))))))
+          (ad-activate 'ruby-do-run-w/compilation)))
+     #+end_src
+
+140. Ловушки.
+
+     #+begin_src emacs-lisp
+     (add-hook 'ruby-mode-hook 'run-coding-hook)
+     #+end_src
+     
+     #+begin_src emacs-lisp
+     ;; (add-hook 'ruby-mode-hook 'idle-highlight)
+     #+end_src
+
+141. Flymake. Проверка синтаксиса в режиме Ruby.
+
+     #+begin_src emacs-lisp
+     (eval-after-load 'ruby-mode
+       '(progn
+          (require 'flymake)
+     
+          ;; Invoke ruby with '-c' to get syntax checking
+          (defun flymake-ruby-init ()
+            (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                               'flymake-create-temp-inplace))
+                   (local-file (file-relative-name
+                                temp-file
+                                (file-name-directory buffer-file-name))))
+              (list "ruby" (list "-c" local-file))))
+     
+          (push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
+          (push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+     
+          (push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3)
+                flymake-err-line-patterns)
+     
+          (add-hook 'ruby-mode-hook
+                    (lambda ()
+                      (when (and buffer-file-name
+                                 (file-writable-p
+                                  (file-name-directory buffer-file-name))
+                                 (file-writable-p buffer-file-name))
+                        (local-set-key (kbd "C-c d")
+                                       'flymake-display-err-menu-for-current-line)
+                        (flymake-mode t))))))
+     #+end_src
+
+142. Rinari — минорный режим для Ruby On Rails. Ищите на
+     [[http://rinari.rubyforge.org/][rinari.rubyforge]] дополнительную информацию о rinari.
+
+     #+begin_src emacs-lisp
+     (setq rinari-major-modes
+           (list 'mumamo-after-change-major-mode-hook 'dired-mode-hook 'ruby-mode-hook
+     	    'css-mode-hook 'yaml-mode-hook 'javascript-mode-hook))
+     #+end_src
+
+143. *JavaScript.* В первую очередь заменяем черезчур длинное слово
+     =function= на =ƒ=.
+
+     #+begin_src emacs-lisp
+     (font-lock-add-keywords
+      'espresso-mode `(("\\(function *\\)("
+                        (0 (progn (compose-region (match-beginning 1) (match-end 1)
+                                                  "ƒ")
+                                  nil)))))
+     #+end_src
+
+144. Подсветка нехороших слов в коде.
+
+     #+begin_src emacs-lisp
+     (font-lock-add-keywords 'espresso-mode
+                             '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
+                                1 font-lock-warning-face t)))
+     #+end_src
+
+145. Включаем режим JavaScript для файлов с расширением =.js= и
+     =.json=. Включаем paredit для режима JavaScript.
+
+     #+begin_src emacs-lisp
+     (autoload 'espresso-mode "espresso" "Start espresso-mode" t)
+     (add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+     (add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+     (add-hook 'espresso-mode-hook 'moz-minor-mode)
+     (add-hook 'espresso-mode-hook 'turn-on-paredit)
+     (add-hook 'espresso-mode-hook 'run-coding-hook)
+     ;; (add-hook 'espresso-mode-hook 'idle-highlight)
+     (setq espresso-indent-level 2)
+     #+end_src
+
+146. Красивая печать JSON-объектов.
+
+     #+begin_src emacs-lisp
+     (defun esk-pp-json ()
+       "Pretty-print the json object following point."
+       (interactive)
+       (require 'json)
+       (let ((json-object (save-excursion (json-read))))
+         (switch-to-buffer "*json*")
+         (delete-region (point-min) (point-max))
+         (insert (pp json-object))
+         (goto-char (point-min))))
+     #+end_src
+
+147. *Perl.*
+
+     #+begin_src emacs-lisp
+     (eval-after-load 'cperl-mode
+       '(progn
+          (define-key cperl-mode-map (kbd "RET") 'reindent-then-newline-and-indent)))
+     
+     (global-set-key (kbd "C-h P") 'perldoc)
+     
+     (add-to-list 'auto-mode-alist '("\\.p[lm]$" . cperl-mode))
+     (add-to-list 'auto-mode-alist '("\\.pod$" . pod-mode))
+     (add-to-list 'auto-mode-alist '("\\.tt$" . tt-mode))
+     #+end_src
+
+155. *Загрузка настроек конкретного пользователя и машины.* После того
+     как мы загрузили все настройки Starter Kit, мы можем загрузить
+     настройки конкретного пользователя и конкретной машины.
+
+     #+srcname: starter-kit-load-files
+     #+begin_src emacs-lisp
+     (if (file-exists-p elisp-source-dir)
+       (let ((default-directory elisp-source-dir))
+         (normal-top-level-add-subdirs-to-load-path)))
+     (if (file-exists-p system-specific-config) (load system-specific-config))
+     (if (file-exists-p system-specific-literate-config)
+         (org-babel-load-file system-specific-literate-config))
+     (if (file-exists-p user-specific-config) (load user-specific-config))
+     (if (file-exists-p user-specific-literate-config)
+         (org-babel-load-file user-specific-literate-config))
+     (when (file-exists-p user-specific-dir)
+       (let ((default-directory user-specific-dir))
+         (mapc #'load (directory-files user-specific-dir nil ".*el$"))
+         (mapc #'org-babel-load-file (directory-files user-specific-dir nil ".*org$"))))
+     #+end_src
