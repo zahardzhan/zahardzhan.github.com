@@ -75,25 +75,35 @@ title: Русская типографика в Emacs
    <td>Кто<span style="color: black;">-</span>либо</td></tr>
  <tr align=center><td>Дефис: <b>-</b></td></tr>
 
+ <tr><br></tr>
+
  <tr align=center style="font-family: Georgia; font-size: 40px; color:
                          grey;">
    <td>2009<span style="color: black;">–</span>2010</td></tr>
  <tr align=center><td>Короткое тире: <b>--</b></td></tr>
+
+ <tr><br></tr>
 
  <tr align=center style="font-family: Georgia; font-size: 40px; color:
                          grey;">
    <td><span style="color: black;">—</span> Кто здесь?</td></tr>
  <tr align=center><td>Тире: <b>---</b></td></tr>
 
+ <tr><br></tr>
+
  <tr align=center style="font-family: Georgia; font-size: 40px; color:
                          grey;">
    <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
  <tr align=center><td>Неразрывный пробел и тире: <b>C-x 8 Space</b> <b>---</b></td></tr>
 
+ <tr><br></tr>
+
  <tr align=center style="font-family: Georgia; font-size: 40px; color:
                          grey;">
    <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
  <tr align=center><td>Кавычки-ёлочки: <b>"</b></td></tr>
+
+ <tr><br></tr>
 
  <tr align=center style="font-family: Georgia; font-size: 40px; color:
                          grey;">
