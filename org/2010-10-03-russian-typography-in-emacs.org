@@ -72,7 +72,7 @@ title: Русская типографика в Emacs
 - Дефис: =-=
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td>Кто<span style="color: black;">-</span>либо</td></tr>
   </table>
@@ -81,7 +81,7 @@ title: Русская типографика в Emacs
 - Короткое тире: =--=
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td>2009<span style="color: black;">–</span>2010</td></tr>
   </table>
@@ -90,7 +90,7 @@ title: Русская типографика в Emacs
 - Тире: =---=
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td><span style="color: black;">—</span> Кто здесь?</td></tr>
   </table>
@@ -99,7 +99,7 @@ title: Русская типографика в Emacs
 - Неразрывный пробел и тире: =C-x 8 Space ---=
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
   </table>
@@ -108,7 +108,7 @@ title: Русская типографика в Emacs
 - Кавычки-ёлочки: "
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
   </table>
@@ -117,7 +117,7 @@ title: Русская типографика в Emacs
 - Кавычки-лапки: '
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td><span style="color: black;">„</span>лапки<span style="color: black;">“</span></td></tr>
   </table>
@@ -126,7 +126,7 @@ title: Русская типографика в Emacs
 - Одинарная кавычка: =C-q= '
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td><span style="color: black;">'</span>символ</td></tr>
   </table>
@@ -135,7 +135,7 @@ title: Русская типографика в Emacs
 - Двойная кавычка: =C-q= "
 
   #+begin_html
-  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin-top: 0.5em;">
   <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
   <td><span style="color: black;">"</span>строка<span style="color: black;">"</span></td></tr>
   </table>
