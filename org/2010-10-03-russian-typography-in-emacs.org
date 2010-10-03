@@ -67,47 +67,76 @@ title: Русская типографика в Emacs
    (add-hook 'org-mode-hook 'turn-on-typopunct-mode)
    #+end_src
 
-Запустите Emacs и типографские символы к вашим услугам.
+Запустите Emacs и типографские символы к вашим услугам:
 
-#+begin_html
-<table>
- <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
-   <td>Кто<span style="color: black;">-</span>либо</td></tr>
- <tr align=center><td>Дефис: <b>-</b></td></tr>
+- Дефис: =-=
 
- <tr><br></tr>
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td>Кто<span style="color: black;">-</span>либо</td></tr>
+  </table>
+  #+end_html
 
- <tr align=center style="font-family: Georgia; font-size: 40px; color:
-                         grey;">
-   <td>2009<span style="color: black;">–</span>2010</td></tr>
- <tr align=center><td>Короткое тире: <b>--</b></td></tr>
+- Короткое тире: =--=
 
- <tr><br></tr>
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td>2009<span style="color: black;">–</span>2010</td></tr>
+  </table>
+  #+end_html
 
- <tr align=center style="font-family: Georgia; font-size: 40px; color:
-                         grey;">
-   <td><span style="color: black;">—</span> Кто здесь?</td></tr>
- <tr align=center><td>Тире: <b>---</b></td></tr>
+- Тире: =---=
 
- <tr><br></tr>
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td><span style="color: black;">—</span> Кто здесь?</td></tr>
+  </table>
+  #+end_html
 
- <tr align=center style="font-family: Georgia; font-size: 40px; color:
-                         grey;">
-   <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
- <tr align=center><td>Неразрывный пробел и тире: <b>C-x 8 Space</b> <b>---</b></td></tr>
+- Неразрывный пробел и тире: =C-x 8 Space ---=
 
- <tr><br></tr>
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
+  </table>
+  #+end_html
 
- <tr align=center style="font-family: Georgia; font-size: 40px; color:
-                         grey;">
-   <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
- <tr align=center><td>Кавычки-ёлочки: <b>"</b></td></tr>
+- Кавычки-ёлочки: "
 
- <tr><br></tr>
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
+  </table>
+  #+end_html
 
- <tr align=center style="font-family: Georgia; font-size: 40px; color:
-                         grey;">
-   <td><span style="color: black;">„</span>лапки<span style="color: black;">“</span></td></tr>
- <tr align=center><td>Кавычки-лапки: <b>'</b></td></tr>
-</table>
-#+end_html
+- Кавычки-лапки: '
+
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td><span style="color: black;">„</span>лапки<span style="color: black;">“</span></td></tr>
+  </table>
+  #+end_html
+
+- Одинарная кавычка: =C-q= '
+
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td><span style="color: black;">'</span>символ</td></tr>
+  </table>
+  #+end_html
+
+- Двойная кавычка: =C-q= "
+
+  #+begin_html
+  <table style="background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em;">
+  <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+  <td><span style="color: black;">"</span>строка<span style="color: black;">"</span></td></tr>
+  </table>
+  #+end_html
