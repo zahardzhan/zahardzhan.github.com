@@ -1,0 +1,103 @@
+#+SEQ_TODO: PROPOSED TODO STARTED | DONE DEFERRED REJECTED
+#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
+#+STARTUP: SHOWALL INDENT HIDESTARS
+#+BABEL: :noweb none
+#+BEGIN_HTML
+---
+layout: post
+title: Русская типографика в Emacs
+---
+#+END_HTML
+
+В школе я терпеть не мог уроки русского языка. Наверное это потому,
+что язык — сложная вещь, а учить десятки и сотни почти не связанных
+друг с другом условностей для меня всегда было невыносимо. Но в то же
+время мне нравятся красивые вещи.
+
+С новым тысячелетием интернет вошел в жизнь и принес с собой
+возможность писать и публиковать на весь мир плоды своих
+мыслей. Представление результатов мыслительной деятельности не сильно
+изменилось за последние несколько тысяч лет — это текст. Набранный
+текст, который я вижу на экране — это вполне материальная вещь, и если
+у многих людей хватает ума позаботиться о внешнем виде сайта, хорошем
+дизайне и красивых картинках, то должнó позаботиться и о красоте
+текста.
+
+Если в школе не было настоящего мотива заморачиваться графическим
+представлением текстов — всё писалось от руки, написанное не читалось
+более чем двумя людьми, то сейчас, когда статью в блоге могут прочесть
+сотни и тысячи человек, мотив определенно есть.
+
+В отличие от языка, с его сотнями сложных правил; правил которые
+говорят о том, как должен выглядеть красивый печатный текст гораздо
+меньше, и они значительно проще. Если не вдаваться в подробности
+профессиональной типографики, то для получения сносного текста
+достаточно уметь применять всего 6 символов. Здесь я не буду
+рассказывать о /правилах/ применения — о них хорошо рассказал Лебедев
+в своем «Ководстве»: [[http://www.artlebedev.ru/kovodstvo/sections/62/][§ 62. Экранная типографика]], [[http://www.artlebedev.ru/kovodstvo/sections/97/][§ 97. Тире, минус и
+дефис]], [[http://www.artlebedev.ru/kovodstvo/sections/104/][§ 104. Кавычки]], [[http://www.artlebedev.ru/kovodstvo/sections/158/][§ 158. Короткое тире]]; я расскажу как прикрутить
+типографику к Emacs.
+
+Вам понадобится пакет [[http://www.emacswiki.org/emacs/typopunct.el][typopunct.el]], положите его в вашу директорию с
+пакетами Emacs.
+
+Поместите нижеследующий код в конфигурационный файл Emacs'а.
+
+1. Загружаем /typopunct.el/ и выбираем русскую типографику:
+
+   #+begin_src emacs-lisp
+   (require 'typopunct)
+   (setq-default typopunct-buffer-language 'russian)
+   #+end_src
+
+2. Функция включает /typopunct-mode/.
+
+   #+begin_src emacs-lisp
+   (defun turn-on-typopunct-mode ()
+     (typopunct-mode t))
+   #+end_src
+
+3. Здесь я включаю типографику в режимах /org-mode/ и
+   /markdown-mode/. Чтобы включить типографику в других режимах —
+   добавте функцию =turn-on-typopunct-mode= в соответствующие ловушки
+   или воспользуйтесь командой =M-x typopunct-mode=.
+
+   #+begin_src emacs-lisp
+   (add-hook 'markdown-mode-hook 'turn-on-typopunct-mode)
+   (add-hook 'org-mode-hook 'turn-on-typopunct-mode)
+   #+end_src
+
+Запустите Emacs и типографские символы к вашим услугам.
+
+#+begin_html
+<table>
+ <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+   <td>Кто<span style="color: black;">-</span>либо</td></tr>
+ <tr align=center><td>Дефис: <b>-</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td>2009<span style="color: black;">–</span>2010</td></tr>
+ <tr align=center><td>Короткое тире: <b>--</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">—</span> Кто здесь?</td></tr>
+ <tr align=center><td>Тире: <b>---</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
+ <tr align=center><td>Неразрывный пробел и тире: <b>C-x 8 Space</b> <b>---</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
+ <tr align=center><td>Кавычки-ёлочки: <b>"</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">„</span>лапки<span style="color: black;">“</span></td></tr>
+ <tr align=center><td>Кавычки-лапки: <b>'</b></td></tr>
+</table>
+#+end_html

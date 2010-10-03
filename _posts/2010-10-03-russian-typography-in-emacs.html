@@ -1,0 +1,123 @@
+---
+layout: post
+title: Русская типографика в Emacs
+---
+
+<p>
+В школе я терпеть не мог уроки русского языка. Наверное это потому,
+что язык — сложная вещь, а учить десятки и сотни почти не связанных
+друг с другом условностей для меня всегда было невыносимо. Но в то же
+время мне нравятся красивые вещи.
+</p>
+<p>
+С новым тысячелетием интернет вошел в жизнь и принес с собой
+возможность писать и публиковать на весь мир плоды своих
+мыслей. Представление результатов мыслительной деятельности не сильно
+изменилось за последние несколько тысяч лет — это текст. Набранный
+текст, который я вижу на экране — это вполне материальная вещь, и если
+у многих людей хватает ума позаботиться о внешнем виде сайта, хорошем
+дизайне и красивых картинках, то должнó позаботиться и о красоте
+текста.
+</p>
+<p>
+Если в школе не было настоящего мотива заморачиваться графическим
+представлением текстов — всё писалось от руки, написанное не читалось
+более чем двумя людьми, то сейчас, когда статью в блоге могут прочесть
+сотни и тысячи человек, мотив определенно есть.
+</p>
+<p>
+В отличие от языка, с его сотнями сложных правил; правил которые
+говорят о том, как должен выглядеть красивый печатный текст гораздо
+меньше, и они значительно проще. Если не вдаваться в подробности
+профессиональной типографики, то для получения сносного текста
+достаточно уметь применять всего 6 символов. Здесь я не буду
+рассказывать о <i>правилах</i> применения — о них хорошо рассказал Лебедев
+в своем «Ководстве»: <a href="http://www.artlebedev.ru/kovodstvo/sections/62/">§ 62. Экранная типографика</a>, <a href="http://www.artlebedev.ru/kovodstvo/sections/97/">§ 97. Тире, минус и дефис</a>, <a href="http://www.artlebedev.ru/kovodstvo/sections/104/">§ 104. Кавычки</a>, <a href="http://www.artlebedev.ru/kovodstvo/sections/158/">§ 158. Короткое тире</a>; я расскажу как прикрутить
+типографику к Emacs.
+</p>
+<p>
+Вам понадобится пакет <a href="http://www.emacswiki.org/emacs/typopunct.el">typopunct.el</a>, положите его в вашу директорию с
+пакетами Emacs.
+</p>
+<p>
+Поместите нижеследующий код в конфигурационный файл Emacs'а.
+</p>
+<ol>
+<li>
+Загружаем <i>typopunct.el</i> и выбираем русскую типографику:
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">typopunct</span><span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>setq-default typopunct-buffer-language 'russian<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+</li>
+<li>
+Функция включает <i>typopunct-mode</i>.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">turn-on-typopunct-mode</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span>typopunct-mode t<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+</li>
+<li>
+Здесь я включаю типографику в режимах <i>org-mode</i> и
+<i>markdown-mode</i>. Чтобы включить типографику в других режимах —
+добавте функцию <code>turn-on-typopunct-mode</code> в соответствующие ловушки
+или воспользуйтесь командой <code>M-x typopunct-mode</code>.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'markdown-mode-hook 'turn-on-typopunct-mode<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'org-mode-hook 'turn-on-typopunct-mode<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+</li>
+</ol>
+
+<p>Запустите Emacs и типографские символы к вашим услугам.
+</p>
+
+
+<table>
+ <tr align=center style="font-family: Georgia; font-size: 40px; color: grey;">
+   <td>Кто<span style="color: black;">-</span>либо</td></tr>
+ <tr align=center><td>Дефис: <b>-</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td>2009<span style="color: black;">–</span>2010</td></tr>
+ <tr align=center><td>Короткое тире: <b>--</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">—</span> Кто здесь?</td></tr>
+ <tr align=center><td>Тире: <b>---</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td>Уссурийск<span style="color: black;"> —</span> Владивосток</td></tr>
+ <tr align=center><td>Неразрывный пробел и тире: <b>C-x 8 Space</b> <b>---</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">«</span>ёлочки<span style="color: black;">»</span></td></tr>
+ <tr align=center><td>Кавычки-ёлочки: <b>"</b></td></tr>
+
+ <tr align=center style="font-family: Georgia; font-size: 40px; color:
+                         grey;">
+   <td><span style="color: black;">„</span>лапки<span style="color: black;">“</span></td></tr>
+ <tr align=center><td>Кавычки-лапки: <b>'</b></td></tr>
+</table>
