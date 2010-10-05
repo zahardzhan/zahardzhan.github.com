@@ -3,6 +3,33 @@ layout: post
 title: Программа Emacs Starter Kit
 ---
 
+<p>
+В прошлой статье я рассказал об очень позитивных впечатлениях Дональда
+Кнута от созданной им методологии «литературного программирования»,
+которые не покидают его на протяжении последних двадцати лет. Мои
+впечатления так же весьма позитивны. Однако, я посетовал, что
+литературное программирование совсем не используется в сообществе
+программистов, и в особенности — в мире Open Source. Дабы не быть
+голословным, представлю вашему вниманию программу Emacs Starter Kit,
+которую я постарался сделать настолько литературной, насколько это
+возможно. Но я не супермэн и не могу действительно хорошо объяснить
+код, который писали несколько сотен человек, к тому же я совсем не
+силен в Emacs Lisp, поэтому лучшее пояснение я дал тому коду, который
+написал сам; если вы сильны в программировании Emacs и если у вас есть
+идеи и предложения по улучшению, дополнению, исправлению и объяснению
+приведенного здесь когда — милости прошу — форкайте и пульте коммиты;
+комментируйте здесь и пишите мне на почту.
+</p>
+<p>
+Итак, <i>это статья является Emacs Lisp-программой</i>, основной частью
+пакета настроек Emacs Starter Kit, который служит мне и еще как
+минимум двум тысячам человек в качестве основного конфигурационного
+файла редактора Emacs. <i>Этот</i> файл хранится в <a href="http://github.com/zahardzhan/emacs-starter-kit">моем git-репозитории</a> на
+гитхабе. Мой репозиторий является форком <a href="http://github.com/eschulte/emacs-starter-kit">репозитория eschulte</a>,
+литературный конфиг которого я перевел и дополнил. Его репозиторий
+является в свою очередь форком <a href="http://github.com/technomancy/emacs-starter-kit">репозитория technomacy</a>, автора
+оригинального Kit.
+</p>
 <ol>
 <li>
 <b>Emacs.</b> Большая и сложная программа. Ему как ничему другому подходит
@@ -380,7 +407,7 @@ ELPA. О том как это осуществить можно узнать н�
        try<span style="color: #8c8c8c;">)</span>
    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">while</span> <span style="color: #8c8c8c;">(</span>not <span style="color: #8c8c8c;">(</span>or root
                    <span style="color: #8c8c8c;">(</span>null file<span style="color: #8c8c8c;">)</span>
-                   <span style="color: #b22222;">;; </span><span style="color: #b22222;">FIXME: Disabled this heuristic because it is sometimes
+                   <span style="color: #b22222;">;; </span><span style="color: #ff0000; font-weight: bold;">FIXME</span><span style="color: #b22222;">: Disabled this heuristic because it is sometimes
 </span>                   <span style="color: #b22222;">;; </span><span style="color: #b22222;">inappropriate.
 </span>                   <span style="color: #b22222;">;; </span><span style="color: #b22222;">As a heuristic, we stop looking up the hierarchy of
 </span>                   <span style="color: #b22222;">;; </span><span style="color: #b22222;">directories as soon as we find a directory belonging
@@ -835,7 +862,7 @@ emacs-lisp файлах и в файлах org-mode, таких как <i>это
   <span style="color: #8b2252;">"Byte-compile all your dotfiles again."</span>
   <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
   <span style="color: #8c8c8c;">(</span>byte-recompile-directory dotfiles-dir 0<span style="color: #8c8c8c;">)</span>
-  <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: remove elpa-to-submit once everything's submitted.
+  <span style="color: #b22222;">;; </span><span style="color: #ff0000; font-weight: bold;">TODO</span><span style="color: #b22222;">: remove elpa-to-submit once everything's submitted.
 </span>  <span style="color: #8c8c8c;">(</span>byte-recompile-directory <span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"elpa-to-submit/"</span> 0<span style="color: #8c8c8c;">)))</span>
 </pre>
 
@@ -1005,7 +1032,7 @@ emacs-lisp файлах и в файлах org-mode, таких как <i>это
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">toggle-fullscreen</span> <span style="color: #8c8c8c;">()</span>
   <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
-  <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: this only works for X. patches welcome for other OSes.
+  <span style="color: #b22222;">;; </span><span style="color: #ff0000; font-weight: bold;">TODO</span><span style="color: #b22222;">: this only works for X. patches welcome for other OSes.
 </span>  <span style="color: #8c8c8c;">(</span>x-send-client-message nil 0 nil <span style="color: #8b2252;">"_NET_WM_STATE"</span> 32
                          '<span style="color: #8c8c8c;">(</span>2 <span style="color: #8b2252;">"_NET_WM_STATE_MAXIMIZED_VERT"</span> 0<span style="color: #8c8c8c;">))</span>
   <span style="color: #8c8c8c;">(</span>x-send-client-message nil 0 nil <span style="color: #8b2252;">"_NET_WM_STATE"</span> 32
@@ -2103,7 +2130,7 @@ html-документации по Starter Kit.
 </span>                 '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>define-key eshell-mode-map <span style="color: #8b2252;">"\C-a"</span> 'eshell-bol<span style="color: #8c8c8c;">)))</span>
        <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color<span style="color: #8c8c8c;">))</span>
 
-     <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: submit these via M-x report-emacs-bug
+     <span style="color: #b22222;">;; </span><span style="color: #ff0000; font-weight: bold;">TODO</span><span style="color: #b22222;">: submit these via M-x report-emacs-bug
 </span>     <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-visual-commands <span style="color: #8b2252;">"ssh"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-visual-commands <span style="color: #8b2252;">"tail"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-command-completions-alist
