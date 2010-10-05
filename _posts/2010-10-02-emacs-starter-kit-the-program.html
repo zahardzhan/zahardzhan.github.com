@@ -3,33 +3,6 @@ layout: post
 title: Программа Emacs Starter Kit
 ---
 
-<p>
-В прошлой статье я рассказал об очень позитивных впечатлениях Дональда
-Кнута от созданной им методологии «литературного программирования»,
-которые не покидают его на протяжении последних двадцати лет. Мои
-впечатления так же весьма позитивны. Однако, я посетовал, что
-литературное программирование совсем не используется в сообществе
-программистов, и в особенности — в мире Open Source. Дабы не быть
-голословным, представлю вашему вниманию программу Emacs Starter Kit,
-которую я постарался сделать настолько литературной, насколько это
-возможно. Но я не супермэн и не могу действительно хорошо объяснить
-код, который писали несколько сотен человек, к тому же я совсем не
-силен в Emacs Lisp, поэтому лучшее пояснение я дал тому коду, который
-написал сам; если вы сильны в программировании Emacs и если у вас есть
-идеи и предложения по улучшению, дополнению, исправлению и объяснению
-приведенного здесь когда — милости прошу — форкайте и пульте коммиты;
-комментируйте здесь и пишите мне на почту.
-</p>
-<p>
-Итак, <i>это статья является Emacs Lisp-программой</i>, основной частью
-пакета настроек Emacs Starter Kit, который служит мне и еще как
-минимум двум тысячам человек в качестве основного конфигурационного
-файла редактора Emacs. <i>Этот</i> файл хранится в <a href="http://github.com/zahardzhan/emacs-starter-kit">моем git-репозитории</a> на
-гитхабе. Мой репозиторий является форком <a href="http://github.com/eschulte/emacs-starter-kit">репозитория eschulte</a>,
-литературный конфиг которого я перевел и дополнил. Его репозиторий
-является в свою очередь форком <a href="http://github.com/technomancy/emacs-starter-kit">репозитория technomacy</a>, автора
-оригинального Kit.
-</p>
 <ol>
 <li>
 <b>Emacs.</b> Большая и сложная программа. Ему как ничему другому подходит
@@ -137,22 +110,13 @@ git submodule update
 
 
 <p>
-и соберите последние версии Org-mode и <a href="http://www.gnu.org/software/auctex/">Auctex</a>
+и соберите последнюю версию Org-mode
 </p>
 
 
 
 <pre class="src src-sh"><span style="color: #7a378b;">cd</span> ~/.emacs.d/src/org/
 make
-</pre>
-
-
-
-
-
-
-<pre class="src src-sh"><span style="color: #7a378b;">cd</span> ~/.emacs.d/src/auctex
-./configure &amp;&amp; make
 </pre>
 
 
@@ -334,10 +298,6 @@ Emacs.
 знать, чтобы я это добавил.
 
 <p>
-Помогите улучшить <i>эту</i> программу: подскажите в дополнении,
-исправлении и объяснении кода.
-</p>
-<p>
 Приветствуется помощь в отправке новых библиотек в ELPA. Есть два
 способа: взять новые библиотеки, подготовить их к ELPA и забросить
 в директорию elpa-to-submit; или взять файлы из elpa-to-submit, и
@@ -476,46 +436,6 @@ ELPA. О том как это осуществить можно узнать н�
 
 </li>
 <li>
-Пакеты которые перечислены в списке <code>starter-kit-packages</code> будут
-автоматически получены и установлены из ELPA при первом запуске
-Emacs.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">starter-kit-packages</span> <span style="color: #8c8c8c;">(</span>list 'idle-highlight
-                                   'ruby-mode
-                                   'inf-ruby
-                                   'js2-mode
-                                   'css-mode
-                                   'yasnippet-bundle
-                                   'gist
-                                   'paredit<span style="color: #8c8c8c;">))</span>
-</pre>
-
-
-
-</li>
-<li>
-Устанавливаем пакеты из списка <code>starter-kit-packages</code>. Это
-потребует сетевого подключения. Во время выполнения этого кода
-вам, возможно, придется несколько раз перезапустить Emacs из-за
-ошибок при получении пакетов.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> 
-      &lt;&lt;starter-kit-is-online?&gt;&gt;
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> package-archive-contents 
-     <span style="color: #8c8c8c;">(</span>package-refresh-contents<span style="color: #8c8c8c;">))</span>
-  &lt;&lt;install-starter-kit-packages-from-elpa&gt;&gt;<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
 Проверка доступа в Сеть. При работе в Windows функция
 <code>network-interface-list</code> недоступна, поэтому мы предполагаем что
 доступ в Сеть таки есть.
@@ -523,29 +443,61 @@ Emacs.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>and <span style="color: #8c8c8c;">(</span>functionp 'network-interface-list<span style="color: #8c8c8c;">)</span>
-         <span style="color: #8c8c8c;">(</span>network-interface-list<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span>some <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">(</span>iface<span style="color: #8c8c8c;">)</span> 
-            <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> <span style="color: #8c8c8c;">(</span>equal <span style="color: #8b2252;">"lo"</span> <span style="color: #8c8c8c;">(</span>car iface<span style="color: #8c8c8c;">))</span>
-              <span style="color: #8c8c8c;">(</span>member 'up <span style="color: #8c8c8c;">(</span>first <span style="color: #8c8c8c;">(</span>last <span style="color: #8c8c8c;">(</span>network-interface-info <span style="color: #8c8c8c;">(</span>car iface<span style="color: #8c8c8c;">)))))))</span>
-          <span style="color: #8c8c8c;">(</span>network-interface-list<span style="color: #8c8c8c;">))</span>
-    t<span style="color: #8c8c8c;">)</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">starter-kit-is-online?</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>and <span style="color: #8c8c8c;">(</span>functionp 'network-interface-list<span style="color: #8c8c8c;">)</span>
+           <span style="color: #8c8c8c;">(</span>network-interface-list<span style="color: #8c8c8c;">))</span>
+      <span style="color: #8c8c8c;">(</span>some <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">(</span>iface<span style="color: #8c8c8c;">)</span> 
+              <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> <span style="color: #8c8c8c;">(</span>equal <span style="color: #8b2252;">"lo"</span> <span style="color: #8c8c8c;">(</span>car iface<span style="color: #8c8c8c;">))</span>
+                <span style="color: #8c8c8c;">(</span>member 'up <span style="color: #8c8c8c;">(</span>first <span style="color: #8c8c8c;">(</span>last <span style="color: #8c8c8c;">(</span>network-interface-info <span style="color: #8c8c8c;">(</span>car iface<span style="color: #8c8c8c;">)))))))</span>
+            <span style="color: #8c8c8c;">(</span>network-interface-list<span style="color: #8c8c8c;">))</span>
+      t<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
 
 </li>
 <li>
-Установка из ELPA пакетов из списка <code>starter-kit-packages</code>.
+Устанавливает из ELPA пакеты по списку. Это потребует сетевого
+подключения. Во время выполнения этого кода вам, возможно,
+придется несколько раз перезапустить Emacs из-за ошибок при
+получении пакетов.
 
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">dolist</span> <span style="color: #8c8c8c;">(</span>package starter-kit-packages<span style="color: #8c8c8c;">)</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> <span style="color: #8c8c8c;">(</span>or <span style="color: #8c8c8c;">(</span>member package package-activated-list<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>functionp package<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span>message <span style="color: #8b2252;">"Installing %s"</span> <span style="color: #8c8c8c;">(</span>symbol-name package<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span>package-install package<span style="color: #8c8c8c;">)))</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">starter-kit-install-packages-from-elpa</span> <span style="color: #8c8c8c;">(</span>list-of-packages<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>starter-kit-is-online?<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> package-archive-contents 
+      <span style="color: #8c8c8c;">(</span>package-refresh-contents<span style="color: #8c8c8c;">))</span>
+    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">dolist</span> <span style="color: #8c8c8c;">(</span>package list-of-packages<span style="color: #8c8c8c;">)</span>
+      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> <span style="color: #8c8c8c;">(</span>or <span style="color: #8c8c8c;">(</span>member package package-activated-list<span style="color: #8c8c8c;">)</span>
+                  <span style="color: #8c8c8c;">(</span>functionp package<span style="color: #8c8c8c;">))</span>
+        <span style="color: #8c8c8c;">(</span>message <span style="color: #8b2252;">"Installing %s"</span> <span style="color: #8c8c8c;">(</span>symbol-name package<span style="color: #8c8c8c;">))</span>
+        <span style="color: #8c8c8c;">(</span>package-install package<span style="color: #8c8c8c;">)))))</span>
+</pre>
+
+
+
+</li>
+<li>
+Перечисленные ниже пакеты будут автоматически получены и
+установлены из ELPA при первом запуске Emacs. Можете использовать
+этот код в своем конфигурационном файле для установки нужных вам
+пакетов.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>starter-kit-install-packages-from-elpa '<span style="color: #8c8c8c;">(</span>idle-highlight
+                                          ruby-mode
+                                          inf-ruby
+                                          js2-mode
+                                          css-mode
+                                          gist
+                                          paredit
+                                          yaml-mode
+                                          find-file-in-project
+                                          magit<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -557,28 +509,16 @@ Emacs.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>autoload 'paredit-mode <span style="color: #8b2252;">"paredit"</span><span style="color: #8c8c8c;">)</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>autoload 'paredit-mode <span style="color: #8b2252;">"paredit"</span> <span style="color: #8b2252;">""</span> t<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>autoload 'yaml-mode <span style="color: #8b2252;">"yaml-mode"</span> <span style="color: #8b2252;">""</span> t<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
 
 </li>
 <li>
-<b>Установка загрузочных путей и файлов.</b> По-умолчанию загружается
-пользовательский файл <code>custom.el</code>, его нет в комплекте Kit'a.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>load custom-file 'noerror<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
-Обход бага Mac OS X в котором имя системы является полным именем
-домена.
+<b>Установка загрузочных путей и файлов.</b> Обход бага Mac OS X в
+котором имя системы является полным именем домена.
 
 
 
@@ -713,9 +653,9 @@ emacs-lisp файлах и в файлах org-mode, таких как <i>это
 
 </li>
 <li>
-У нас есть несколько функций для включения разнообразных режимов
-при открытии буферов с исходным кодом. Здесь мы определяем эти
-функции и последовательно добавляем их в ловушку <code>coding-hook</code>;
+Есть несколько функций для включения разнообразных режимов при
+открытии буферов с исходным кодом. Здесь мы определяем эти функции
+и последовательно добавляем их в ловушку <code>coding-hook</code>;
 &lambda;-функции не используются — у нас нет гарантии того что они
 уже не добавлены в ловушку.
 
@@ -745,39 +685,26 @@ emacs-lisp файлах и в файлах org-mode, таких как <i>это
 
 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">turn-on-whitespace</span> <span style="color: #8c8c8c;">()</span>
   <span style="color: #8c8c8c;">(</span>whitespace-mode t<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">turn-off-tool-bar</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span>tool-bar-mode -1<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">add-watchwords</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span>font-lock-add-keywords
+   nil '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"\\&lt;</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">FIX</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">TODO</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">FIXME</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">HACK</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">REFACTOR</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">:"</span>
+          1 font-lock-warning-face t<span style="color: #8c8c8c;">))))</span>
 </pre>
 
 
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'local-column-number-mode<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'local-comment-auto-fill<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-<p>
-Подсветка текущей строки отключена.
-</p>
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'turn-on-hl-line-mode<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'pretty-lambdas<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'local-comment-auto-fill<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'turn-on-hl-line-mode<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'turn-on-save-place-mode<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'pretty-lambdas<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'add-watchwords<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'coding-hook 'idle-highlight<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
@@ -1041,6 +968,54 @@ emacs-lisp файлах и в файлах org-mode, таких как <i>это
 
 </li>
 <li>
+Включает режим paredit для не-лиспов.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">esk-paredit-nonlisp</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8b2252;">"Turn on paredit mode for non-lisps."</span>
+  <span style="color: #8c8c8c;">(</span>set <span style="color: #8c8c8c;">(</span>make-local-variable 'paredit-space-delimiter-chars<span style="color: #8c8c8c;">)</span>
+       <span style="color: #8c8c8c;">(</span>list ?\"<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span>paredit-mode 1<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+</li>
+<li>
+Показывает «текущую точку в буфере» в минибуфере.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">message-point</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>message <span style="color: #8b2252;">"%s"</span> <span style="color: #8c8c8c;">(</span>point<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+</li>
+<li>
+Распахивает окно Emacs на весь экран.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">toggle-fullscreen</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
+  <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: this only works for X. patches welcome for other OSes.
+</span>  <span style="color: #8c8c8c;">(</span>x-send-client-message nil 0 nil <span style="color: #8b2252;">"_NET_WM_STATE"</span> 32
+                         '<span style="color: #8c8c8c;">(</span>2 <span style="color: #8b2252;">"_NET_WM_STATE_MAXIMIZED_VERT"</span> 0<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span>x-send-client-message nil 0 nil <span style="color: #8b2252;">"_NET_WM_STATE"</span> 32
+                         '<span style="color: #8c8c8c;">(</span>2 <span style="color: #8b2252;">"_NET_WM_STATE_MAXIMIZED_HORZ"</span> 0<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+</li>
+<li>
 <b>Сочетания клавиш.</b> Многие оригинальные сочетания клавиш в Emacs
 не отличаются особой эргономичностью и функциональностью. Эта
 секция имеет своей целью исправление подобных недостатков.
@@ -1185,6 +1160,12 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 </li>
 <li>
+<b>M-Space</b> я рекомендую использовать для переключения между
+языками, но это может вызвать конфликт с сочетанием «показать меню
+окна» в среде GNOME.
+
+</li>
+<li>
 <b>S-Space</b> и <b>M-/</b> используются для умного автодополнения. Иногда
 достаточно просто несколько раз нажать эту комбинацию и желаемый
 текст чудесным образом напишется сам.
@@ -1194,19 +1175,6 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"M-/"</span><span style="color: #8c8c8c;">)</span> 'hippie-expand<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"S-SPC"</span><span style="color: #8c8c8c;">)</span> 'dabbrev-expand<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
-<b>M-Space</b> — переключение между языками. Две легко доступные,
-вплотную расположенные клавиши — это лучший вариант.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"M-SPC"</span><span style="color: #8c8c8c;">)</span> 'toggle-input-method<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
@@ -1319,8 +1287,7 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>windmove-default-keybindings<span style="color: #8c8c8c;">)</span> <span style="color: #b22222;">;; </span><span style="color: #b22222;">Shift+direction
-</span><span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-x O"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>other-window -1<span style="color: #8c8c8c;">)))</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-x O"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>other-window -1<span style="color: #8c8c8c;">)))</span>
 <span style="color: #8c8c8c;">(</span>global-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-x C-o"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>other-window 1<span style="color: #8c8c8c;">)))</span>
 </pre>
 
@@ -1600,8 +1567,14 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> window-system
-  &lt;&lt;setup-frame-title&gt;&gt;
-  &lt;&lt;turn-off-graphical-user-interface-elements&gt;&gt;<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>setq frame-title-format '<span style="color: #8c8c8c;">(</span>buffer-file-name <span style="color: #8b2252;">"%f"</span> <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"%b"</span><span style="color: #8c8c8c;">)))</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>fboundp 'scroll-bar-mode<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>scroll-bar-mode nil<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>setq default-vertical-scroll-bar nil<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>fboundp 'tool-bar-mode<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>tool-bar-mode nil<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span>tooltip-mode nil<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>blink-cursor-mode nil<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -1639,6 +1612,18 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 </li>
 <li>
+Отключение панели инструментов в новых фреймах.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'before-make-frame-hook 'turn-off-tool-bar<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+</li>
+<li>
 Отключение меню.
 
 
@@ -1670,36 +1655,31 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>mouse-wheel-mode t<span style="color: #8c8c8c;">)</span>
-
-<span style="color: #8c8c8c;">(</span>setq echo-keystrokes 0.1
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>setq echo-keystrokes 0.1
       font-lock-maximum-decoration t
       inhibit-startup-message t
       transient-mark-mode t
       color-theme-is-global t
       delete-by-moving-to-trash t
       shift-select-mode nil
+      mouse-yank-at-point t
+      require-final-newline t
       truncate-partial-width-windows nil
       uniquify-buffer-name-style 'forward
       whitespace-style '<span style="color: #8c8c8c;">(</span>trailing lines space-before-tab
                                   indentation space-after-tab<span style="color: #8c8c8c;">)</span>
-      whitespace-line-column 100
+      whitespace-line-column 80
       ediff-window-setup-function 'ediff-setup-windows-plain
       oddmuse-directory <span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"oddmuse"</span><span style="color: #8c8c8c;">)</span>
       xterm-mouse-mode t
       save-place-file <span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"places"</span><span style="color: #8c8c8c;">))</span>
-</pre>
 
+<span style="color: #8c8c8c;">(</span>mouse-wheel-mode t<span style="color: #8c8c8c;">)</span>
 
+<span style="color: #8c8c8c;">(</span>add-to-list 'safe-local-variable-values '<span style="color: #8c8c8c;">(</span>lexical-binding . t<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'safe-local-variable-values '<span style="color: #8c8c8c;">(</span>whitespace-line-column . 80<span style="color: #8c8c8c;">))</span>
 
-</li>
-<li>
-Еще немного <b>разных настроек</b>.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>set-default 'indent-tabs-mode nil<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>set-default 'indent-tabs-mode nil<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>set-default 'indicate-empty-lines t<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>set-default 'imenu-auto-rescan t<span style="color: #8c8c8c;">)</span>
 
@@ -1714,6 +1694,18 @@ Kinesis. Есть парочка хороших клавиатур у Microsoft.
 
 </li>
 <li>
+Работаем с системным буфером обмена в Emacs.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>setq x-select-enable-clipboard t<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+</li>
+<li>
 UTF-8 используется повсеместно.
 
 
@@ -1722,6 +1714,7 @@ UTF-8 используется повсеместно.
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>set-terminal-coding-system 'utf-8<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>set-keyboard-coding-system 'utf-8<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>prefer-coding-system 'utf-8<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>ansi-color-for-comint-mode-on<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
@@ -1834,8 +1827,23 @@ UTF-8 используется повсеместно.
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.rb$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Rakefile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.js</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">on</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">?$"</span> . js2-mode<span style="color: #8c8c8c;">))</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-to-list 'auto-mode-alist '("\\.xml$" . nxml-mode))
-</span></pre>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.xml$"</span> . nxml-mode<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+</li>
+<li>
+Grep игнорирует файлы при поиске.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'grep
+  '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>boundp 'grep-find-ignored-files<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>add-to-list 'grep-find-ignored-files <span style="color: #8b2252;">"target"</span><span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>add-to-list 'grep-find-ignored-files <span style="color: #8b2252;">"*.class"</span><span style="color: #8c8c8c;">)))</span>
+</pre>
 
 
 
@@ -1858,7 +1866,10 @@ UTF-8 используется повсеместно.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'diff-mode
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>set-face-background 'vertical-border <span style="color: #8b2252;">"white"</span><span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>set-face-foreground 'vertical-border <span style="color: #8b2252;">"white"</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'diff-mode
   '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span>
      <span style="color: #8c8c8c;">(</span>set-face-foreground 'diff-added <span style="color: #8b2252;">"green4"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>set-face-foreground 'diff-removed <span style="color: #8b2252;">"red3"</span><span style="color: #8c8c8c;">)))</span>
@@ -1867,6 +1878,26 @@ UTF-8 используется повсеместно.
   '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span>
      <span style="color: #8c8c8c;">(</span>set-face-foreground 'magit-diff-add <span style="color: #8b2252;">"green3"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>set-face-foreground 'magit-diff-del <span style="color: #8b2252;">"red3"</span><span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'mumamo
+  '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'zenburn
+     '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">ignore-errors</span> <span style="color: #8c8c8c;">(</span>set-face-background
+                      'mumamo-background-chunk-submode <span style="color: #8b2252;">"gray22"</span><span style="color: #8c8c8c;">))))</span>
+</pre>
+
+
+
+</li>
+<li>
+Обходим защиту от спама в Emacs Wiki.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'oddmuse-mode-hook
+         <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span>
+           <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">unless</span> <span style="color: #8c8c8c;">(</span>string-match <span style="color: #8b2252;">"question"</span> oddmuse-post<span style="color: #8c8c8c;">)</span>
+             <span style="color: #8c8c8c;">(</span>setq oddmuse-post <span style="color: #8c8c8c;">(</span>concat <span style="color: #8b2252;">"uihnscuskc=1;"</span> oddmuse-post<span style="color: #8c8c8c;">)))))</span>
 </pre>
 
 
@@ -1933,6 +1964,17 @@ UTF-8 используется повсеместно.
 В этой версии Starter Kit Nxhtml не установлен, информацию по
 установке ищите на <a href="http://www.emacswiki.org/emacs/NxhtmlMode">EmacsWiki-Nxhtml</a>.
 </p>
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>setq mumamo-chunk-coloring 'submode-colored
+      nxhtml-skip-welcome t
+      indent-region-mode t
+      rng-nxml-auto-validate-flag nil<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
 </li>
 <li>
 <b>Регистры</b> дают вам возможность быстро прыгнуть к файлу или иной
@@ -1940,51 +1982,15 @@ UTF-8 используется повсеместно.
 для файла <code>init.el</code>, <b>s</b> для этого файла) чтобы прыгнуть к нему.
 
 <p>
-Добавте сюда регистры для тех файлов, которые вы редактируете
-чаще всего.
+Используйте подобный код в своем конфигурационном файле — добавте
+регистры для тех файлов, которые вы редактируете чаще всего.
 </p>
 
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">dolist</span> <span style="color: #8c8c8c;">(</span>r `<span style="color: #8c8c8c;">((</span>?i <span style="color: #8c8c8c;">(</span>file . ,<span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"init.el"</span><span style="color: #8c8c8c;">)))</span>
-             <span style="color: #8c8c8c;">(</span>?s <span style="color: #8c8c8c;">(</span>file . ,<span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"starter-kit.org"</span><span style="color: #8c8c8c;">)))</span>
-             <span style="color: #8c8c8c;">(</span>?r <span style="color: #8c8c8c;">(</span>file . ,<span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"starter-kit-registers.org"</span><span style="color: #8c8c8c;">)))))</span>
+             <span style="color: #8c8c8c;">(</span>?s <span style="color: #8c8c8c;">(</span>file . ,<span style="color: #8c8c8c;">(</span>concat dotfiles-dir <span style="color: #8b2252;">"starter-kit.org"</span><span style="color: #8c8c8c;">)))))</span>
   <span style="color: #8c8c8c;">(</span>set-register <span style="color: #8c8c8c;">(</span>car r<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>cadr r<span style="color: #8c8c8c;">)))</span>
-</pre>
-
-
-
-</li>
-<li>
-<b>Yasnippet.</b> <a href="http://code.google.com/p/yasnippet/">yasnippet</a> это еще одни сниппеты для Emacs. За их
-основу была взята система шаблонов <i>TextMate</i>. Чтобы приобщиться
-к этому расширению — посмотрите <a href="http://www.youtube.com/watch?v=vOj7btx3ATg">видео на YouTube</a> и прочтите <a href="http://yasnippet.googlecode.com/svn/trunk/doc/index.html">введение и учебник</a>.
-
-</li>
-<li>
-Загрузка yasnippet.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-to-list 'load-path
-             <span style="color: #8c8c8c;">(</span>expand-file-name  <span style="color: #8b2252;">"yasnippet"</span>
-                                <span style="color: #8c8c8c;">(</span>expand-file-name <span style="color: #8b2252;">"src"</span>
-                                                  dotfiles-dir<span style="color: #8c8c8c;">)))</span>
-<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">yasnippet</span><span style="color: #8c8c8c;">)</span>
-<span style="color: #8c8c8c;">(</span>yas/initialize<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
-Загрузка сниппетов из директории <code>./snippets/</code>.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>yas/load-directory <span style="color: #8c8c8c;">(</span>expand-file-name <span style="color: #8b2252;">"snippets"</span> dotfiles-dir<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -2001,41 +2007,6 @@ UTF-8 используется повсеместно.
 Чтобы узнать больше об Org-mode загляните на <a href="http://orgmode.org/worg/">worg</a>, большую вики
 по Org-mode сделаную с помощью самого Org-mode и <a href="http://git-scm.com/">git</a>.
 </p>
-</li>
-<li>
-Ловушка Org-Mode. Последняя версия yasnippet плохо работает с
-Org-mode; следующая функция позволяет им хорошо работать вместе.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">yas/org-very-safe-expand</span> <span style="color: #8c8c8c;">()</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> <span style="color: #8c8c8c;">((</span>yas/fallback-behavior 'return-nil<span style="color: #8c8c8c;">))</span> <span style="color: #8c8c8c;">(</span>yas/expand<span style="color: #8c8c8c;">)))</span>
-</pre>
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'org-mode-hook
-          <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span>
-              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-n"</span> 'outline-next-visible-heading<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-p"</span> 'outline-previous-visible-heading<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-u"</span> 'outline-up-heading<span style="color: #8c8c8c;">)</span>
-              <span style="color: #b22222;">;; </span><span style="color: #b22222;">table
-</span>              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-w"</span> 'org-table-copy-region<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-y"</span> 'org-table-paste-rectangle<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-\C-l"</span> 'org-table-sort-lines<span style="color: #8c8c8c;">)</span>
-              <span style="color: #b22222;">;; </span><span style="color: #b22222;">display images
-</span>              <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8b2252;">"\M-I"</span> 'org-toggle-iimage-in-org<span style="color: #8c8c8c;">)</span>
-              <span style="color: #b22222;">;; </span><span style="color: #b22222;">yasnippet (using the new org-cycle hooks)
-</span>              <span style="color: #8c8c8c;">(</span>make-variable-buffer-local 'yas/trigger-key<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>setq yas/trigger-key [tab]<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>define-key yas/keymap [tab] 'yas/next-field<span style="color: #8c8c8c;">)))</span>
-</pre>
-
-
-
 </li>
 <li>
 Загружаем библиотеку Babel; она содержит много полезных функций
@@ -2125,20 +2096,27 @@ html-документации по Starter Kit.
      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">em-prompt</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">em-term</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">em-cmpl</span><span style="color: #8c8c8c;">)</span>
-     <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: for some reason requiring this here breaks it, but
-</span>     <span style="color: #b22222;">;; </span><span style="color: #b22222;">requiring it after an eshell session is started works fine.
-</span>     <span style="color: #b22222;">;; </span><span style="color: #b22222;">(require 'eshell-vc)
-</span>     <span style="color: #8c8c8c;">(</span>setenv <span style="color: #8b2252;">"PAGER"</span> <span style="color: #8b2252;">"cat"</span><span style="color: #8c8c8c;">)</span>
+     <span style="color: #8c8c8c;">(</span>setenv <span style="color: #8b2252;">"PAGER"</span> <span style="color: #8b2252;">"cat"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>set-face-attribute 'eshell-prompt nil <span style="color: #7a378b;">:foreground</span> <span style="color: #8b2252;">"turquoise1"</span><span style="color: #8c8c8c;">)</span>
-     <span style="color: #8c8c8c;">(</span>add-hook 'eshell-mode-hook <span style="color: #b22222;">;; </span><span style="color: #b22222;">for some reason this needs to be a hook
-</span>               '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>define-key eshell-mode-map <span style="color: #8b2252;">"\C-a"</span> 'eshell-bol<span style="color: #8c8c8c;">)))</span>
-     <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-visual-commands <span style="color: #8b2252;">"ssh"</span><span style="color: #8c8c8c;">)</span>
+     <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>&lt; emacs-major-version 23<span style="color: #8c8c8c;">)</span>
+       <span style="color: #8c8c8c;">(</span>add-hook 'eshell-mode-hook <span style="color: #b22222;">;; </span><span style="color: #b22222;">for some reason this needs to be a hook
+</span>                 '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">(</span>define-key eshell-mode-map <span style="color: #8b2252;">"\C-a"</span> 'eshell-bol<span style="color: #8c8c8c;">)))</span>
+       <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color<span style="color: #8c8c8c;">))</span>
+
+     <span style="color: #b22222;">;; </span><span style="color: #b22222;">TODO: submit these via M-x report-emacs-bug
+</span>     <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-visual-commands <span style="color: #8b2252;">"ssh"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-visual-commands <span style="color: #8b2252;">"tail"</span><span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-command-completions-alist
                   '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"gunzip"</span> <span style="color: #8b2252;">"gz\\'"</span><span style="color: #8c8c8c;">))</span>
      <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-command-completions-alist
-                  '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"tar"</span> <span style="color: #8b2252;">"</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">\\.tar|\\.tgz</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">\\.tar\\.gz</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">\\'"</span><span style="color: #8c8c8c;">))</span>
-     <span style="color: #8c8c8c;">(</span>add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color<span style="color: #8c8c8c;">)))</span>
+                  '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"tar"</span> <span style="color: #8b2252;">"</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">\\.tar|\\.tgz</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">\\.tar\\.gz</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">\\'"</span><span style="color: #8c8c8c;">))))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">eshell/cds</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8b2252;">"Change directory to the project's root."</span>
+  <span style="color: #8c8c8c;">(</span>eshell/cd <span style="color: #8c8c8c;">(</span>locate-dominating-file default-directory <span style="color: #8b2252;">"src"</span><span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">eshell/find</span> <span style="color: #8c8c8c;">(</span>dir <span style="color: #228b22;">&amp;rest</span> opts<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>find-dired dir <span style="color: #8c8c8c;">(</span>mapconcat 'identity opts <span style="color: #8b2252;">" "</span><span style="color: #8c8c8c;">)))</span>
 </pre>
 
 
@@ -2201,6 +2179,17 @@ Clojure хорошими настройками. Для начала неско�
 
 
 
+<p>
+<b>C-c l</b> вставляет слово <i>lambda</i>.
+</p>
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>define-key lisp-mode-shared-map <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-c l"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"lambda"</span><span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
 </li>
 <li>
 Тусклые скобочки.
@@ -2237,6 +2226,10 @@ Clojure хорошими настройками. Для начала неско�
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">turn-on-paredit</span> <span style="color: #8c8c8c;">()</span>
   <span style="color: #8c8c8c;">(</span>paredit-mode +1<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'paredit
+  <span style="color: #b22222;">;; </span><span style="color: #b22222;">need a binding that works in the terminal
+</span>  '<span style="color: #8c8c8c;">(</span>define-key paredit-mode-map <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"M-)"</span><span style="color: #8c8c8c;">)</span> 'paredit-forward-slurp-sexp<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -2251,13 +2244,7 @@ Clojure хорошими настройками. Для начала неско�
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode<span style="color: #8c8c8c;">)</span>
-<span style="color: #8c8c8c;">(</span>add-hook 'emacs-lisp-mode-hook 'run-coding-hook<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>add-hook 'emacs-lisp-mode-hook 'esk-remove-elc-on-save<span style="color: #8c8c8c;">)</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'emacs-lisp-mode-hook 'idle-highlight)
-</span><span style="color: #8c8c8c;">(</span>add-hook 'emacs-lisp-mode-hook 'turn-on-paredit<span style="color: #8c8c8c;">)</span>
-
-<span style="color: #8c8c8c;">(</span>font-lock-add-keywords 'emacs-lisp-mode
-                   '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"(</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">)"</span> . 'esk-paren-face<span style="color: #8c8c8c;">)))</span>
 </pre>
 
 
@@ -2277,7 +2264,18 @@ Clojure хорошими настройками. Для начала неско�
             <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span>
               <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>file-exists-p <span style="color: #8c8c8c;">(</span>concat buffer-file-name <span style="color: #8b2252;">"c"</span><span style="color: #8c8c8c;">))</span>
                   <span style="color: #8c8c8c;">(</span>delete-file <span style="color: #8c8c8c;">(</span>concat buffer-file-name <span style="color: #8b2252;">"c"</span><span style="color: #8c8c8c;">))))))</span>
+</pre>
 
+
+
+</li>
+<li>
+<b>M-.</b> находит определение elisp-функции.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>define-key emacs-lisp-mode-map <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"M-."</span><span style="color: #8c8c8c;">)</span> 'find-function-at-point<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
@@ -2289,44 +2287,7 @@ Clojure хорошими настройками. Для начала неско�
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'clojure-mode-hook 'run-coding-hook<span style="color: #8c8c8c;">)</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'clojure-mode-hook 'idle-highlight)
-</span>
-<span style="color: #8c8c8c;">(</span>font-lock-add-keywords 'clojure-mode
-                        '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"(</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">)"</span> . 'esk-paren-face<span style="color: #8c8c8c;">)))</span>
-
-<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defface</span> <span style="color: #a0522d;">esk-clojure-trace-face</span>
-   '<span style="color: #8c8c8c;">((((</span>class color<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>background dark<span style="color: #8c8c8c;">))</span>
-      <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:foreground</span> <span style="color: #8b2252;">"grey50"</span><span style="color: #8c8c8c;">))</span>
-     <span style="color: #8c8c8c;">(((</span>class color<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>background light<span style="color: #8c8c8c;">))</span>
-      <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:foreground</span> <span style="color: #8b2252;">"grey55"</span><span style="color: #8c8c8c;">)))</span>
-   <span style="color: #8b2252;">"Face used to dim parentheses."</span>
-   <span style="color: #7a378b;">:group</span> 'starter-kit-faces<span style="color: #8c8c8c;">)</span>
-
-<span style="color: #8c8c8c;">(</span>setq esk-clojure-trace-face 'esk-clojure-trace-face<span style="color: #8c8c8c;">)</span>
-
-<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">slime-jump-to-trace</span> <span style="color: #8c8c8c;">(</span><span style="color: #228b22;">&amp;optional</span> on<span style="color: #8c8c8c;">)</span>
-  <span style="color: #8b2252;">"Jump to the file/line that the current stack trace line references.
-   Only works with files in your project root's src/, not in dependencies."</span>
-  <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">save-excursion</span>
-    <span style="color: #8c8c8c;">(</span>beginning-of-line<span style="color: #8c8c8c;">)</span>
-    <span style="color: #8c8c8c;">(</span>search-forward-regexp <span style="color: #8b2252;">"[0-9]: </span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">[</span><span style="color: #8b2252;">^</span><span style="color: #8b2252;">$(]+</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">.*?</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">[0-9]*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">)"</span><span style="color: #8c8c8c;">)</span>
-    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> <span style="color: #8c8c8c;">((</span>line <span style="color: #8c8c8c;">(</span>string-to-number <span style="color: #8c8c8c;">(</span>match-string 2<span style="color: #8c8c8c;">)))</span>
-          <span style="color: #8c8c8c;">(</span>ns-path <span style="color: #8c8c8c;">(</span>split-string <span style="color: #8c8c8c;">(</span>match-string 1<span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"\\."</span><span style="color: #8c8c8c;">))</span>
-          <span style="color: #8c8c8c;">(</span>project-root <span style="color: #8c8c8c;">(</span>locate-dominating-file default-directory <span style="color: #8b2252;">"src/"</span><span style="color: #8c8c8c;">)))</span>
-      <span style="color: #8c8c8c;">(</span>find-file <span style="color: #8c8c8c;">(</span>format <span style="color: #8b2252;">"%s/src/%s.clj"</span> project-root
-                         <span style="color: #8c8c8c;">(</span>mapconcat 'identity ns-path <span style="color: #8b2252;">"/"</span><span style="color: #8c8c8c;">)))</span>
-      <span style="color: #8c8c8c;">(</span>goto-line line<span style="color: #8c8c8c;">))))</span>
-
-<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'slime
-  '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span>
-     <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defalias</span> '<span style="color: #0000ff;">sldb-toggle-details</span> 'slime-jump-to-trace<span style="color: #8c8c8c;">)</span>
-     <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">sldb-prune-initial-frames</span> <span style="color: #8c8c8c;">(</span>frames<span style="color: #8c8c8c;">)</span>
-       <span style="color: #8b2252;">"Show all stack trace lines by default."</span>
-       frames<span style="color: #8c8c8c;">)))</span>
-
-<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'find-file-in-project
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'find-file-in-project
   '<span style="color: #8c8c8c;">(</span>add-to-list 'ffip-patterns <span style="color: #8b2252;">"*.clj"</span><span style="color: #8c8c8c;">))</span>
 </pre>
 
@@ -2334,74 +2295,14 @@ Clojure хорошими настройками. Для начала неско�
 
 </li>
 <li>
-Подсвечиваем в дебагере полезные строки.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">sldb-font-lock</span> <span style="color: #8c8c8c;">()</span>
-  <span style="color: #8c8c8c;">(</span>font-lock-add-keywords nil
-                          '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"[0-9]+: </span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">clojure\.</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">core</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">lang</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">.*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">"</span>
-                             1 esk-clojure-trace-face<span style="color: #8c8c8c;">)</span>
-                            <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"[0-9]+: </span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">java.*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">"</span>
-                             1 esk-clojure-trace-face<span style="color: #8c8c8c;">)</span>
-                            <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"[0-9]+: </span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">swank.*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">"</span>
-                             1 esk-clojure-trace-face<span style="color: #8c8c8c;">)</span>
-                            <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\[</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">[A-Z]+</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">\\]"</span>
-                             1 font-lock-function-name-face<span style="color: #8c8c8c;">))))</span>
-
-<span style="color: #8c8c8c;">(</span>add-hook 'sldb-mode-hook 'sldb-font-lock<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
-Включаем paredit для редактировании исходников на Clojure.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'clojure-mode-hook 'turn-on-paredit<span style="color: #8c8c8c;">)</span>
-</pre>
-
-
-
-</li>
-<li>
-Команда <code>clojure-project</code> делает всю необходимую подготовку и
-запускает указанный Clojure-проект в сессии SLIME.
+Команда <code>clojure-project</code> больше не используется.
 
 
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">clojure-project</span> <span style="color: #8c8c8c;">(</span>path<span style="color: #8c8c8c;">)</span>
-  <span style="color: #8b2252;">"Setup classpaths for a clojure project and starts a new SLIME session.
-
-  Kills existing SLIME session, if any."</span>
-  <span style="color: #8c8c8c;">(</span>interactive <span style="color: #8c8c8c;">(</span>list
-                <span style="color: #8c8c8c;">(</span>ido-read-directory-name
-                 <span style="color: #8b2252;">"Project root: "</span>
-                 <span style="color: #8c8c8c;">(</span>locate-dominating-file default-directory <span style="color: #8b2252;">"pom.xml"</span><span style="color: #8c8c8c;">))))</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>get-buffer <span style="color: #8b2252;">"*inferior-lisp*"</span><span style="color: #8c8c8c;">)</span>
-    <span style="color: #8c8c8c;">(</span>kill-buffer <span style="color: #8b2252;">"*inferior-lisp*"</span><span style="color: #8c8c8c;">))</span>
-  <span style="color: #8c8c8c;">(</span>add-to-list 'swank-clojure-extra-vm-args
-               <span style="color: #8c8c8c;">(</span>format <span style="color: #8b2252;">"-Dclojure.compile.path=%s"</span>
-                       <span style="color: #8c8c8c;">(</span>expand-file-name <span style="color: #8b2252;">"target/classes/"</span> path<span style="color: #8c8c8c;">)))</span>
-  <span style="color: #8c8c8c;">(</span>setq swank-clojure-binary nil
-        swank-clojure-jar-path <span style="color: #8c8c8c;">(</span>expand-file-name <span style="color: #8b2252;">"target/dependency/"</span> path<span style="color: #8c8c8c;">)</span>
-        swank-clojure-extra-classpaths
-        <span style="color: #8c8c8c;">(</span>append <span style="color: #8c8c8c;">(</span>mapcar <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">(</span>d<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>expand-file-name d path<span style="color: #8c8c8c;">))</span>
-                        '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"src/"</span> <span style="color: #8b2252;">"target/classes/"</span> <span style="color: #8b2252;">"test/"</span><span style="color: #8c8c8c;">))</span>
-                <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> <span style="color: #8c8c8c;">((</span>lib <span style="color: #8c8c8c;">(</span>expand-file-name <span style="color: #8b2252;">"lib"</span> path<span style="color: #8c8c8c;">)))</span>
-                  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>file-exists-p lib<span style="color: #8c8c8c;">)</span>
-                      <span style="color: #8c8c8c;">(</span>directory-files lib t <span style="color: #8b2252;">".jar$"</span><span style="color: #8c8c8c;">))))</span>
-        slime-lisp-implementations
-        <span style="color: #8c8c8c;">(</span>cons `<span style="color: #8c8c8c;">(</span>clojure ,<span style="color: #8c8c8c;">(</span>swank-clojure-cmd<span style="color: #8c8c8c;">)</span> <span style="color: #7a378b;">:init</span> swank-clojure-init<span style="color: #8c8c8c;">)</span>
-              <span style="color: #8c8c8c;">(</span>remove-if #'<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">(</span>x<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>eq <span style="color: #8c8c8c;">(</span>car x<span style="color: #8c8c8c;">)</span> 'clojure<span style="color: #8c8c8c;">))</span>
-                         slime-lisp-implementations<span style="color: #8c8c8c;">)))</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">save-window-excursion</span>
-    <span style="color: #8c8c8c;">(</span>slime<span style="color: #8c8c8c;">)))</span>
+  <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>message <span style="color: #8b2252;">"Deprecated in favour of M-x swank-clojure-project. Install swank-clojure from ELPA."</span><span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -2426,31 +2327,21 @@ Clojure хорошими настройками. Для начала неско�
 
 </li>
 <li>
-<b>Scheme.</b>
+Во <b>всех режимах лиспа</b> включаются тусклые скобочки, режим
+<i>paredit</i> и общие улучшения для кодирования.
 
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'scheme-mode-hook 'run-coding-hook<span style="color: #8c8c8c;">)</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'scheme-mode-hook 'idle-highlight)
-</span><span style="color: #8c8c8c;">(</span>font-lock-add-keywords 'scheme-mode
-                   '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"(</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">)"</span> . 'esk-paren-face<span style="color: #8c8c8c;">)))</span>
-</pre>
-
-
-
-</li>
-<li>
-<b>Common Lisp.</b>
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-hook 'lisp-mode-hook 'run-coding-hook<span style="color: #8c8c8c;">)</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'lisp-mode-hook 'idle-highlight)
-</span><span style="color: #8c8c8c;">(</span>add-hook 'lisp-mode-hook 'turn-on-paredit<span style="color: #8c8c8c;">)</span>
-<span style="color: #8c8c8c;">(</span>font-lock-add-keywords 'lisp-mode
-                   '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"(</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">)"</span> . 'esk-paren-face<span style="color: #8c8c8c;">)))</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">dolist</span> <span style="color: #8c8c8c;">(</span>x '<span style="color: #8c8c8c;">(</span>scheme emacs-lisp lisp clojure<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> window-system
+    <span style="color: #8c8c8c;">(</span>font-lock-add-keywords
+     <span style="color: #8c8c8c;">(</span>intern <span style="color: #8c8c8c;">(</span>concat <span style="color: #8c8c8c;">(</span>symbol-name x<span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"-mode"</span><span style="color: #8c8c8c;">))</span>
+     '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"(</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">)"</span> . 'esk-paren-face<span style="color: #8c8c8c;">))))</span>
+  <span style="color: #8c8c8c;">(</span>add-hook
+   <span style="color: #8c8c8c;">(</span>intern <span style="color: #8c8c8c;">(</span>concat <span style="color: #8c8c8c;">(</span>symbol-name x<span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"-mode-hook"</span><span style="color: #8c8c8c;">))</span> 'turn-on-paredit<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span>add-hook
+   <span style="color: #8c8c8c;">(</span>intern <span style="color: #8c8c8c;">(</span>concat <span style="color: #8c8c8c;">(</span>symbol-name x<span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"-mode-hook"</span><span style="color: #8c8c8c;">))</span> 'run-coding-hook<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -2523,8 +2414,12 @@ Clojure хорошими настройками. Для начала неско�
 
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.rake$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
-<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Rakefile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.gemspec$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.ru$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Rakefile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Gemfile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Capfile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Vagrantfile$"</span> . ruby-mode<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
@@ -2600,14 +2495,6 @@ Rake.
 
 
 
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'ruby-mode-hook 'idle-highlight)
-</span></pre>
-
-
-
 </li>
 <li>
 Flymake. Проверка синтаксиса в режиме Ruby.
@@ -2615,34 +2502,37 @@ Flymake. Проверка синтаксиса в режиме Ruby.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'ruby-mode
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">flymake-ruby-init</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let*</span> <span style="color: #8c8c8c;">((</span>temp-file <span style="color: #8c8c8c;">(</span>flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace<span style="color: #8c8c8c;">))</span>
+         <span style="color: #8c8c8c;">(</span>local-file <span style="color: #8c8c8c;">(</span>file-relative-name
+                      temp-file
+         <span style="color: #8c8c8c;">(</span>file-name-directory buffer-file-name<span style="color: #8c8c8c;">))))</span>
+    <span style="color: #b22222;">;; </span><span style="color: #b22222;">Invoke ruby with '-c' to get syntax checking
+</span>    <span style="color: #8c8c8c;">(</span>list <span style="color: #8b2252;">"ruby"</span> <span style="color: #8c8c8c;">(</span>list <span style="color: #8b2252;">"-c"</span> local-file<span style="color: #8c8c8c;">))))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">flymake-ruby-enable</span> <span style="color: #8c8c8c;">()</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>and buffer-file-name
+             <span style="color: #8c8c8c;">(</span>file-writable-p
+              <span style="color: #8c8c8c;">(</span>file-name-directory buffer-file-name<span style="color: #8c8c8c;">))</span>
+             <span style="color: #8c8c8c;">(</span>file-writable-p buffer-file-name<span style="color: #8c8c8c;">)</span>
+             <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>fboundp 'tramp-list-remote-buffers<span style="color: #8c8c8c;">)</span>
+                 <span style="color: #8c8c8c;">(</span>not <span style="color: #8c8c8c;">(</span>subsetp
+                       <span style="color: #8c8c8c;">(</span>list <span style="color: #8c8c8c;">(</span>current-buffer<span style="color: #8c8c8c;">))</span>
+                       <span style="color: #8c8c8c;">(</span>tramp-list-remote-buffers<span style="color: #8c8c8c;">)))</span>
+               t<span style="color: #8c8c8c;">))</span>
+    <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-c d"</span><span style="color: #8c8c8c;">)</span>
+                   'flymake-display-err-menu-for-current-line<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span>flymake-mode t<span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'ruby-mode
   '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span>
      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">flymake</span><span style="color: #8c8c8c;">)</span>
-
-     <span style="color: #b22222;">;; </span><span style="color: #b22222;">Invoke ruby with '-c' to get syntax checking
-</span>     <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">flymake-ruby-init</span> <span style="color: #8c8c8c;">()</span>
-       <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let*</span> <span style="color: #8c8c8c;">((</span>temp-file <span style="color: #8c8c8c;">(</span>flymake-init-create-temp-buffer-copy
-                          'flymake-create-temp-inplace<span style="color: #8c8c8c;">))</span>
-              <span style="color: #8c8c8c;">(</span>local-file <span style="color: #8c8c8c;">(</span>file-relative-name
-                           temp-file
-                           <span style="color: #8c8c8c;">(</span>file-name-directory buffer-file-name<span style="color: #8c8c8c;">))))</span>
-         <span style="color: #8c8c8c;">(</span>list <span style="color: #8b2252;">"ruby"</span> <span style="color: #8c8c8c;">(</span>list <span style="color: #8b2252;">"-c"</span> local-file<span style="color: #8c8c8c;">))))</span>
-
      <span style="color: #8c8c8c;">(</span>push '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">".+\\.rb$"</span> flymake-ruby-init<span style="color: #8c8c8c;">)</span> flymake-allowed-file-name-masks<span style="color: #8c8c8c;">)</span>
      <span style="color: #8c8c8c;">(</span>push '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"Rakefile$"</span> flymake-ruby-init<span style="color: #8c8c8c;">)</span> flymake-allowed-file-name-masks<span style="color: #8c8c8c;">)</span>
-
      <span style="color: #8c8c8c;">(</span>push '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"^</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">.*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">:</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">[0-9]+</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">: </span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">.*</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">$"</span> 1 2 nil 3<span style="color: #8c8c8c;">)</span>
            flymake-err-line-patterns<span style="color: #8c8c8c;">)</span>
-
-     <span style="color: #8c8c8c;">(</span>add-hook 'ruby-mode-hook
-               <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">lambda</span> <span style="color: #8c8c8c;">()</span>
-                 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>and buffer-file-name
-                            <span style="color: #8c8c8c;">(</span>file-writable-p
-                             <span style="color: #8c8c8c;">(</span>file-name-directory buffer-file-name<span style="color: #8c8c8c;">))</span>
-                            <span style="color: #8c8c8c;">(</span>file-writable-p buffer-file-name<span style="color: #8c8c8c;">))</span>
-                   <span style="color: #8c8c8c;">(</span>local-set-key <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">"C-c d"</span><span style="color: #8c8c8c;">)</span>
-                                  'flymake-display-err-menu-for-current-line<span style="color: #8c8c8c;">)</span>
-                   <span style="color: #8c8c8c;">(</span>flymake-mode t<span style="color: #8c8c8c;">))))))</span>
+     <span style="color: #8c8c8c;">(</span>add-hook 'ruby-mode-hook 'flymake-ruby-enable<span style="color: #8c8c8c;">)))</span>
 </pre>
 
 
@@ -2657,46 +2547,14 @@ Rinari — минорный режим для Ruby On Rails. Ищите на
 
 <pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>setq rinari-major-modes
       <span style="color: #8c8c8c;">(</span>list 'mumamo-after-change-major-mode-hook 'dired-mode-hook 'ruby-mode-hook
-       'css-mode-hook 'yaml-mode-hook 'javascript-mode-hook<span style="color: #8c8c8c;">))</span>
+            'css-mode-hook 'yaml-mode-hook 'javascript-mode-hook<span style="color: #8c8c8c;">))</span>
 </pre>
 
 
 
 </li>
 <li>
-<b>JavaScript.</b> В первую очередь заменяем черезчур длинное слово
-<code>function</code> на <code>ƒ</code>.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>font-lock-add-keywords
- 'espresso-mode `<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">function *</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">("</span>
-                   <span style="color: #8c8c8c;">(</span>0 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span> <span style="color: #8c8c8c;">(</span>compose-region <span style="color: #8c8c8c;">(</span>match-beginning 1<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>match-end 1<span style="color: #8c8c8c;">)</span>
-                                             <span style="color: #8b2252;">"&#402;"</span><span style="color: #8c8c8c;">)</span>
-                             nil<span style="color: #8c8c8c;">)))))</span>
-</pre>
-
-
-
-</li>
-<li>
-Подсветка нехороших слов в коде.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>font-lock-add-keywords 'espresso-mode
-                        '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"\\&lt;</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">FIX</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">TODO</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">FIXME</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">HACK</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">REFACTOR</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">:"</span>
-                           1 font-lock-warning-face t<span style="color: #8c8c8c;">)))</span>
-</pre>
-
-
-
-</li>
-<li>
-Включаем режим JavaScript для файлов с расширением <code>.js</code> и
-<code>.json</code>. Включаем paredit для режима JavaScript.
+<b>JavaScript.</b>
 
 
 
@@ -2705,30 +2563,23 @@ Rinari — минорный режим для Ruby On Rails. Ищите на
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.js$"</span> . espresso-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.json$"</span> . espresso-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-hook 'espresso-mode-hook 'moz-minor-mode<span style="color: #8c8c8c;">)</span>
-<span style="color: #8c8c8c;">(</span>add-hook 'espresso-mode-hook 'turn-on-paredit<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook 'espresso-mode-hook 'esk-paredit-nonlisp<span style="color: #8c8c8c;">)</span>
 <span style="color: #8c8c8c;">(</span>add-hook 'espresso-mode-hook 'run-coding-hook<span style="color: #8c8c8c;">)</span>
-<span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-hook 'espresso-mode-hook 'idle-highlight)
-</span><span style="color: #8c8c8c;">(</span>setq espresso-indent-level 2<span style="color: #8c8c8c;">)</span>
-</pre>
+<span style="color: #8c8c8c;">(</span>setq espresso-indent-level 2<span style="color: #8c8c8c;">)</span>
 
-
-
-</li>
-<li>
-Красивая печать JSON-объектов.
-
-
-
-
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">esk-pp-json</span> <span style="color: #8c8c8c;">()</span>
-  <span style="color: #8b2252;">"Pretty-print the json object following point."</span>
-  <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">json</span><span style="color: #8c8c8c;">)</span>
-  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> <span style="color: #8c8c8c;">((</span>json-object <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">save-excursion</span> <span style="color: #8c8c8c;">(</span>json-read<span style="color: #8c8c8c;">))))</span>
-    <span style="color: #8c8c8c;">(</span>switch-to-buffer <span style="color: #8b2252;">"*json*"</span><span style="color: #8c8c8c;">)</span>
-    <span style="color: #8c8c8c;">(</span>delete-region <span style="color: #8c8c8c;">(</span>point-min<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>point-max<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span>insert <span style="color: #8c8c8c;">(</span>pp json-object<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span>goto-char <span style="color: #8c8c8c;">(</span>point-min<span style="color: #8c8c8c;">))))</span>
+<span style="color: #b22222;">;; </span><span style="color: #b22222;">If you prefer js2-mode, use this instead:
+</span><span style="color: #b22222;">;; </span><span style="color: #b22222;">(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+</span>
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">eval-after-load</span> 'espresso
+  '<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span> <span style="color: #8c8c8c;">(</span>define-key espresso-mode-map <span style="color: #8b2252;">"{"</span> 'paredit-open-curly<span style="color: #8c8c8c;">)</span>
+          <span style="color: #8c8c8c;">(</span>define-key espresso-mode-map <span style="color: #8b2252;">"}"</span> 'paredit-close-curly-and-newline<span style="color: #8c8c8c;">)</span>
+          <span style="color: #b22222;">;; </span><span style="color: #b22222;">fixes problem with pretty function font-lock
+</span>          <span style="color: #8c8c8c;">(</span>define-key espresso-mode-map <span style="color: #8c8c8c;">(</span>kbd <span style="color: #8b2252;">","</span><span style="color: #8c8c8c;">)</span> 'self-insert-command<span style="color: #8c8c8c;">)</span>
+          <span style="color: #8c8c8c;">(</span>font-lock-add-keywords
+           'espresso-mode `<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">(</span><span style="color: #8b2252;">function *</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">)</span><span style="color: #8b2252;">("</span>
+                             <span style="color: #8c8c8c;">(</span>0 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">progn</span> <span style="color: #8c8c8c;">(</span>compose-region <span style="color: #8c8c8c;">(</span>match-beginning 1<span style="color: #8c8c8c;">)</span>
+                                                       <span style="color: #8c8c8c;">(</span>match-end 1<span style="color: #8c8c8c;">)</span> <span style="color: #8b2252;">"&#402;"</span><span style="color: #8c8c8c;">)</span>
+                                       nil<span style="color: #8c8c8c;">)))))))</span>
 </pre>
 
 
@@ -2749,6 +2600,31 @@ Rinari — минорный режим для Ruby On Rails. Ищите на
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.p[lm]$"</span> . cperl-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.pod$"</span> . pod-mode<span style="color: #8c8c8c;">))</span>
 <span style="color: #8c8c8c;">(</span>add-to-list 'auto-mode-alist '<span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"\\.tt$"</span> . tt-mode<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+</li>
+<li>
+Регенерация автозагрузочных файлов.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>regen-autoloads<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+</li>
+<li>
+По-умолчанию загружается пользовательский файл <code>custom.el</code>, его
+нет в комплекте Kit'a.
+
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>load custom-file 'noerror<span style="color: #8c8c8c;">)</span>
 </pre>
 
 
