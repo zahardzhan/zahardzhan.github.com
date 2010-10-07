@@ -59,7 +59,7 @@ Happy Hacking --- это воплощение мечты эмаксера. Кл�
 <div class="figure">
 <p><a href="/images/apple-keyboard.png">
    <img src="/images/apple-keyboard.png"
-        alt="Клавиатура Apple."></a></p>
+        alt="Клавиатура Apple"></a></p>
 </div>
 #+END_HTML
 

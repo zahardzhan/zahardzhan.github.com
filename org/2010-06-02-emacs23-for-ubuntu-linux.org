@@ -14,9 +14,13 @@ title: Emacs 23 в Ubuntu
 задавая лишних вопросов, на него перейти. Но это при условии, что
 пользуетесь эмаксом в иксах со сглаженными шрифтами.
 
-#+CAPTION: Шрифты Emacs 23 в Ubuntu
-#+LABEL:   fig:emacs23-new-and-old
-[[/images/emacs23-font-in-ubuntu.png]]
+#+BEGIN_HTML
+<div class="figure">
+<p><a href="/images/emacs23-font-in-ubuntu.png">
+   <img src="/images/emacs23-font-in-ubuntu.png"
+        alt="Шрифты Emacs 23 в Ubuntu"></a></p>
+</div>
+#+END_HTML
 
 К слову, в предыдущей версии нормального отображения шрифтов можно
 было добиться только путем выпиливания кучи всякого из =/etc/fonts.d=.
