@@ -3,7 +3,6 @@
 #+STARTUP: HIDESTARS
 #+BEGIN_HTML
 ---
----
 layout: post
 title: Clojure для Google App Engine
 ---
