@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: Hello, Deadlock!
@@ -34,7 +32,6 @@ title: Hello, Deadlock!
 
 
 
-
 <p>
 попытка организовать взаимную блокировку в лоб обречена на провал —
 STM нам этого не позволит — агент не может ожидать окончания
@@ -51,7 +48,6 @@ STM нам этого не позволит — агент не может ож
 
 
 
-
 <p>
 <code>future</code> выносит ожидание окончания выполнения дейтсвия агента в
 отдельный поток, который затем блокируется в потоке действия — происходит
@@ -62,7 +58,6 @@ STM нам этого не позволит — агент не может ож
 
 <pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">send-off</span> a #<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">do</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">deref</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">future</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">await</span> a<span style="color: #8c8c8c;">)))</span> %<span style="color: #8c8c8c;">))</span>
 </pre>
-
 
 
 
@@ -77,6 +72,5 @@ STM нам этого не позволит — агент не может ож
 &gt; a
 #&lt;Agent@asdf: nil&gt;
 </pre>
-
 
 
