@@ -1,0 +1,398 @@
+---
+layout: post
+title: Блог для программиста
+---
+
+<p>
+Традиция такая. Про переезд на новый хостинг пост. А как иначе?
+Новоселье!
+</p>
+<p>
+Вот помню еще той весной задумал завести свой блог, но осенью пишу
+статью; как раз пол года срок. Ну что ж, начну рассказ с начала.
+</p>
+<p>
+Все началось с ЖЖ. И все закончилось уже, хватило мне единственного
+взгляда — ЖЖ ужасен, и сколько бы народу не сидело в нем — порывы
+рвотные я не могу сдержать при взгляде на его дизайн. Могу лишь
+навещать, пусть через силу, друзей в сообществах родных по духу. На
+каждый комментарий что оставил в нем, читая интересный пост, затрачено
+пустых усилий было столько, что мог бы целый пост я написать, будь
+волен я не заходить по десять раз на сайт и не елозить мышью
+по доброй сотне комментариев ветвей.
+</p>
+<p>
+Потом я Blogger испытал, но не прижился он: был черезчур раздут (или
+мне показалось). Задумка в целом глупой оказалась, ведь корпорации
+добра до блогов дела нет.
+</p>
+<p>
+Ничем кроме проклятья не назову я то, что настигает гугл в его
+попытках тщетных представить публике почтенной уютное местечко для
+бесед. Волну никто не понял, а Buzz, в который каждого из нас как
+будто носом ткнули — вовсе не базар, а так&hellip; лоток в безлюдной
+деревушке, в котором обречен подряд который месяц себя любимого читать,
+и кросспосты с чтеца, и твиты с твиттера, короче — что
+угодно. Единственное понял я — оригинального контента не сыскать, там
+все из третьих мест и не серьезно.
+</p>
+<p>
+О Posterous товарищ Умпутун в своем подкасте замолвил доброе слово —
+грех было не попробовать, и честно вам скажу — понравилось. Чего уж
+там, я всем рекомендую на Posterous взглянуть, запостить что-нибудь, и
+до тех пор пока ваши посты будут просты вам не в чем будет
+блог-платформу упрекнуть.
+</p>
+<p>
+Прошло три месяца, и все бы ничего, но нет, хозяева платформы
+поспешили презентовать markdown для постов, но допилить забыли
+возможность обновлять посты потом; чем причинили мне долгие часы в
+попытках обновить свой пост. Все было тщетно.
+</p>
+<p>
+Я понял, что идеала быть не может, хотя, быть может, он возможен, но
+нужно постараться самому и приложить усилия к тому, чтобы собрать
+платформу на которой будет просто и в удовольствие постить. Я оказался
+не один такой. В Сети нашлись люди, которые не ждали пока им принесут
+идеал на блюде. Эти люди были те еще гики — это ж надо додуматься
+приспособить систему контроля версий для публикации постингов.
+</p>
+<p>
+Парни открыли на <a href="http://github.com">гитхабе</a> дополнительный сервис, зовется он
+<a href="http://pages.github.com">Pages</a> — статические HTML-страницы держит. Простые страницы все
+же не блог — так какой же от сервиса толк? Там есть генератор удобный,
+который из пачки шаблонов и текста ровного сделает сайт пользователю
+на радость командой одной — <code>git push</code> — экая малость.
+</p>
+<p>
+В чем суть? Зачем ради простого блога такие огороды городить?
+</p>
+<dl>
+<dt>Шаблоны? HTML? CSS?</dt><dd>
+Ради индивидуальности. Когда-нибудь
+настанет время, захочется чтоб просто было все, красиво, чтоб
+нашу отражало суть, чтоб каждый мог к нам заглянуть и посмотреть
+не на шаблон, которых 100500 в Сети, а на творение&hellip;
+
+<p>
+Здесь путь один, и раз уж взялся показать себя в Сети — освой
+HTML и CSS, без них здесь не пройти.
+</p>
+</dd>
+<dt>Git</dt><dd>
+Для техников пишу эту статью. Ужель ты с Википедией знаком?
+Гит — то же самое, но лучше; хранилище для текста.
+
+<p>
+Чем отличается программа от статьи? Ничем. Суть текст
+простой. И нам же лучше, если мы сможем откатить ошибки,
+поправить сайт не будучи в сети, друзьям послать — пускай
+помогут нам, и от греха подальше сохранить на множестве
+машин.
+</p>
+
+
+
+<pre class="example">sudo aptitude install git-core
+</pre>
+
+
+
+</dd>
+<dt>Emacs</dt><dd>
+При чем здесь Emacs? А при том, что мы работать будем в
+нем. В Org Mode.
+
+<p>
+Что лучше может быть, чем пост писать в редакторе
+достойном? Шаблоны править в нем, по ходу: CSS, HTML,
+коммитить в нем же в git, и слушать музыку (но я здесь не о
+том). С тех пор как я намучался с плодами Web 2.0, порою
+к страшным прибегая извращениям (навроде написания статьи в
+редакторе GMail'а) подход, где все в одном, все
+по-старинке — спокойствие вселяет, и заставляет к благому
+делу большее усердие прилягнуть.
+</p>
+</dd>
+<dt>Org Mode</dt><dd>
+Буквально месяц с тех времен прошел когда впервые я
+прослышал о сей моде. Немного поискал и примянул
+использовать разок. Потом другой. И третий. В конце
+концов оставил не у дел я множество вещей, будь то
+ToDo-листы, календари и прочий ширпотреб — org-mode с
+лихом эти вещи заменяет.
+
+<p>
+Я был шокирован не далее чем пару дней назад,
+наткнувшись на один из тысяч форков настроек <a href="http://zahardzhan.github.com/2010/emacs-starter-kit-the-program.html">Emacs Starter Kit</a>. От радости я плакал, когда код читал (сам
+Кнут бы плакал тоже) — настройки те написаны в
+«литературном стиле». В том самом стиле был написан
+«TeX». Суть в кратце такова: внутри «org-mode»-файла
+лежит рассказ о коде, код; рассказ сам — исполняется,
+двух зайцев убивая в раз — в конце у нас есть просто код
+и есть рассказ (пригодный к публикации в блоге или в
+виде PDF-файла сгенерированного LaTeX'ом — безо всякой
+дополнительной обработки).
+</p>
+</dd>
+<dt>Jekyll</dt><dd>
+Генератор <a href="http://github.com/mojombo/jekyll">Jekyll</a> написан на Ruby, заточен под
+блоги. Работа с ним идет таким ходом: пользователь в
+директории, git-репозитории, создает поддиректории особые,
+которые наполняет шаблонами, картинками, страницами
+стилей, скриптами и собственно, постами. Когда очередной
+работы выполнен кусок — контент коммитится и отправляется
+на сервера гитхаба, там прогоняется через наш генератор,
+он из шаблонов и кусков конечный собирает блог. 
+
+<p>
+Без Jekyll'а мы можем обойтись вполне — достаточно нам
+git'а, но чтоб по десять тысяч раз нам в облако не пушить
+и не плодить коммитов — поставим; а позже в нем мы сможем
+запустить и протестировать наш блог.
+</p>
+<p>
+Вам правду доложу — поставить <b>Jekyll</b> было трудно, я
+битый час консоль пытал; так было это нудно. Я весь
+расстроился и был немного зол, что много нехороших слов
+про руби в тви наплёл. Но превозмог и сделал грязный хак —
+скачал <a href="http://packages.ubuntu.com/maverick/all/rubygems1.8/download">пакет</a> из Meerkat (вот дурак ;)
+</p>
+
+
+
+<pre class="example">sudo aptitude install ruby-full
+wget http://mirrors.kernel.org/ubuntu/pool/universe/libg/libgems-ruby/rubygems1.8_1.3.7-2_all.deb
+sudo dpkg --install rubygems1.8_1.3.7-2_all.deb
+sudo gem install jekyll
+</pre>
+
+
+
+<p>
+Пускай вас эта ложка дегтя не смущает, хотя стабильности
+она не добавляет, стабильность оставляю не у дел; ведь так
+всегда — поставил свежий софт и глюки потерпел.
+</p>
+<p>
+Бинарь ищите в недрах:
+</p>
+
+
+
+<pre class="example">/var/lib/gems/1.8/gems/jekyll-0.7.0/bin/jekyll
+</pre>
+
+
+
+</dd>
+<dt>Ubuntu</dt><dd>
+Не знаю, как там кто — я пользуюсь Убунтой; тому есть сто
+причин, но главная из них — я не хочу напрасно тратить
+время, работаю по принципу «работает — хуй с ним».
+
+</dd>
+</dl>
+
+<p>Не стану я вдаваться глубоко в тоньчайшие аспекты разработки,
+представлю вам всё просто и легко — два пасса мышью плюс в консоли
+десять строк, встряхнуть, разбавить, потрясти; готово — вот наш блог.
+</p>
+<p>
+Мой блог; хоть он не совершенен — своею писаниной дорожу, поэтому я
+поступаю просто и сурово — я git-репозиторий в svn держу (в Dropbox'е
+тобиш):
+</p>
+
+
+
+<pre class="example">cd ~/Dropbox
+git init zahardzhan.github.com
+cd ./zahardzhan.github.com
+</pre>
+
+
+
+<p>
+Здесь имя — zahardzhan, пишу своё, я вашего не знаю; читатель, укажи
+своё, но не забудь <code>.github.com</code> приписать — таков формат.
+</p>
+<p>
+Залейте бложик на гитхаб.
+</p>
+
+
+
+<pre class="example">git remote add origin git@github.com:zahardzhan/zahardzhan.github.com.git
+git push origin master
+</pre>
+
+
+
+<p>
+В своем устройстве блог не терпит беспорядка — давно уж прописали: что
+где лежит и что чему принадлежит.
+</p>
+
+
+
+<pre class="example">~
+   Dropbox
+      zahardzhan.github.com
+         atom.xml
+         _config.yml
+         css
+            screen.css
+         favicon.ico
+         images
+            image1.png
+            image2.png
+         index.html
+         _layouts
+            default.html
+            post.html
+         org
+            2010-10-09-buddhas-zen.org
+            2010-10-10-blog-for-programmer.org
+         _posts
+            2010-10-09-buddhas-zen.html
+            2010-10-10-blog-for-programmer.html
+         _site
+</pre>
+
+
+
+<p>
+Вот файлы, по порядку:
+</p>
+<dl>
+<dt><code>atom.xml</code></dt><dd>
+Шаблон канала новостей. Уважь читателя — кто будет
+блог читать без новостей? И пропиши канал в
+<a href="http://feedburner.com">feedburner.com</a> скорей.
+
+</dd>
+<dt><code>_config.yml</code></dt><dd>
+Настройки Jekyll в формате YAML. Подробнее в
+<a href="http://wiki.github.com/mojombo/jekyll/configuration">оригинале</a>. Я не большой фанат — держу всё по-дефолту:
+
+</dd>
+<dt><code>css</code></dt><dd>
+Здесь я держу страницу стиля.
+
+</dd>
+<dt><code>favicon.ico</code></dt><dd>
+Иконка.
+
+</dd>
+<dt><code>images</code></dt><dd>
+Картинки.
+
+</dd>
+<dt><code>index.html</code></dt><dd>
+Заглавная страница. Три черточки вверху в формате
+<a href="http://wiki.github.com/mojombo/jekyll/yaml-front-matter">YAML front matter</a> укажут заголовок и шаблон в который
+будет вставлена страница.
+
+</dd>
+<dt><code>_layouts</code></dt><dd>
+Шаблоны сайта; используют язык <a href="http://www.liquidmarkup.org/">liquid</a>. Примеры приводить
+не стану — там много кода для поста, но если любопытно
+вам, прошу <a href="http://github.com/zahardzhan/zahardzhan.github.com">репозиторий блога</a> навестить.
+
+</dd>
+<dt><code>org</code></dt><dd>
+Хранилище постов в формате Emacs Org-mode. Отсюда готовые
+посты будут компилироваться в html-файлы в директорию
+
+</dd>
+<dt><code>_posts</code></dt><dd>
+Хранилище для постов в формате html, markdown и
+textile. Отсюда готовые посты будут компилироваться в
+html-файлы в директорию
+
+</dd>
+<dt><code>_site</code></dt><dd>
+Хранилище скомпилированых постов в формате html. Отсюда
+они уже никуда не будут компилироваться, поэтому эту
+директорию нужно проигнорировать в своем <code>.gitignore</code>.
+
+</dd>
+</dl>
+
+<p>Перед письмом постов настроим Emacs, чтоб правильно он импорт
+проводил. Нам от готового поста нужно одно лишь тело (контент между
+тагами <code>&lt;body&gt;</code>).
+</p>
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span>setq org-publish-project-alist
+      '<span style="color: #8c8c8c;">((</span><span style="color: #8b2252;">"zahardzhan.github.com-org"</span>
+         <span style="color: #7a378b;">:base-directory</span> <span style="color: #8b2252;">"~/Dropbox/Blog/org/"</span>
+         <span style="color: #7a378b;">:base-extension</span> <span style="color: #8b2252;">"org"</span>
+         <span style="color: #7a378b;">:publishing-directory</span> <span style="color: #8b2252;">"~/Dropbox/Blog/_posts/"</span>
+         <span style="color: #7a378b;">:recursive</span> t
+         <span style="color: #7a378b;">:publishing-function</span> org-publish-org-to-html
+         <span style="color: #7a378b;">:headline-levels</span> 4
+         <span style="color: #7a378b;">:html-extension</span> <span style="color: #8b2252;">"html"</span>
+         <span style="color: #7a378b;">:body-only</span> t<span style="color: #8c8c8c;">)</span>
+
+        <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"zahardzhan.github.com-static"</span>
+         <span style="color: #7a378b;">:base-directory</span> <span style="color: #8b2252;">"~/Dropbox/Blog/org/"</span>
+         <span style="color: #7a378b;">:base-extension</span> <span style="color: #8b2252;">"css</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">js</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">png</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">jpg</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">gif</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">pdf</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">mp3</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">ogg</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">swf</span><span style="color: #8b2252; font-weight: bold;">\\</span><span style="color: #8b2252; font-weight: bold;">|</span><span style="color: #8b2252;">php"</span>
+         <span style="color: #7a378b;">:publishing-directory</span> <span style="color: #8b2252;">"~/Dropbox/Blog/_posts/"</span>
+         <span style="color: #7a378b;">:recursive</span> t
+         <span style="color: #7a378b;">:publishing-function</span> org-publish-attachment<span style="color: #8c8c8c;">)</span>
+
+        <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"zahardzhan.github.com"</span>
+         <span style="color: #7a378b;">:components</span> <span style="color: #8c8c8c;">(</span><span style="color: #8b2252;">"zahardzhan.github.com-org"</span>
+                      <span style="color: #8b2252;">"zahardzhan.github.com-static"</span><span style="color: #8c8c8c;">))))</span>
+</pre>
+
+
+
+<p>
+Посты мы пишем так:
+</p>
+
+
+
+<pre class="example">#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t 
+#+STARTUP: SHOWALL INDENT
+#+BEGIN_HTML
+---
+layout: post
+title: Мой первый пост
+---
+
+Мой первый пост!
+</pre>
+
+
+
+<p>
+Название <code>.org</code>-файла должно указывать на то, что это пост; он должен
+быть назван так: <code>2010-10-10-my-first-post.org</code>, иначе непойдет.
+</p>
+<p>
+Как будет пост готов — нажмём <b>C-c e X zahardzhan.github.com</b> (с
+расчетом на <i>свой</i> сайт). 
+</p>
+<p>
+Взглянём что получилось (в браузере по адресу localhost:4000)
+</p>
+
+
+
+<pre class="example">~/Dropbox/zahardzhan.github.com # /var/lib/gems/1.8/gems/jekyll-0.7.0/bin/jekyll --server
+</pre>
+
+
+
+<p>
+Magit'ом закоммитим новый <code>_posts/2010-10-10-my-first-post.html</code>.
+</p>
+<p>
+<code>git push</code>. На этом всё.
+</p>
