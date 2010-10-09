@@ -1,0 +1,217 @@
+---
+layout: post
+title: Clojure vs Python vs ...?
+---
+
+<p>
+Несколько недель назад я почти потерял всякий интерес к Clojure. И
+правда, что в ней может быть такого интересного? Она простая,
+функциональная и в ней есть транзакционная память, персистентные
+структуры, метаданные и удобные макросы, но я изучал её около года, и
+в общем, не скажу что её фичи убийственнее фич других языков. В конце
+концов, я скажу лишь, что это чертовски хороший лисп, на котором
+приятно писать многопоточные программы: это продукт эволюции, но не
+революции.
+</p>
+<p>
+Я пишу эту заметку с небольшим опозданием, всего каких-то пару-тройку
+недель, да к тому же это еще и злостный самобоян с моей стороны, но да
+ладно; так вот, недавно в ленте гугл-ридера мне попалась <a href="http://raindog-2.livejournal.com/16470.html">пара постов</a> в
+ЖЖ — автор показал свою реализацию игры «жизнь» на Clojure — всего 6
+строк кода.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">nbr-deltas</span> [[-1 -1][-1 0][-1 1][0 -1][0 1][1 -1][1 0][1 1]]<span style="color: #8c8c8c;">)</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">nbr-cells</span> [[x y]]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">map</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [[a b]] [<span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">+</span> x a<span style="color: #8c8c8c;">)(</span><span style="color: #7a378b;">+</span> y b<span style="color: #8c8c8c;">)</span>]<span style="color: #8c8c8c;">)</span> nbr-deltas<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">cell-table</span> [cell]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> conj {cell 10} <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">map</span> #<span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">vec</span> [% 1]<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>nbr-cells cell<span style="color: #8c8c8c;">))))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">all-table</span> [cells]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> merge-with + <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">map</span> cell-table cells<span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">next-gen</span> [cells] 
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">keys</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">filter</span> #<span style="color: #8c8c8c;">(</span>#{3 12 13} <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">second</span> %<span style="color: #8c8c8c;">))</span> <span style="color: #8c8c8c;">(</span>all-table cells<span style="color: #8c8c8c;">))))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">nth-gen</span> [n cells]
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">==</span> n 0<span style="color: #8c8c8c;">)</span> cells <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">recur</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">-</span> n 1<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>next-gen cells<span style="color: #8c8c8c;">))))</span>
+</pre>
+
+
+
+<p>
+Я подумал «почему бы не сравнить „функциональность“ Clojure с
+„функциональностью“ Python?»
+</p>
+<p>
+Ну и сравнил: не вдаваясь в подробности и особо не раздумывая на
+красóтами результата, передрал код один-в-один.
+</p>
+
+
+
+<pre class="src src-python"><span style="color: #a0522d;">nbr_deltas</span> = (-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">nbr_cells</span>(c):
+  <span style="color: #a020f0;">return</span> ret[(c[0] + d[0], c[1] + d[1]) <span style="color: #a020f0;">for</span> d <span style="color: #a020f0;">in</span> nbr_deltas]
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">cell_table</span>(cell):
+  <span style="color: #a020f0;">return</span> <span style="color: #7a378b;">dict</span>((c, v) <span style="color: #a020f0;">for</span> c, v <span style="color: #a020f0;">in</span> [(cell, 10)] + [(nbr, 1) <span style="color: #a020f0;">for</span> nbr <span style="color: #a020f0;">in</span> nbr_cells(cell)])
+
+&lt;&lt;define-function-merge-<span style="color: #a020f0;">with</span>&gt;&gt;
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">all_table</span>(cells):
+  <span style="color: #a020f0;">return</span> merge_with(<span style="color: #a020f0;">lambda</span> x,y: x+y, [cell_table(cell) <span style="color: #a020f0;">for</span> cell <span style="color: #a020f0;">in</span> cells])
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">next_gen</span>(cells):
+  <span style="color: #a020f0;">return</span> [cell <span style="color: #a020f0;">for</span> cell, val <span style="color: #a020f0;">in</span> all_table(cells).iteritems() <span style="color: #a020f0;">if</span> val <span style="color: #a020f0;">in</span> (3, 12, 13)]
+
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">nth_gen</span>(n, cells):
+    gen = cells
+    <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #7a378b;">range</span>(0, n):
+        gen = next_gen(gen)
+    <span style="color: #a020f0;">return</span> gen
+</pre>
+
+
+
+<p>
+Фактически, те же самые 6 строк. Единственные отличия — в библиотеке
+питона нет функции <code>merge-with</code> для слияния словарей, и функция
+<code>nth-gen</code> реализована императивно из-за отсутствия оптимизации
+хвостовой рекурсии в питоне.
+</p>
+
+
+
+<div class="org-src-container"><label class="org-src-name">define-function-merge-with()</label><pre class="src src-python">
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">merge_with</span>(f, maps):
+    result = {}
+    <span style="color: #a020f0;">for</span> <span style="color: #7a378b;">map</span> <span style="color: #a020f0;">in</span> maps:
+        <span style="color: #a020f0;">for</span> key, val <span style="color: #a020f0;">in</span> <span style="color: #7a378b;">map</span>.iteritems():
+            <span style="color: #a020f0;">if</span> key <span style="color: #a020f0;">in</span> result:
+                result[key] = f(result[key], val)
+            <span style="color: #a020f0;">else</span>:
+                result[key] = val
+    <span style="color: #a020f0;">return</span> result
+</pre></div>
+
+
+
+<p>
+Автор Clojure-версии протестировал программу на своём ноутбуке:
+</p>
+<blockquote>
+
+<p>Ура! Все работает. Расчет занял 12 секунд на МacBook Pro (2.53 GHz
+Intel Core 2 Duo, 4GB RAM), то есть около 100 поколений в секунду.
+</p>
+</blockquote>
+
+
+
+
+
+<pre class="src src-clojure">&gt; <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">count</span> <span style="color: #8c8c8c;">(</span>nth-gen 1103 [[0 1][1 1][2 1][1 2][2 0]]<span style="color: #8c8c8c;">))</span>
+116
+</pre>
+
+
+
+<p>
+Я протестировал свою версию на своём безымянном нетбуке российской
+сборки, с процессором Atom N450 1.4 и 2G RAM под Jolicloud 1.0; и у
+меня расчёт занял те же 12 секунд.
+</p>
+
+
+
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #a020f0;">print</span> <span style="color: #7a378b;">len</span>(nth_gen(1103, ((0, 1), (1, 1), (2, 1), (1, 2), (2, 0))))
+116
+</pre>
+
+
+
+<p>
+<b>P.S.</b> Уже довольно долго у меня зреют сумбурные мысли по поводу
+использования <i>goto</i>, <i>рекурсии</i>, <i>циклов</i>, и <i>DSL</i>
+(предметно-ориентированных языков) для решения одних и тех же
+задач. Буквально месяц назад к этому прибавились еще и размышления о
+<i>литературном программировании</i>, но сейчас я не смогу связать всё это
+в что-то осмысленно-структурированное, поэтому предлагаю вам взглянуть
+на решение одной маленькой задачи, а именно реализации функции
+<code>nth-gen</code> в четырех парадигмах, и высказать здесь первое, что пришло в
+голову:
+</p>
+<ul>
+<li>
+Рекурсия, Clojure
+
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">nth-gen</span> [n cells] 
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">==</span> n 0<span style="color: #8c8c8c;">)</span> 
+      cells
+      <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">recur</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">-</span> n 1<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>next-gen cells<span style="color: #8c8c8c;">))))</span>
+</pre>
+
+
+
+</li>
+<li>
+Цикл, Python
+
+
+
+
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">nth_gen</span>(n, cells):
+    gen = cells
+    <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #7a378b;">range</span>(0, n):
+        gen = next_gen(gen)
+    <span style="color: #a020f0;">return</span> gen
+</pre>
+
+
+
+</li>
+<li>
+DSL, Common Lisp
+
+
+
+
+<pre class="src src-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">nth-gen</span> <span style="color: #8c8c8c;">(</span>n, cells<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">loop</span> repeat n for gen = cells then <span style="color: #8c8c8c;">(</span>next-gen gen<span style="color: #8c8c8c;">)</span>
+        finally return gen<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+</li>
+<li>
+Литературное программирование, любой язык
+
+
+
+
+<pre class="example">&lt;&lt;Получить n-ое поколение клеток применив функцию
+  'next-generation' к поколению 'cells' n раз&gt;&gt;
+
+&lt;&lt;Получить n-ое поколение клеток применив функцию
+  'next-generation' к поколению 'cells' n раз&gt;&gt;=
+Реализация этого псевдокода на чем угодно и как угодно, с
+оптимизацией, без оптимизации, рекурсией, через GOTO, на асме...
+
+Здесь мог бы быть любой из приведенных выше кусков кода.
+@
+</pre>
+
+
+</li>
+</ul>
+

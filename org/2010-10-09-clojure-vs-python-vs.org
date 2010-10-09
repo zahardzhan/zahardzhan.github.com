@@ -1,0 +1,164 @@
+#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
+#+STARTUP: SHOWALL INDENT
+#+STARTUP: HIDESTARS
+#+begin_html
+---
+layout: post
+title: Clojure vs Python vs ...?
+---
+#+end_html
+
+Несколько недель назад я почти потерял всякий интерес к Clojure. И
+правда, что в ней может быть такого интересного? Она простая,
+функциональная и в ней есть транзакционная память, персистентные
+структуры, метаданные и удобные макросы, но я изучал её около года, и
+в общем, не скажу что её фичи убийственнее фич других языков. В конце
+концов, я скажу лишь, что это чертовски хороший лисп, на котором
+приятно писать многопоточные программы: это продукт эволюции, но не
+революции.
+
+Я пишу эту заметку с небольшим опозданием, всего каких-то пару-тройку
+недель, да к тому же это еще и злостный самобоян с моей стороны, но да
+ладно; так вот, недавно в ленте гугл-ридера мне попалась [[http://raindog-2.livejournal.com/16470.html][пара постов]] в
+ЖЖ — автор показал свою реализацию игры «жизнь» на Clojure — всего 6
+строк кода.
+
+#+begin_src clojure
+(def nbr-deltas [[-1 -1][-1 0][-1 1][0 -1][0 1][1 -1][1 0][1 1]])
+
+(defn nbr-cells [[x y]]
+  (map (fn [[a b]] [(+ x a)(+ y b)]) nbr-deltas))
+
+(defn cell-table [cell]
+  (apply conj {cell 10} (map #(vec [% 1]) (nbr-cells cell))))
+
+(defn all-table [cells]
+  (apply merge-with + (map cell-table cells)))
+
+(defn next-gen [cells] 
+  (keys (filter #(#{3 12 13} (second %)) (all-table cells))))
+
+(defn nth-gen [n cells]
+  (if (== n 0) cells (recur (- n 1) (next-gen cells))))
+#+end_src
+
+Я подумал «почему бы не сравнить „функциональность“ Clojure с
+„функциональностью“ Python?»
+
+Ну и сравнил: не вдаваясь в подробности и особо не раздумывая на
+красóтами результата, передрал код один-в-один.
+
+#+begin_src python :noweb none :tangle none
+nbr_deltas = (-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)
+
+def nbr_cells(c):
+  return ret[(c[0] + d[0], c[1] + d[1]) for d in nbr_deltas]
+
+def cell_table(cell):
+  return dict((c, v) for c, v in [(cell, 10)] + [(nbr, 1) for nbr in nbr_cells(cell)])
+
+<<define-function-merge-with>>
+
+def all_table(cells):
+  return merge_with(lambda x,y: x+y, [cell_table(cell) for cell in cells])
+
+def next_gen(cells):
+  return [cell for cell, val in all_table(cells).iteritems() if val in (3, 12, 13)]
+
+def nth_gen(n, cells):
+    gen = cells
+    for i in range(0, n):
+        gen = next_gen(gen)
+    return gen
+#+end_src
+
+Фактически, те же самые 6 строк. Единственные отличия — в библиотеке
+питона нет функции =merge-with= для слияния словарей, и функция
+=nth-gen= реализована императивно из-за отсутствия оптимизации
+хвостовой рекурсии в питоне.
+
+#+srcname: define-function-merge-with
+#+begin_src python
+def merge_with(f, maps):
+    result = {}
+    for map in maps:
+        for key, val in map.iteritems():
+            if key in result:
+                result[key] = f(result[key], val)
+            else:
+                result[key] = val
+    return result
+#+end_src
+
+Автор Clojure-версии протестировал программу на своём ноутбуке:
+
+#+begin_quote
+Ура! Все работает. Расчет занял 12 секунд на МacBook Pro (2.53 GHz
+Intel Core 2 Duo, 4GB RAM), то есть около 100 поколений в секунду.
+#+end_quote
+
+#+begin_src clojure
+> (count (nth-gen 1103 [[0 1][1 1][2 1][1 2][2 0]]))
+116
+#+end_src
+
+Я протестировал свою версию на своём безымянном нетбуке российской
+сборки, с процессором Atom N450 1.4 и 2G RAM под Jolicloud 1.0; и у
+меня расчёт занял те же 12 секунд.
+
+#+begin_src python
+>>> print len(nth_gen(1103, ((0, 1), (1, 1), (2, 1), (1, 2), (2, 0))))
+116
+#+end_src
+
+*P.S.* Уже довольно долго у меня зреют сумбурные мысли по поводу
+использования /goto/, /рекурсии/, /циклов/, и /DSL/
+(предметно-ориентированных языков) для решения одних и тех же
+задач. Буквально месяц назад к этому прибавились еще и размышления о
+/литературном программировании/, но сейчас я не смогу связать всё это
+в что-то осмысленно-структурированное, поэтому предлагаю вам взглянуть
+на решение одной маленькой задачи, а именно реализации функции
+=nth-gen= в четырех парадигмах, и высказать здесь первое, что пришло в
+голову:
+
+- Рекурсия, Clojure
+
+  #+begin_src clojure
+  (defn nth-gen [n cells] 
+    (if (== n 0) 
+        cells
+        (recur (- n 1) (next-gen cells))))
+  #+end_src
+
+- Цикл, Python
+
+  #+begin_src python
+  def nth_gen(n, cells):
+      gen = cells
+      for i in range(0, n):
+          gen = next_gen(gen)
+      return gen
+  #+end_src
+
+- DSL, Common Lisp
+
+  #+begin_src lisp
+  (defun nth-gen (n, cells)
+    (loop repeat n for gen = cells then (next-gen gen)
+          finally return gen))
+  #+end_src
+
+- Литературное программирование, любой язык
+
+  #+begin_example
+  <<Получить n-ое поколение клеток применив функцию
+    'next-generation' к поколению 'cells' n раз>>
+  
+  <<Получить n-ое поколение клеток применив функцию
+    'next-generation' к поколению 'cells' n раз>>=
+  Реализация этого псевдокода на чем угодно и как угодно, с
+  оптимизацией, без оптимизации, рекурсией, через GOTO, на асме...
+  
+  Здесь мог бы быть любой из приведенных выше кусков кода.
+  @
+  #+end_example
