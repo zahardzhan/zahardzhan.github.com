@@ -1,0 +1,140 @@
+---
+layout: post
+title: Машинка Тьюринга
+---
+
+<p>
+Студеною зимней порою я коротал вечера за чтением популярной книжки
+Пенроуза «Новый ум короля», в которой математик рассказывал «о
+компьютерах, мышлении и законах физики». Это было увлекательное чтиво,
+местами сдобренное доброй пачкой формул из разных областей физики и
+математики.
+</p>
+<p>
+Первая глава была посвящена машине Тьюринга и
+&lambda;-исчислению. Тогда я как раз только начал изучать Clojure, и
+вот однажды вечером на меня снизошло толи вдохновение толи смертная
+скука — от нечего делать я решил написать маленькую машину
+Тьюринга. Часом позже машина была готова. Она получилась очень
+маленькая и в целом, достаточно хорошая — на следующее утро я очень
+удивился увидев свой твит с ссылкой на github.gist с кодом на планете
+Clojure.
+</p>
+<p>
+Я не большой любитель формальностей компьютерных наук, поэтому опишу
+суть машины по-простому. Итак, <a href="http://en.wikipedia.org/wiki/Turing_machine"><i>машина Тьюринга</i></a> — это штуковина,
+которая пребывает в одном из множества состояний и управляется
+правилами перехода между ними; ездит взад-вперед по ленте с нулями и
+единицами и по ходу своей езды переписывает ленту до тех пор пока не
+остановится или не зависнет (и тогда она уже никогда не остановится).
+</p>
+<p>
+Чудесная возможность <i>зависнуть</i> при удачном сочетании правил перехода
+и нулей-единиц на ленте делает машину Тьюринга настоящим компьютером,
+а заодно позволяет вычислить ею все, что можно вычислить на любом
+другом компьютере.
+</p>
+<p>
+<code>UN+1</code> — это набор правил для машины которая добавляет к
+последовательности единиц на ленте одну единицу справа. Правила к ней я
+задал в формате который использует Пенроуз в своей книге. Функция
+<code>convert-rules</code> преобразует правила в более удобный для Clojure
+формат.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">convert-rules</span> [rules]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> conj [] <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">for</span> [rule rules <span style="color: #7a378b;">:let</span> [[state read jump write move] rule]]
+                   {<span style="color: #7a378b;">:state</span> state <span style="color: #7a378b;">:read</span> read <span style="color: #7a378b;">:jump</span> jump <span style="color: #7a378b;">:write</span> write <span style="color: #7a378b;">:move</span> move}<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+Состояния машины и правила перехода между ними задаются в таблице;
+машина на сверяется с ней на каждом шаге своей работы.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">UN+1</span> <span style="color: #8c8c8c;">(</span>convert-rules '[[0 0 0 0 R]
+                           [0 1 1 1 R]
+                           [1 0 0 1 S]
+                           [1 1 1 1 R]]<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+<p>
+Здесь 1ый столбик — это номер состояния, 2ой — цифра которую прочла
+машина с ленты, 3ий — в какое состояние машина должна перейти, 4ый —
+что она должна записать на ленту, 5ый — команда шага: R (сдвинуться на
+ленте вправо), L (сдвинуться на ленте влево), N (остаться на месте) и
+S (остановиться).
+</p>
+<p>
+Сама машина задается таблицей правил <i>rules</i>, индикатором активности
+<i>running</i>, номером текущего состояния <i>state</i>, позицией на ленте
+<i>pos</i>, и лентой по которой она ездит <i>tape</i>.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">machine</span> [rules running state pos tape] 
+  {<span style="color: #7a378b;">:rules</span> rules <span style="color: #7a378b;">:running</span> running <span style="color: #7a378b;">:state</span> state <span style="color: #7a378b;">:pos</span> pos <span style="color: #7a378b;">:tape</span> tape}<span style="color: #8c8c8c;">)</span>
+</pre>
+
+
+
+<p>
+На каждом шаге своей работы машина читает ячейку ленты и изменяет свое
+состояние соответственно таблице правил.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">step</span> [{<span style="color: #7a378b;">:as</span> machine <span style="color: #7a378b;">:keys</span> [state pos tape rules running]}]
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if-not</span> running machine
+          <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">some</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [{<span style="color: #7a378b;">:as</span> rule <span style="color: #7a378b;">:keys</span> [write jump move]}]
+                  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">and</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">=</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:state</span> machine<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:state</span> rule<span style="color: #8c8c8c;">))</span>
+                             <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">=</span> <span style="color: #8c8c8c;">(</span>tape pos<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:read</span> rule<span style="color: #8c8c8c;">)))</span>
+                    <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">assoc</span> machine
+                      <span style="color: #7a378b;">:running</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">not=</span> move 'S<span style="color: #8c8c8c;">)</span>
+                      <span style="color: #7a378b;">:state</span> jump
+                      <span style="color: #7a378b;">:tape</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">assoc</span> tape pos write<span style="color: #8c8c8c;">)</span>
+                      <span style="color: #7a378b;">:pos</span> <span style="color: #8c8c8c;">((</span>case move L dec, R inc, N identity, S inc<span style="color: #8c8c8c;">)</span> pos<span style="color: #8c8c8c;">))))</span>
+                rules<span style="color: #8c8c8c;">)))</span>
+</pre>
+
+
+
+<p>
+Запуск машины может привести к зависанию, так что надо быть осторожнее.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">run</span> [machine]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">println</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:tape</span> machine<span style="color: #8c8c8c;">))</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">:running</span> machine<span style="color: #8c8c8c;">)</span> 
+    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">recur</span> <span style="color: #8c8c8c;">(</span>step machine<span style="color: #8c8c8c;">))))</span>
+</pre>
+
+
+
+
+<pre class="src src-clojure">clojure.turing-machine.machine&gt; <span style="color: #8c8c8c;">(</span>run <span style="color: #8c8c8c;">(</span>machine UN+1 true 0 0 [0 1 1 0 0]<span style="color: #8c8c8c;">))</span>
+[0 1 1 0 0]
+[0 1 1 0 0]
+[0 1 1 0 0]
+[0 1 1 0 0]
+[0 1 1 1 0]
+nil
+</pre>
+
+
+
+<p>
+Как и ожидалось, машина дописала единичку справа.
+</p>
