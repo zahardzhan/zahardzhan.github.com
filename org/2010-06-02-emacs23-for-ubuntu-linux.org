@@ -8,6 +8,12 @@ title: Emacs 23 в Ubuntu
 ---
 #+END_HTML
 
+*Недавно* все стало сильно проще:
+
+: sudo add-apt-repository ppa:ubuntu-elisp/ppa
+: sudo apt-get update
+: sudo apt-get install emacs23
+
 Недавно вышел Emacs 23.2, в главных фичах которого --- поддержка
 шрифтовых настроек гнома, то есть шрифты в нём /такие же/, как и во
 всех остальных программах. Одного этого достаточно, чтобы не
