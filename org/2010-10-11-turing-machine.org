@@ -62,6 +62,14 @@ title: Машинка Тьюринга
 ленте вправо), L (сдвинуться на ленте влево), N (остаться на месте) и
 S (остановиться).
 
+#+BEGIN_HTML
+<div class="figure">
+<p><a href="/images/un+1-turing-machine-program.png">
+   <img src="/images/un+1-turing-machine-program.png"
+        alt="Машина UN+1"></a></p>
+</div>
+#+END_HTML
+
 Сама машина задается таблицей правил /rules/, индикатором активности
 /running/, номером текущего состояния /state/, позицией на ленте
 /pos/, и лентой по которой она ездит /tape/.
