@@ -93,7 +93,18 @@ div.post li p {margin-top: 0.5em; margin-bottom: 0em;}
 div.post li + li {margin-top: 0.7em;}
 div.post dd p {margin-top: 0.5em; margin-bottom: 0em;}
 div.post dd + dt {margin-top: 0.7em;}
-div.post pre {background-color: #F5F5EA; padding: 0.7em 0.7em 0.7em; margin: 0; overflow: auto; display: inline-block; min-width: 552px; max-width: 820px;}
+div.post pre {
+    background-color: #F5F5EA; 
+    padding-top: 0.7em; 
+    padding-bottom: 0.7em;
+    padding-left: 0.7em;
+    padding-right: 1.4em;
+    margin: 0; 
+    overflow: auto; 
+    display: inline-block; 
+    min-width: 552px; 
+    max-width: 820px;
+}
 div.post li pre, div.post dd pre {margin-top: 0.5em;}
 div.post div.figure {margin: 1em 0em; text-align: center;}
 div.post div.figure p {text-align: center; font-style: italic; font-size: smaller; text-indent: 0;}
