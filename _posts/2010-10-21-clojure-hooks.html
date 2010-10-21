@@ -1,0 +1,223 @@
+---
+layout: post
+title: Ловушки для Clojure
+---
+
+<p>
+Java — суровый язык для суровых программистов.
+</p>
+<p>
+Нет, Java-программисты не вытирают попу наждачной бумагой (хотя, это
+как посмотреть), но считают даже легкий намек на динамичность языка
+недопустимой роскошью, поэтому суровые Java-хакеры написали <i>второй компилятор</i> для придания своим программам малой толики функциональной
+комбинаторики. Саму идею ради которой собственно и был написан этот
+второй компилятор назвали чуть ли не новой парадигмой программирования
+(<i>Аспектно-ориентированное программирование</i>, АОП) — со своей,
+принципиально новой терминологией, куда уж без неё.
+</p>
+<p>
+Но это не более чем мой скромный взгляд на жизнь Java-сообщества и
+проект десятилетней давности «<a href="http://en.wikipedia.org/wiki/AspectJ">AspectJ</a>». Определенно, создатель
+AspectJ, Грегор Кичалес (Gregor Kiczales), совсем не дурак — профессор
+Computer Science и ко всему большой лиспер, приложивший руку к Common
+Lisp Object System, автор книги «Art of the Metaobject Protocol», о
+которой небезызвестный Алан Кэй (Alan Kay) <a href="http://www.cc.gatech.edu/fac/mark.guzdial/squeak/oopsla.html">сказал</a>
+</p>
+<blockquote>
+
+<p>«Art of the Metaobject Protocol» это лучшая компьютерная книга
+написанная за последние десять лет [1990-2000].
+</p>
+</blockquote>
+
+
+<p>
+Думаю, биография создателя AspectJ делает очевидным предположение о
+том, что само АОП по своей сути является попыткой перенести фичи
+Common Lisp в Java, на что я приведу сомнительное (<i>citation needed</i>)
+высказывание Питера Норвига
+</p>
+<blockquote>
+
+<p>В Лиспе, если вы хотите аспектно-ориентированного программирования —
+нужно лишь написать немного макросов, и готово.
+</p>
+<p>
+В Java — нужен Грегор Кичалес, создающий новую фирму, и месяцы и годы
+попыток заставить всё это работать.
+</p>
+</blockquote>
+
+
+<p>
+Лисп всегда был практичным языком. По крайней мере мне он всегда
+нравился именно за свою практичность. И если кто-то скажет, мол
+«лисп — академическая игрушка» — не верте, ибо это чушь и сказка. Три
+больших лиспа последней четверти века: <i>Emacs Lisp</i>, <i>Common Lisp</i> и
+<i>Clojure</i> были заточены исключительно под практические нужды.
+</p>
+<p>
+Соответственно, в старых лиспах уже очень, очень долгое время (десятки
+лет, насколько я могу судить) был собственный и очень добротный
+инструментарий для «АОП» (в кавычках — тогда это называлось
+по-другому): <i>advice</i> в Emacs Lisp и Common Lisp Object System <i>Method Combinations</i> (<i>комбинаторы методов</i> или <i>сочетания методов</i>&hellip; проблемы с переводом терминов).
+</p>
+<p>
+До недавнего времени я не видел ничего подобного для Clojure, но мне
+хотелось испробовать АОП-шные фичи, и вот, летом 2010 года,
+technomancy опубликовал на гитхабе библиотеку «ловушек» <a href="http://github.com/technomancy/robert-hooke.git">Robert Hooke</a>. Находясь под впечатлением от книги «<a href="http://zahardzhan.github.com/2010/beautiful-code-paperback.html">Идеальный код</a>», на
+следующий же день я её <a href="http://github.com/zahardzhan/hooks">форкнул</a> дабы привести в более кложурообразный
+вид и сделать чуть погибче.
+</p>
+<p>
+С того момента когда я прочел приведенную выше цитату Норвига меня
+мучил вопрос — «а правда ли, что для реализации основны АОП в лиспе
+нужны макросы?» Я разобрался как работают ловушки technomancy, и
+оказалось, что макросы не нужны. Для их реализации достаточно лишь
+динамических переменных, метаданных и функций высшего порядка. И все
+это в семидесяти (!!!) строках кода. После переписывания реализации
+technomancy я искренне удивился компактности кода.
+</p>
+<p>
+Ловушки по сути являются крохотным фреймворком вокруг простого, но
+сурового комбинатора функций — он позволяет мощным чисто
+функциональным механизмам сослужить нам полезную императивную
+службу. Technomancy в <a href="http://blog.fogus.me/2010/06/28/take-8-phil-hagelberg/">интервью</a> назвал код этого комбинатора (2 строчки
+на Clojure) «своим любимым кусочком кода».
+</p>
+<p>
+Ловушки используются <i>для изменения поведения функции без изменения её оригинальной реализации</i>. Это такая своеобразная техника подключения
+«функций-плагинов» к функции.
+</p>
+<p>
+Функция <i>add-hook</i> устанавливает ловушку в одном из трех мест:
+</p>
+<dl>
+<dt>before</dt><dd>
+Ловушка вызывается перед вызовом оригинальной функции.
+
+</dd>
+<dt>after</dt><dd>
+Ловушка вызывается после вызова оригинальной функции.
+
+</dd>
+</dl>
+
+<p>В before и after-ловушки имеет смысл устанавливать чисто
+императивные функции — только такие смогут повлиять на ход выполнения
+программы. При вызове в эти ловушки передаются аргументы вызова. Эти
+ловушки вызываются непосредственно до и после вызова оригинальной
+функции; все around-ловушки «оборачивают» before и after-ловушки.
+</p>
+<dl>
+<dt>around</dt><dd>
+Ловушка вызывается вместо вызова оригинальной функции. При
+вызове в неё передается функция которую ловушка
+«оборачивает» и аргументы вызова.
+
+</dd>
+</dl>
+
+<p>В around-ловушки можно устанавливать чистые функции, грязные
+функции, использующие всевозможные with-макросы, заменяющие аргументы,
+модифицирующие их количество — настоящее раздолье для программерской
+фантазии.
+</p>
+<p>
+Функция <i>add-hook</i> принимает 4 аргумента, в стиле функции <i>add-watch</i>
+из clojure.core:
+</p>
+<ol>
+<li>
+Ключ <code>:before</code>, <code>:after</code> или <code>:around</code>.
+</li>
+<li>
+Функцию, анонимную функцию или имя переменной, содержащей функцию
+(например, <code>#'+</code>), около которой мы ставим ловушку.
+</li>
+<li>
+Уникальный ключ именующий ловушку, чтобы можно было её удалить.
+</li>
+<li>
+Функцию которую мы ставим в ловушку.
+
+</li>
+</ol>
+
+<p>Функция <i>remove-hook</i> снимает ловушку. Она принимает 3 аргумента:
+</p>
+<ol>
+<li>
+Ключ <code>:before</code>, <code>:after</code> или <code>:around</code>.
+</li>
+<li>
+Функцию, анонимную функцию или имя переменной, содержащей функцию
+(например, <code>#'+</code>), около которой мы поставили ловушку.
+</li>
+<li>
+Уникальный ключ именующий ловушку.
+
+</li>
+</ol>
+
+<p><b>Небольшой пример</b> иллюстрирующий работу с ловушками.
+</p>
+
+
+
+<pre class="src src-clojure"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">examine</span> [x]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">print</span> x<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">microscope</span> [f x]
+  <span style="color: #8c8c8c;">(</span>f <span style="color: #8c8c8c;">(</span>.toUpperCase x<span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">doubler</span> [f &amp; xs]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> f xs<span style="color: #8c8c8c;">)</span>
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> f xs<span style="color: #8c8c8c;">))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">telescope</span> [f x]
+ <span style="color: #8c8c8c;">(</span>f <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> str <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">interpose</span> <span style="color: #8b2252;">" "</span> x<span style="color: #8c8c8c;">))))</span>
+
+<span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defn</span> <span style="color: #0000ff;">into-string</span> [f &amp; xs]
+  <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">with-out-str</span> <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">apply</span> f xs<span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span>add-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:microscope</span> microscope<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:doubler</span>    doubler<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:telescope</span>  telescope<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:into-str</span>   into-string<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>add-hook <span style="color: #7a378b;">:after</span>  #'examine <span style="color: #7a378b;">:dotspace</span>   <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">fn</span> [&amp; args] <span style="color: #8c8c8c;">(</span><span style="color: #7a378b;">print</span> \. \space<span style="color: #8c8c8c;">)))</span>
+
+<span style="color: #8c8c8c;">(</span>examine <span style="color: #8b2252;">"Before i forget"</span><span style="color: #8c8c8c;">)</span>
+&gt; B E F O R E   I   F O R G E T.  B E F O R E   I   F O R G E T.  
+
+<span style="color: #8c8c8c;">(</span>remove-hook <span style="color: #7a378b;">:after</span>  #'examine <span style="color: #7a378b;">:dotspace</span><span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>remove-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:doubler</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #8c8c8c;">(</span>examine <span style="color: #8b2252;">"Before i forget"</span><span style="color: #8c8c8c;">)</span>
+&gt; B E F O R E   I   F O R G E T
+
+<span style="color: #8c8c8c;">(</span>remove-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:microscope</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #8c8c8c;">(</span>examine <span style="color: #8b2252;">"Before i forget"</span><span style="color: #8c8c8c;">)</span>
+&gt; B e f o r e   i   f o r g e t
+
+<span style="color: #8c8c8c;">(</span>remove-hook <span style="color: #7a378b;">:around</span> #'examine <span style="color: #7a378b;">:telescope</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #8c8c8c;">(</span>examine <span style="color: #8b2252;">"Before i forget"</span><span style="color: #8c8c8c;">)</span>
+&gt; Before i forget
+</pre>
+
+
+
+<p>
+Вся эта магия достигается благодаря метаданным. Когда мы добавляем
+функцию-ловушку к оригинальной функции — они обе переезжают в
+метаданные третьей функции которая будет их вызывать, и эта третья
+занимает имя оригинальной функции. Все последующие ловушки добавляются
+уже непосредственно в метаданные, а когда все ловушки снимаются — все
+возвращается на свои места, как будто ничего и не было.
+</p>
+<p>
+Чтобы использовать ловушки в своих программах укажите в зависимостях
+Leiningen <code>[hooks "1.0.0"]</code>.
+</p>
