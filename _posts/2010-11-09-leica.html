@@ -1,0 +1,1669 @@
+---
+layout: post
+title: Лейка
+---
+
+<p>
+
+
+<p>
+<a name="NWD40utgl-1">*</a>
+<h2>Введение</h2>
+<p>
+Год назад, после недолгого изучения Python и Common Lisp я взялся за
+Clojure. Примерно в то же время я открыл для себя местный
+файлообменный сайт, ныне опустившийся до непотребного в плане рекламы
+состояния, но все еще приносящий пользу, благо на нем обитает немало
+народу со всего дальнего востока. На этом сайте любой желающий может
+опубликовать свое сообщение&nbsp;— набор из картинок, текста описания и
+ссылок на залитые на файлообменник файлы. Часто среди опубликованного
+попадаются действительно стоящие вещи. И в большинстве случаев это
+добрая пачка ссылок на файлы общим весом в несколько
+гигабайт. Естественно, качать ручками из браузера и караулить не
+сломалось ли чего по ходу дела&nbsp;— не мой метод.
+<p>
+Ubuntu&nbsp;— моя домашняя система. В сообществе файлообменника есть
+программирующие люди, но они ориентируются в основном на пользователей
+Windows. На то есть веская причина, ведь согласно статистике линуксом
+пользуется всего один процент пользователей (согласно опросу). И это
+естественно, что под линукс программ нет. Точнее есть&nbsp;— скрипты
+некоторых пользователей, но они страшны как смертный грех. А тот один
+единственный достойный менеджер закачек и по совместительству плугин
+Фаерфокса (которым я не пользуюсь с тех пор как появился Хром) слишком
+«общий» и не достаточно хорошо заточен под местный сайт.
+<p>
+Я взялся написать качалку. Сперва пробовал написать её на Common Lisp,
+но у меня не получилось&nbsp;— я слишком плохо его знал. Потом попробовал
+написать её на Python. Получилось. Но программа была многопоточная, а
+питон и многопоточность&nbsp;— вещи не лучшим образом подходящие друг
+другу. Структура программы походила на многоэтажное здание,
+построенное из костылей.
+<p>
+Я бросил Python и взялся переписать программу на Clojure. Получилось
+не с первого раза, но процесс и результат меня порадовали: при всей
+многопоточности работа с состоянием так же проста, как в обычных,
+однопоточных императивных программах&nbsp;— происходит практически «не
+задумываясь», одним словом Clojure&nbsp;— отличный выбор для
+многопоточных сетевых приложений.
+<p>
+Если быть чуть более честным, то версия «Лейки», которую я здесь
+описываю является плодом многократных переписываний и всевозможных
+экспериментов над кодом, стилем и подходом к написанию программ на
+Clojure. Эту программу я переписывал около семи раз в течение
+года. Усилия, что я приложил к этому&nbsp;— хорошая цена за полученный
+мною опыт. В результате каждой такой переписи я осваивал тот или иной
+прием программирования. И изложенная ниже финальная версия программы
+представляет собой предельно идиоматичный Clojure-код который я сейчас
+способен написать.
+<p>
+<a name="NWD40utgl-2">В этой статье целиком и полностью, в стиле «литературного</a>
+программирования», описана моя маленькая программа, многопоточный
+консольный менеджер закачек «Лейка». Я пользуюсь этой программой уже
+очень давно и скачал ею не одну сотню гигабайт, так что я надеюсь, эта
+программа послужит читателю если и не для практических целей, то
+хотябы для учебных. Но прежде чем перейти к деталям реализации я
+сделаю большое отступление и расскажу о тонкостях работы с состоянием
+в Clojure.
+<p>
+<h2>Работа с состоянием в Clojure</h2>
+<p>
+Clojure&nbsp;— особенный императивный язык. В отличие от подавляющего
+большинства языков программирования, в которых есть только один способ
+работы с состоянием&nbsp;— старые добрые переменные, в Clojure их как
+минимум четыре, из-за специфичного подхода <em>программной
+транзакционной памяти</em> (<em>software transactional memory, STM</em>).
+<p>
+Подход к состоянию в Clojure довольно прост&nbsp;— он основывается на
+четком разграничении <em>значения</em>, <em>состояния</em> и
+<em>идентичности</em>, которые во многих языках объединены в одну
+сущность.
+<p>
+<dl>
+<dt>Значение (<em>value</em>)<dd>Нечто неизменяемое, или совокупность
+неизменяемых величин. Например число 3&nbsp;— оно, как говорится, и в
+Африке 3&nbsp;— в математическом, вневременном смысле; все тройки
+одинаковы, в том смысле, что существует только <em>одна</em>
+«тройка».
+<p>
+<dt>Идентичность (<em>identity</em>)<dd>Сущность, которую мы ассоциируем
+с последовательностью состояний во времени. Даже если 2 идентичности
+имеют одинаковое значение (или одно и то же значение&nbsp;— тут никакой
+разницы), они не будут равны друг другу.
+<p>
+<dt>Состояние (<em>value</em>)<dd>Значение идентичности в некоторый
+момент времени.
+</dl>
+<p>
+Идентичностями (т.е. изменяемыми объектами) в Clojure являются
+<em>переменные</em> (<em>variables</em>) и <em>ссылки</em>
+(<em>references</em>), всего их 4 вида; каждый вид используется для
+своих целей.
+<p>
+<dl>
+<dt>Переменные (<em>variables</em>)<dd>могут изменяться только внутри одного
+единственного потока, поэтому они используются как глобальные
+переменные&nbsp;— к ним привязываются функции, макросы и просто
+значения; из-за динамической привязки отлично подходят для разного
+рода аспектно-ориентированного программирования.
+<p>
+<dt>Атомы (<em>atoms</em>)<dd>это переменные, доступные для чтения и
+изменения из всех потоков; изменяются атомарно, по-отдельности,
+каждый атом в своей транзакции. Ипользуются как старые добрые
+переменные в обычных языках.
+<p>
+<dt>Ссылки (<em>references</em>)<dd>как атомы, только изменяются внутри
+явно обозначенной программистом транзакции, поэтому используются для
+одновременного координированного группового изменения.
+<p>
+<dt>Агенты (<em>agents</em>)<dd>это переменные, доступные изо всех
+потоков, для изменения которых нужно отправить им <em>сообщение</em>,
+состоящее из функции с аргументами. После отправки сообщения агенту
+программа продолжает свою работу; изменение состояния агента
+(вычисление функции сообщения) происходит в отдельном потоке, после
+чего агент принимает значение результата вычисления
+сообщения. Агенту можно послать сразу несколько сообщений, они
+сохранятся в очереди сообщений и будут обработаны
+последовательно. До тех пор, пока не будет вычислено сообщение,
+агент сохраняет свое прежнее значение.
+</dl>
+<p>
+Агенты&nbsp;— ключевые компоненты в этой программе, поэтому о них стоит
+рассказать подробнее.
+<p>
+Стиль программирования агентов Clojure в миру зовется
+<em>asynchronous message-passing concurrency</em>. Здесь
+<em>asynchronous</em> означает отсутствие необходимости дожидаться
+изменения агента после отправки ему сообщения.
+<p>
+Агенты используются как основные «рабочие лошадки». В отличие от
+ссылок и атомов, изменять которые можно только «чистыми» функциями
+(точнее, очень рекомендуется&nbsp;— из-за отката и повтора транзакций
+побочные эффекты могут причинить неприятности); сообщения агентов, как
+правило&nbsp;— функции с побочными эффектами.
+<p>
+В статье местами я использую терминологию слегка нетипичную для
+Clojure, например <em>действие агента</em>&nbsp;— это то же самое, что и
+функция-сообщение которое можно отправить агенту. <em>Тело агента</em>&nbsp;—
+то же самое что и состояние агента. <em>Выполнение действия</em>&nbsp;—
+обработка сообщения.
+<p>
+Агенту можно отправить сообщение двумя способами. Первый&nbsp;— для
+«быстрых» или процессороёмких, обычно без побочных эффектов,
+сообщений. Такие сообщения будут выполняться на ограниченном, в
+зависимости от количества ядер процессора, количестве потоков:
+<p>
+<pre>
+  (send agent function args)
+</pre>
+
+Другой вариант для «долгоиграющих», обычно с обильным вводом-выводом,
+сообщений. Такие будут выполняться на большем количестве потоков, чем
+сообщения отправленные <code>send</code>'ом.
+<p>
+<pre>
+  (send-off agent function args)
+</pre>
+
+Состояние агента можно узнать в любое время&nbsp;— для этого не надо
+ждать окончания обработки отправленного ему сообщения:
+<p>
+<pre>
+  (deref agent)
+  или
+  @agent
+</pre>
+
+Если во время обработки сообщения возникает ошибка, т.е. выбрасывается
+исключение&nbsp;— оно сохраняется в агенте; ошибки агента можно увидеть
+вызвав функциию <code>agent-errors</code>. При этом агент становится
+недоступным для сообщений до тех пор, пока не будет очищен от ошибок
+функцией <code>clear-agent-errors</code>.
+<p>
+Во время обработки агентом сообщения внутри функции-сообщения
+становится доступной переменная <code>*agent*</code>, значением которой
+является агент, который обрабатывает сообщение. Таким образом агент
+может посылать сообщения самому себе. Также, не-нилевое значение
+<a name="NWD40utgl-3">переменной </a><code>*agent*</code> является признаком того, что код выполняется
+внутри действия агента.
+<p>
+Все сообщения которые агент отсылает себе или другим агентам во время
+выполнения действия задерживаются до окончания действия, что
+доставляет неудобства, так как в большинстве случаев бывает необходима
+мгновенная отправка. В подобных случаях используется функция
+<code>release-pending-sends</code>.
+<p>
+<h2>Дизайн конкурентной программы</h2>
+<p>
+В отличие от простых, последовательных программ, работающих в одном
+потоке, сконструировать конкурентную программу куда сложнее&nbsp;— из-за
+большого количества потенциальных взаимодействий между её частями,
+работающих в разных потоках (что, собственно и является смыслом слова
+«конкурентный»). Но если следовать следующим простым правилам,
+описанным в 5 главе «Message-Passing Concurrency» книги «Concepts,
+Techniques, and Models of Computer Programming» задача сильно
+упрощается.
+<p>
+<ol>
+<li><em>Неформальная спецификация</em>. Первым делом нужно
+определить&nbsp;— что же программа должна делать?
+<p>
+<li><em>Компоненты.</em> Необходимо перечислить все формы конкурентной
+активности&nbsp;— каждая из них становится компонентом (например,
+агентом). Далее следует нарисовать блочную диаграмму системы, в
+которой будут показаны все экземпляры компонентов.
+<p>
+<li><em>Протокол сообщений.</em> Решить какие сообщения будут посылать
+компоненты и спроектировать протоколы соообщений между
+ними. Нарисовать диаграмму компонентов со всеми протоколами
+сообщений.
+<p>
+<li><em>Диаграммы состояний.</em> Для каждого конкурентного компонента
+нужно нарисовать диаграмму состояний и проверить, что в каждом
+состоянии компонент получает и посылает правильные сообщения и
+выполняет правильные действия.
+<p>
+<li><em>Закодировать и распланировать.</em> Закодировать систему на
+любимом языке программирования и выбрать любимый алгоритм
+<a name="NWD40utgl-4">планирования взаимодействий между компонентами.</a>
+<p>
+<li><em>Протестировать и повторять</em> до тех пор пока программа не
+станет работать так как от нее ожидается.
+</ol>
+<p>
+В общих чертах я следовал этой схеме, но картинок в статье я приводить
+не стану. В них нет особой надобности. 
+<p>
+<h2>Неформальная спецификация</h2>
+<p>
+У нас есть текстовый файл наполненный ссылками на страницы
+разнообразных файлообменных ресурсов или прямыми ссылками
+непосредственно на файлы на этих ресурсах. Нам нужно скачать эти файлы
+с файлообменников, причем их можно качать в несколько потоков, в
+зависимости от возможностей, предоставляемых конкретными сервисами. По
+ходу скачивания могут возникнуть проблемы&nbsp;— на файлообменнике может
+не оказаться файла, загрузка может оборваться, на диске может быть
+недостаточно места. При обрыве связи загрузка должна возобновляться, если
+это возможно. Программа консольная и будет работать в пакетном режиме,
+при этом во время её работы в консоли будет отображаться полоса
+прогресса загрузки.
+<p>
+Скомпилированная в Jar программа будет запускаться так:
+<p>
+<pre>
+  <a name="NWD40utgl-5">java -jar leica.jar путь-к-файлу-с-ссылками [директория-куда-качать]</a>
+</pre>
+
+В командной строке указывается путь к файлу с ссылками и,
+необязательно, директория в которую будут скачиваться файлы. Эту
+информацию мы отразим в небольшой подсказке, которая будет выдаваться
+при запуске программы с ключом <tt>--help</tt>.
+<p>
+<pre><a name="NW40utgl-3BaZdu-1" href="#NWD40utgl-5"><dfn>&lt;help-message&gt;=</dfn></a> <b>(<a href="#NWD40utgl-9">U-&gt;</a>)</b>
+&quot;Leica -- downloader written in lisp.
+
+Run:
+
+java -jar <a href="#NWD40utgl-7">leica</a>.jar [keys] [file with links] [directory in which download files]&quot;
+</pre><p>
+
+<h2>Структура программы</h2>
+<p>
+Почти вся программа находится в одном файле. В этой статье описывается
+файл <tt>leica.clj</tt>. В репозитории есть еще один файл с модулем
+самодельного логгера <tt>log.clj</tt>. Признаюсь, мне не хватило
+терпения осилить ни один из трех монструозных джавовских логгеров,
+поэтому я написал свой собственный.
+<p>
+Clojure&nbsp;— язык настолько же функциональный, насколько и
+императивный, поэтому перед использованием имени в программе оно
+обязательно должно быть определено. Это ведет к тому, что программы на
+Clojure пишутся снизу-вверх. В этой статье я излагаю программу для
+лучшего её восприятия читателем, а не компьютером&nbsp;— и так и этак, я
+прыгаю с одного уровня на другой, перемешивая восходящий и нисходящий
+<a name="NWD40utgl-6">порядок изложения кода.</a>
+<p>
+Вот вся программа, как она видна «с высоты птичьего полета». Программа
+разбита на несколько основных секций: сперва определяется пространство
+имен в котором находится весь этот код, затем все встречающиеся в
+программе имена, диспетчеры мультиметодов, мультиметоды, в блоке
+<tt>definitions</tt> определяются значения всех имен, в самом конце
+определена главная процедура <code><a href="#NWD40utgl-9">-main</a></code>.
+<p>
+<pre><a name="NW40utgl-3xO7PV-1" href="#NWD40utgl-6"><dfn>&lt;leica.clj&gt;=</dfn></a>
+;;; -*- mode: clojure; coding: utf-8 -*-
+
+;; Copyright (C) 2010 Roman Zaharov &lt;zahardzhan@gmail.com&gt;
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+<a name="NW40utgl-3xO7PV-1-u1" href="#NWD40utgl-7"><i>&lt;namespace declaration&gt;</i></a>
+(declare <a name="NW40utgl-3xO7PV-1-u2" href="#NW40utgl-2AzSph-1"><i>&lt;names&gt;</i></a>)
+<a name="NW40utgl-3xO7PV-1-u3" href="#NWD40utgl-D"><i>&lt;macros&gt;</i></a>
+<a name="NW40utgl-3xO7PV-1-u4" href="#NW40utgl-1cbKs8-1"><i>&lt;multimethod dispatch functions&gt;</i></a>
+<a name="NW40utgl-3xO7PV-1-u5" href="#NWD40utgl-I"><i>&lt;multimethods&gt;</i></a>
+<a name="NW40utgl-3xO7PV-1-u6" href="#NW40utgl-A32Df-1"><i>&lt;definitions&gt;</i></a>
+<a name="NW40utgl-3xO7PV-1-u7" href="#NWD40utgl-9"><i>&lt;main procedure&gt;</i></a>
+</pre><p>
+
+<a name="NWD40utgl-7">В определении пространства имен указываются все используемые в коде</a>
+модули и имена из них.
+<p>
+<pre><a name="NW40utgl-20y2nx-1" href="#NWD40utgl-7"><dfn>&lt;namespace declaration&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b>
+(ns <a href="#NWD40utgl-7">leica</a>
+  (:gen-class)
+  (:use
+   [log :only [info debug error]]
+   [clojure.set :only [difference union]]
+   [clojure.contrib.duck-streams :only [slurp* read-lines]]
+   clojure.contrib.command-line
+   clojure.contrib.def
+   clojure.test
+   hooks)
+
+  (:require
+   [clojure.contrib.io :as io])
+  
+  (:import
+   (java.util Date)
+   (java.net URLDecoder
+             ConnectException)   
+   (java.io File
+            FileOutputStream
+            InputStream)
+   (org.apache.commons.httpclient URI
+                                  HttpClient
+                                  HttpStatus
+                                  ConnectTimeoutException 
+                                  NoHttpResponseException
+                                  methods.GetMethod
+                                  methods.HeadMethod
+                                  params.HttpMethodParams
+                                  util.EncodingUtil)))
+</pre><blockquote>Defines <a href="#NWI-leica"><code>leica</code></a> (links are to index).<p>
+</blockquote><p>
+<h2>Компоненты</h2> 
+<p>
+В программе будет три взаимодействующих компонента, каждый из которых
+представляет собой некоторый вид конкурентной активности&nbsp;—
+многочисленные <em>загрузки</em>, <em>планировщик загрузок</em> и
+<em>монитор прогресса</em> загрузок. Все эти компоненты представлены
+агентами Clojure и работают одновременно, координируя свои действия
+между собой.
+<p>
+<em>Загрузки</em> это основные работники в этой программе. Эти агенты
+управляют всем процессом загрузки файла, начиная от получения ссылки
+со страницы с файлообменника и заканчивая собственно скачиванием
+файла. Загрузки могут быть высокоуровневыми и по ходу своей работы
+создавать и управлять более низкоуровневыми загрузками. Загрузки
+создаются конструктором <code><a href="#NW40utgl-A32Df-3">make-download</a></code>. Все наличествующие в
+программе загрузки хранятся в глобальной переменной <code><a href="#NW40utgl-A32Df-4">downloads*</a></code>&nbsp;—
+это ссылка на множество всех загрузок.
+<p>
+Загрузки автономны, каждая из них имеет собственную программу и сама
+управляет своими действиями, поэтому внешний интерфейс к ним весьма
+прост; единственное, что можно сделать с загрузкой&nbsp;— отправить ей
+сообщение запуска <code><a href="#NWD40utgl-I">run</a></code> и тогда загрузка, в зависимости от ситуации
+в которой она находится, выполнит действие предписанное ей её
+программой.
+<p>
+<em>Планировщик загрузок</em> это агент который координирует совместную
+работу загрузок друг с другом: он составляет план, запускает загрузки
+и следит за тем чтобы между ними не возникали конфликты из-за
+ресурсов. Планировщик представлен глобальной переменной
+<code><a href="#NW40utgl-A32Df-N">download-scheduler*</a></code>. 
+<p>
+Планировщик фактически является реактивным агентом, т.е. без
+внутреннего состояния&nbsp;— он работает с глобальным состоянием всей
+программы). Ему можно послать сообщение <code><a href="#NW40utgl-A32Df-O">schedule-downloads</a></code> в ходе
+обработки которого он определит загрузки которые нужно запустить, а
+затем пошлет им сообщение запуска <code><a href="#NWD40utgl-I">run</a></code> и сообщение, предписывающее
+запустить планировщик после завершения выполнения действия
+загрузкой. Тем самым планировщик и загрузки попеременно запускают друг
+друга&nbsp;— этот цикл сообщений и является основным механизмом
+программы; когда он завершается&nbsp;— завершается и работа программы.
+<p>
+<em>Монитор прогресса</em> это агент который отвечает за отображение
+<a name="NWD40utgl-8">информации о работе программы. Он отрисовывает полосу прогресса в</a>
+консоли. Монитор представлен глобальной переменной
+<code><a href="#NW40utgl-A32Df-S">progress-monitor*</a></code>.
+<p>
+Монитор принимает сообщения от загрузок о начале слежения за
+прогрессом загрузки <code><a href="#NW40utgl-A32Df-T">begin-monitor-progress</a></code>, об отрисовке в консоли
+прогресса загрузки <code>update-progress</code> и о прекращении слежения за
+прогрессом загрузки <code><a href="#NW40utgl-A32Df-T">cease-monitor-progress</a></code>.
+<p>
+<h3>Главная процедура</h3>
+<p>
+<a name="NWD40utgl-9">Главная процедура обрабатывает аргументы командной строки. Выбирается</a>
+читабельный файл и из него считываются строки. Выбирается директория в
+которую есть доступ на запись. Если в наличии нет файла или
+директории&nbsp;— программ завершается функцией <code><a href="#NW40utgl-A32Df-1">exit-program</a></code>. Затем
+из ссылок в считанных из файла строках создаются загрузки и
+запускается планировщик загрузок, который завершает работу программы
+по окончании планирования.
+<p>
+<pre><a name="NW40utgl-1xmeVC-1" href="#NWD40utgl-9"><dfn>&lt;main procedure&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b>
+(defn <a href="#NWD40utgl-9">-main</a> [&amp; args]
+(with-command-line args
+ <a name="NW40utgl-1xmeVC-1-u1" href="#NWD40utgl-5"><i>&lt;help-message&gt;</i></a>
+ [remaining-args]
+
+    (let [lines-with-links
+          (read-lines (some #(<a href="#NW40utgl-A32Df-2">as-file</a> % :readable true :directory false) remaining-args))
+
+          workpath
+          (or (some #(<a href="#NW40utgl-A32Df-2">as-file</a> % :writeable true :directory true) remaining-args)
+              (<a href="#NW40utgl-A32Df-2">as-file</a> (System/getProperty &quot;user.dir&quot;) :writeable true :directory true))]
+
+      (when-not lines-with-links
+        (info &quot;You must specify file with links to download.&quot;)
+        (<a href="#NW40utgl-A32Df-1">exit-program</a>))
+
+      (when-not workpath
+        (info &quot;You must specify directory in which files will be downloaded.&quot;)
+        (<a href="#NW40utgl-A32Df-1">exit-program</a>))
+
+      (doseq [line lines-with-links]
+        (<a href="#NW40utgl-A32Df-3">make-download</a> line :path workpath))
+
+      (send-off <a href="#NW40utgl-A32Df-N">download-scheduler*</a> assoc :when-done <a href="#NW40utgl-A32Df-1">exit-program</a>)
+      (send-off <a href="#NW40utgl-A32Df-N">download-scheduler*</a> <a href="#NW40utgl-A32Df-O">schedule-downloads</a>))))
+</pre><blockquote>Defines <a href="#NWI--main"><code>-main</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-2AzSph-1" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[D<a href="#NWD40utgl-A">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-1">exit-program</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-1" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[D<a href="#NW40utgl-A32Df-2">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-1">exit-program</a> []
+  (debug &quot;Leica is done. Bye.&quot;)
+  (System/exit 0))
+</pre><blockquote>Defines <a href="#NWI-exit-program"><code>exit-program</code></a> (links are to index).<p>
+</blockquote><p>
+Функция <code><a href="#NW40utgl-A32Df-2">as-file</a></code> это своеобразный швейцарский нож для работы с
+файлами который я использую в основном для выяснения, существует ли
+некий файл с определенными характеристиками. Например
+<tt><a name="NWD40utgl-A">(as-file path :directory true :writeable true)</a></tt> возвращает файл
+<tt>path</tt> если это файл директории доступной для записи, в противном
+случае он возвращает <code>nil</code>.
+<p>
+Функция написана в «maybe-монадообразном стиле» характерном для кода
+на Хаскелле&nbsp;— аргумент с помощью макроса-комбинатора прогоняется
+через множество maybe-функций, и если на некотором шаге одна из
+функций возвращает <code>nil</code>, то и в конце возвращается <code>nil</code>.
+<p>
+<pre><a name="NW40utgl-2AzSph-2" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-2AzSph-1">&lt;-</a>D<a href="#NWD40utgl-B">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-2">as-file</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-2" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-1">&lt;-</a>D<a href="#NW40utgl-A32Df-3">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-2">as-file</a>
+  [arg &amp; {:as args :keys [exists create readable writeable directory]}]
+  (let [argtype (type arg)
+        maybe-create
+        (fn [f] 
+          (when f 
+            (cond (and (= create true) (not (.exists f)))
+                  (let [dir (File. (.getParent f))]
+                    (if-not (.exists dir)
+                      (throw (new Exception
+                                  &quot;Cannot create file in nonexistant directory.&quot;))
+                      (if-not (.canWrite dir)
+                        (throw (new Exception
+                                    &quot;Cannot create file in nonwriteable directory.&quot;))
+                        (do (.createNewFile f) f))))
+                  :else f)))
+        maybe-exists
+        (fn [f]
+          (when f
+            (cond (= exists true) (when (.exists f) f)
+                  (= exists false) (when-not (.exists f) f)
+                  (not exists) f)))
+        maybe-directory
+        (fn [f]
+          (when f
+            (cond (= directory true) (when (.isDirectory f) f)
+                  (= directory false) (when-not (.isDirectory f) f)
+                  (not directory) f)))
+        maybe-readable
+        (fn [f]
+          (when f
+            (cond (= readable true) (when (.canRead f) f)
+                  (= readable false) (when-not (.canRead f) f)
+                  (not readable) f)))
+        maybe-writeable
+        (fn [f]
+          (when f
+            (cond (= writeable true) (when (.canWrite f) f)
+                  (= writeable false) (when-not (.canWrite f) f)
+                  (not writeable) f)))]
+
+    (cond (= argtype File)
+          (-&gt; arg maybe-create maybe-exists maybe-directory maybe-readable maybe-writeable)
+
+          (= argtype String)
+          (if args
+            (apply <a href="#NW40utgl-A32Df-2">as-file</a> (new File arg) (flatten (seq args)))
+            (<a href="#NW40utgl-A32Df-2">as-file</a> (new File arg))))))
+</pre><blockquote>Defines <a href="#NWI-as-file"><code>as-file</code></a> (links are to index).<p>
+</blockquote><p>
+
+<h2>Загрузка</h2>
+<p>
+<em>Загрузка</em> (<em>download</em>) является агентом и создается из
+соответствующего прототипа загрузки с помощью конструктора
+<code><a href="#NW40utgl-A32Df-3">make-download</a></code> из строки <tt>line</tt> содержащей ссылку на
+файлообменный ресурс. Конструктор <code><a href="#NW40utgl-A32Df-3">make-download</a></code> в качестве
+опциональных ключей принимает <em>программу загрузки</em>
+<tt>:program</tt>, каталог в который должны скачиваться файлы
+<tt>:path</tt> и имя загрузки <tt>:name</tt>. Каждой новой
+загрузке автоматически присваивается её порядковый номер
+<tt>:precedence</tt> и она добавляется ко множеству уже созданных
+загрузок <code><a href="#NW40utgl-A32Df-4">downloads*</a></code> чтобы планировщик загрузок мог обеспечить их
+корректную работу друг с другом.
+<p>
+<em>Тело загрузки</em> является хэшем (здесь и далее термин «хэш»
+обозначает базовую для Clojure структуру данных <em>hash-map</em>)
+который представляет текущее состояние агента загрузки. Разные
+загрузки создаются из разных прототипов и с разными телами&nbsp;— в
+зависимости от того какие функции они выполняют.
+<p>
+<em>Тип загрузки</em> это метка хранящаяся в ключе <tt>:type</tt>
+метаданных тела загрузки. Свой тип (и соответственно прототип)
+загрузки определяются для каждого отдельного сетевого файлообменного
+сервиса с которым работают загрузки.
+<p>
+<em>Программа загрузки</em> это функция, которая определяет каждое
+следующее <em>действие</em> загрузочного агента, она полностью
+контролирует его поведение; на вход она принимает <em>тело
+загрузки</em>, на выходе выдает функцию-действие, которую должен
+выполнить загрузочный агент.
+<p>
+<em>Действие</em> загрузочного агента это функция которая применяется к
+телу агента, она выполняет некоторую полезную работу и изменяет
+состояние агента.
+<p>
+Возникающие во время выполнения действия ошибки, непредусмотренные или
+возникающие по воле программиста, должны приводить к выбрасыванию
+исключения.
+<p>
+Большинство загрузочных агентов содержат следующие ключи в своих телах:
+<p>
+<dl>
+<dt>:link<dd>это самая важная часть загрузочного агента&nbsp;— ссылка
+которую загрузка будет обрабатывать и ради обработки которой она
+создавалась. Например загрузки которые обрабатывают прямые ссылки
+на файл просто загружают этот файл, в процессе следя за тем, чтобы
+не кончилось место на диске или не было дубликатов. Или если
+загрузка создана для обработки ссылок на пользовательские страницы
+файлообменника, то она как правило занимается тем, что вырезает
+прямые ссылки из страницы, а затем создает и запускает новые
+загрузки для каждой прямой ссылки.
+<p>
+<dt>:link-pattern<dd>это неотемлемая часть всех прототипов загрузок
+и используется только в момент создания новой загрузки из
+прототипа. Содержит регулярное выражение, с которым сравнивается
+строка <tt>line</tt>, переданная в конструктор загрузки
+<code><a href="#NW40utgl-A32Df-3">make-download</a></code>.
+<p>
+<dt>:name<dd>это имя загрузки. Обычно это имя загружаемого файла или
+заголовок страницы которую парсит высокоуровневая загрузка при
+получении прямых ссылок.
+<p>
+<dt>:path<dd>это директория в которую загружаются файлы.
+<p>
+<dt>:program<dd>это программа загрузочного агента.
+<p>
+<dt>:precedence<dd>это порядковый номер загрузки.
+<p>
+<dt>:alive<dd>определяет жива ли загрузка. Если загрузка мертва,
+то она не может выполнить никакое действие. Для проверки
+используется предикаты <code><a href="#NWD40utgl-P">alive?</a></code> и <code><a href="#NWD40utgl-Q">dead?</a></code> соответственно.
+<p>
+<dt>:failed<dd>говорит о том, возникла ли ошибка во время выполнения
+прошлого действия (т.е. было ли брошено исключение во время
+выполнения действия). После каждого удачного действия сбрасывается
+на <code>false</code>. Для проверки используется предикат <code><a href="#NWD40utgl-S">failed?</a></code>.
+<p>
+<dt>:fail-reason<dd>это причина провала действия агента; содержит
+исключение которое было брошено во время выполнения последнего
+действия. Селектор&nbsp;— <code><a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a></code>. Сбрасывается на <code>nil</code>
+после каждого удачного действия.
+<p>
+<dt>:run-atom<dd>принимает истинное значение, если в данный момент
+загрузочный агент выполняет некоторое действие. Для проверки
+используется предикат <code><a href="#NWD40utgl-J">running?</a></code>.
+<p>
+<dt>:stop-atom<dd>принимает истинное значение, если загрузочный
+агент должен быть остановлен. В данный момент в программе никак не
+используется.
+<p>
+<dt>:file-length-atom<dd>содержит длину в байтах уже (частично)
+загруженного на компьютер файла, эта величина изменяется во время
+действия загрузочного агента, поэтому для хранения используется
+атом.
+<p>
+<dt>:child-link<dd>используется в высокоуровневых загрузках для
+хранения ссылки из которой создется дочерняя загрузка.
+<p>
+<dt>:child<dd>используется в высокоуровневых загрузках для хранения
+ссылки на дочерние загрузки.
+<p>
+<dt><a name="NWD40utgl-B">:max-running-downloads</a><dd>определяет максимально допустимое
+количество запущенных (т.е. одновременно выполняющих некое действие)
+загрузок данного типа (т.е. работающих с определенным
+сервисом). Используется в основном <em>планировщиком загрузок</em> и
+указывается в прототипе загрузки, если это ограничение имеет смысл
+для сетевого сервиса.
+</dl>
+<p>
+<pre><a name="NW40utgl-2AzSph-3" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-A">&lt;-</a>D<a href="#NWD40utgl-C">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-3">make-download</a> <a href="#NW40utgl-A32Df-3">downloads-precedence-counter</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-3" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-2">&lt;-</a>D<a href="#NW40utgl-A32Df-4">-&gt;</a>]</b>
+(def <a href="#NW40utgl-A32Df-3">downloads-precedence-counter</a> (atom 0))
+
+(defn <a href="#NW40utgl-A32Df-3">make-download</a> [line &amp; {:as opts :keys [program path name]}]
+  (when-let [download-prototype (<a href="#NW40utgl-A32Df-6">download-prototype-matching-address</a> line)]
+    (<a href="#NWD40utgl-D">let-return</a>
+     [dload (agent
+             (merge
+              download-prototype
+              {:precedence (swap! <a href="#NW40utgl-A32Df-3">downloads-precedence-counter</a> inc)
+               :alive true
+               :failed false
+               :<a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> nil
+               :<a href="#NWD40utgl-I">run</a>-atom (atom false)
+               :<a href="#NWD40utgl-K">stop</a>-atom (atom false)}
+              (dissoc opts :program :path :name)
+              (when (<a href="#NWD40utgl-E">supplied</a> program)
+                (if-not (ifn? program)
+                  (throw (Exception. &quot;Program must be invokable.&quot;))
+                  {:program program}))
+              (when (<a href="#NWD40utgl-E">supplied</a> path)
+                (if-let [valid-path (<a href="#NW40utgl-A32Df-2">as-file</a> path :directory true :writeable true)]
+                  {:path valid-path}
+                  (throw (Exception. &quot;Path must be writeable directory.&quot;))))
+              (when (<a href="#NWD40utgl-E">supplied</a> name)
+                (if-not (string? name)
+                  (throw (Exception. &quot;Name must be string.&quot;))
+                  {:name name}))))]
+     (<a href="#NW40utgl-A32Df-4">add-to-downloads</a> dload))))
+</pre><blockquote>Defines <a href="#NWI-downloads-precedence-counter"><code>downloads-precedence-counter</code></a>, <a href="#NWI-make-download"><code>make-download</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-C">Здесь используются функции для добавления и удаления загрузок из</a>
+множества всех загрузок <code><a href="#NW40utgl-A32Df-4">downloads*</a></code>.
+<p>
+<pre><a name="NW40utgl-2AzSph-4" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-B">&lt;-</a>D<a href="#NWD40utgl-F">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-4">downloads*</a> <a href="#NW40utgl-A32Df-4">add-to-downloads</a> <a href="#NW40utgl-A32Df-4">remove-from-downloads</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-4" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-3">&lt;-</a>D<a href="#NW40utgl-A32Df-5">-&gt;</a>]</b>
+(def <a href="#NW40utgl-A32Df-4">downloads*</a> (ref #{}))
+
+(defn <a href="#NW40utgl-A32Df-4">add-to-downloads</a> [dload]
+  (dosync (alter <a href="#NW40utgl-A32Df-4">downloads*</a> union (hash-set dload))))
+
+(defn <a href="#NW40utgl-A32Df-4">remove-from-downloads</a> [dload]
+  (dosync (alter <a href="#NW40utgl-A32Df-4">downloads*</a> difference (hash-set dload))))
+</pre><blockquote>Defines <a href="#NWI-add-to-downloads"><code>add-to-downloads</code></a>, <a href="#NWI-downloads*"><code>downloads*</code></a>, <a href="#NWI-remove-from-downloads"><code>remove-from-downloads</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-D">Вспомогательные макросы </a><code><a href="#NWD40utgl-D">with-return</a></code> и <code><a href="#NWD40utgl-D">let-return</a></code> я очень часто
+использую для явного указания значения, которое возвращает блок кода,
+потому как большинство функций агентов <em>обязаны</em> что-то
+возвращать, при этом производя некоторые побочные эффекты.
+<p>
+<pre><a name="NW40utgl-1VvxMr-1" href="#NWD40utgl-D"><dfn>&lt;macros&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[D<a href="#NWD40utgl-E">-&gt;</a>]</b>
+(defmacro <a href="#NWD40utgl-D">with-return</a> [expr &amp; body]
+  `(do (do ~@body)
+       ~expr))
+
+(defmacro <a href="#NWD40utgl-D">let-return</a> [[form val] &amp; body]
+  `(let [~form ~val]
+     (<a href="#NWD40utgl-D">with-return</a> ~form
+       (do ~@body))))
+</pre><blockquote>Defines <a href="#NWI-let-return"><code>let-return</code></a>, <a href="#NWI-with-return"><code>with-return</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-E">Макрос </a><code><a href="#NWD40utgl-E">supplied</a></code> это просто переименованный <code>and</code>, который я
+использую для проверки переданных в функцию опциональных
+ключей-аргументов.
+<p>
+<pre><a name="NW40utgl-1VvxMr-2" href="#NWD40utgl-D"><dfn>&lt;macros&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-D">&lt;-</a>D<a href="#NW40utgl-1VvxMr-3">-&gt;</a>]</b>
+(defalias <a href="#NWD40utgl-E">supplied</a> and)
+</pre><blockquote>Defines <a href="#NWI-supplied"><code>supplied</code></a> (links are to index).<p>
+</blockquote><p>
+<h3>Прототип загрузки</h3>
+<p>
+<em>Прототип загрузки</em> это обычный хэш, он служит заготовкой из которой
+затем собирается тело загрузочного агента. Прототипы хранятся в
+глобальной переменной <code><a href="#NW40utgl-A32Df-5">download-prototypes*</a></code>&nbsp;— это атом с хэшем в
+<a name="NWD40utgl-F">котором ключи&nbsp;— метки типов прототипов, а значения&nbsp;— сами</a>
+прототипы загрузок.
+<p>
+Прототип загрузки определяется макросом <code><a href="#NW40utgl-1VvxMr-3">def-download-prototype</a></code>,
+этот макрос создают переменную, значением которой является хэш с
+меткой типа унаследованной от метки <tt>::download</tt> в ключе
+<tt>:type</tt> в метаданных. Диспетчеризация по типу широко
+используется в мультиметодах селекторов и действиях загрузок.
+<p>
+<pre><a name="NW40utgl-2AzSph-5" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-C">&lt;-</a>D<a href="#NWD40utgl-G">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-5">download-prototypes*</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-5" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-4">&lt;-</a>D<a href="#NW40utgl-A32Df-6">-&gt;</a>]</b>
+(def <a href="#NW40utgl-A32Df-5">download-prototypes*</a> (atom {}))
+</pre><blockquote>Defines <a href="#NWI-download-prototypes*"><code>download-prototypes*</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-1VvxMr-3" href="#NWD40utgl-D"><dfn>&lt;macros&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-E">&lt;-</a>D<a href="#NWD40utgl-g">-&gt;</a>]</b>
+(defmacro <a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> [name body]
+  `(let [name-keyword# (keyword (str *ns*) (str (quote ~name)))]
+     (def ~name (with-meta ~body {:type name-keyword#}))
+     (derive name-keyword# ::download)
+     (swap! <a href="#NW40utgl-A32Df-5">download-prototypes*</a> assoc name-keyword# ~name)
+     ~name))
+</pre><blockquote>Defines <a href="#NWI-def-download-prototype"><code>def-download-prototype</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-G">В качестве исходных данных в лейку передается список ссылок. Причем</a>
+ссылки с определенными адресами обрабатываются загрузками
+определенного типа. Для получения прототипа загрузки, которая должна
+обрабатывать данную ссылку используется функция
+<code><a href="#NW40utgl-A32Df-6">download-prototype-matching-address</a></code>&nbsp;— она выбирает нужный
+прототип сравнивая ссылку с регулярным выражением в ключе
+<tt>:link-pattern</tt> прототипа.
+<p>
+<pre><a name="NW40utgl-2AzSph-6" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-F">&lt;-</a>D<a href="#NWD40utgl-H">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-6">download-prototype-matching-address</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-6" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-5">&lt;-</a>D<a href="#NW40utgl-A32Df-7">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-6">download-prototype-matching-address</a> [line]
+  (when-let [url (<a href="#NW40utgl-A32Df-7">extract-url</a> line)]
+    (first (for [[download-type download-prototype] @download-prototypes*
+                 :when (:link-pattern download-prototype)
+                 :let [link (re-find (:link-pattern download-prototype) url)]
+                 :when link]
+             (assoc download-prototype :link link)))))
+</pre><blockquote>Defines <a href="#NWI-download-prototype-matching-address"><code>download-prototype-matching-address</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-H">Здесь функция </a><code><a href="#NW40utgl-A32Df-7">extract-url</a></code> вырезает из произвольной строки первый
+попавшийся URL-адрес.
+<p>
+<pre><a name="NW40utgl-2AzSph-7" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-G">&lt;-</a>D<a href="#NWD40utgl-M">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-7">extract-url</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-7" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-6">&lt;-</a>D<a href="#NW40utgl-A32Df-8">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-7">extract-url</a> [line]
+  (first (re-find #&quot;((https?|ftp|file):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&amp;]*)&quot;
+                  line)))
+</pre><blockquote>Defines <a href="#NWI-extract-url"><code>extract-url</code></a> (links are to index).<p>
+</blockquote><p>
+<h3>Запуск загрузки</h3>
+<p>
+Запуск осуществляет метод <code><a href="#NWD40utgl-I">run</a></code>. Во избежание запуска тела загрузки
+при работающем агенте или запуска мертвой или остановленной загрузки
+<a name="NWD40utgl-I">перед запуском осуществляются соответствующие проверки. На время</a>
+работы агента атом <tt>run-atom</tt> в теле загрузки устанавливается в
+значение <code>true</code>. Действие <tt>action</tt> которое должна выполнить
+загрузка определяется её программой <tt>program</tt> или задается явно
+опциональным аргументом <tt>:action</tt>. Если во время выполнения
+действия исключений не возникло&nbsp;— загрузка переходит в
+бездействующее состояние, в противном случае исключение ловится и
+сохраняется в теле загрузки.
+<p>
+<pre><a name="NW40utgl-1CXBRu-1" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[D<a href="#NWD40utgl-J">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-I">run</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-run"><code>run</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-8" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-7">&lt;-</a>D<a href="#NW40utgl-A32Df-9">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-I">run</a> ::download
+  [{:as dload :keys [program <a href="#NWD40utgl-I">run</a>-atom <a href="#NWD40utgl-K">stop</a>-atom failed]} &amp; {action :action}]
+
+  (when (and (not *agent*) (<a href="#NWD40utgl-J">running?</a> dload))
+    (throw (Exception. &quot;Cannot <a href="#NWD40utgl-I">run</a> download while it is running.&quot;)))
+  
+  (debug &quot;Run download &quot; (<a href="#NWD40utgl-V">represent</a> dload))
+
+  (if (or (<a href="#NWD40utgl-Q">dead?</a> dload) (<a href="#NWD40utgl-L">stopped?</a> dload)) dload
+      (try (reset! <a href="#NWD40utgl-I">run</a>-atom true)
+           (let [action (or action (program dload))]
+             (<a href="#NWD40utgl-N">idle</a> (action dload)))
+           ;; (catch Error RuntimeException ...)
+           (catch Throwable e (<a href="#NWD40utgl-R">fail</a> dload :reason e))
+           (finally (reset! <a href="#NWD40utgl-I">run</a>-atom false)))))
+</pre><p>
+
+<a name="NWD40utgl-J">Предикат </a><code><a href="#NWD40utgl-J">running?</a></code> проверяет&nbsp;— запущен ли агент?
+<p>
+<pre><a name="NW40utgl-1CXBRu-2" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-I">&lt;-</a>D<a href="#NWD40utgl-K">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-J">running?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-running?"><code>running?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-9" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-8">&lt;-</a>D<a href="#NW40utgl-A32Df-A">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-J">running?</a> ::download [dload]
+  (deref (:<a href="#NWD40utgl-I">run</a>-atom dload)))
+</pre><p>
+
+<h3><a name="NWD40utgl-K">Остановка загрузки</a></h3>
+<p>
+В этой версии программы функция остановки загрузки не используется.
+<p>
+<pre><a name="NW40utgl-1CXBRu-3" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-J">&lt;-</a>D<a href="#NWD40utgl-L">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-K">stop</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-stop"><code>stop</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-A" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-9">&lt;-</a>D<a href="#NW40utgl-A32Df-B">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-K">stop</a> ::download [dload])
+</pre><p>
+
+<a name="NWD40utgl-L">Предикат </a><code><a href="#NWD40utgl-L">stopped?</a></code> проверяет&nbsp;— не остановлен ли агент?
+<p>
+<pre><a name="NW40utgl-1CXBRu-4" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-K">&lt;-</a>D<a href="#NWD40utgl-N">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-L">stopped?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-stopped?"><code>stopped?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-B" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-A">&lt;-</a>D<a href="#NW40utgl-A32Df-C">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-L">stopped?</a> ::download [dload]
+  (deref (:<a href="#NWD40utgl-K">stop</a>-atom dload)))
+</pre><p>
+
+<h3><a name="NWD40utgl-M">Базовые действия и предикаты загрузок</a></h3>
+<p>
+Практически все функции для работы с загрузками являются
+мультиметодами и диспетчеризуются по типу тела агента функцией
+<code><a href="#NW40utgl-1cbKs8-1">type-dispatch</a></code>.
+<p>
+<pre><a name="NW40utgl-2AzSph-8" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-H">&lt;-</a>D<a href="#NWD40utgl-Y">-&gt;</a>]</b>
+<a href="#NW40utgl-1cbKs8-1">type-dispatch</a>
+</pre><p>
+
+<pre><a name="NW40utgl-1cbKs8-1" href="#NW40utgl-1cbKs8-1"><dfn>&lt;multimethod dispatch functions&gt;=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b>
+(defn <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>
+  ([x] (type x))
+  ([x &amp; xs] (type x)))
+</pre><blockquote>Defines <a href="#NWI-type-dispatch"><code>type-dispatch</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-N">Действие </a><code><a href="#NWD40utgl-N">idle</a></code> переводит агент в бездействующее состояние.
+<p>
+<pre><a name="NW40utgl-1CXBRu-5" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-L">&lt;-</a>D<a href="#NWD40utgl-O">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-N">idle</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-idle"><code>idle</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-C" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-B">&lt;-</a>D<a href="#NW40utgl-A32Df-D">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-N">idle</a> ::download [dload]
+  (assoc dload :failed false :<a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> nil))
+</pre><p>
+
+<a name="NWD40utgl-O">Предикат </a><code><a href="#NWD40utgl-N">idle</a><a href="#NWD40utgl-O">?</a></code> проверяет&nbsp;— находится ли агент в бездействующем
+состоянии (это значит, что агент жив, не запущен, не остановлен и не ошибся
+выполняя предыдущее действие)?
+<p>
+<pre><a name="NW40utgl-1CXBRu-6" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-N">&lt;-</a>D<a href="#NWD40utgl-P">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-N">idle</a><a href="#NWD40utgl-O">?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-idle?"><code>idle?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-D" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-C">&lt;-</a>D<a href="#NW40utgl-A32Df-E">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-N">idle</a><a href="#NWD40utgl-O">?</a> ::download [dload]
+  (and (<a href="#NWD40utgl-P">alive?</a> dload)
+       (not (<a href="#NWD40utgl-J">running?</a> dload))
+       (not (<a href="#NWD40utgl-L">stopped?</a> dload))
+       (not (<a href="#NWD40utgl-S">failed?</a> dload))))
+</pre><p>
+
+<a name="NWD40utgl-P">Предикат </a><code><a href="#NWD40utgl-P">alive?</a></code> проверяет&nbsp;— жив ли агент?
+<p>
+<pre><a name="NW40utgl-1CXBRu-7" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-O">&lt;-</a>D<a href="#NWD40utgl-Q">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-P">alive?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-alive?"><code>alive?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-E" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-D">&lt;-</a>D<a href="#NW40utgl-A32Df-F">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-P">alive?</a> ::download [dload]
+  (:alive dload))
+</pre><p>
+
+<a name="NWD40utgl-Q">Предикат </a><code><a href="#NWD40utgl-Q">dead?</a></code> проверяет&nbsp;— мертв ли агент?
+<p>
+<pre><a name="NW40utgl-1CXBRu-8" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-P">&lt;-</a>D<a href="#NWD40utgl-R">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-Q">dead?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-dead?"><code>dead?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-F" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-E">&lt;-</a>D<a href="#NW40utgl-A32Df-G">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-Q">dead?</a> ::download [dload]
+  (not (<a href="#NWD40utgl-P">alive?</a> dload)))
+</pre><p>
+
+<a name="NWD40utgl-R">Действие </a><code><a href="#NWD40utgl-R">fail</a></code> используется для перевода агента в «ошибочное»
+состояние. Оно пишет в лог об ошибке и сохраняет возникшее исключение
+в теле агента.
+<p>
+<pre><a name="NW40utgl-1CXBRu-9" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-Q">&lt;-</a>D<a href="#NWD40utgl-S">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-R">fail</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-fail"><code>fail</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-G" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-F">&lt;-</a>D<a href="#NW40utgl-A32Df-H">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-R">fail</a> ::download [dload &amp; {reason :reason}]
+  (error &quot;Error &quot; (<a href="#NWD40utgl-V">represent</a> dload) &quot; reason: &quot; reason)
+  (assoc dload :failed true :<a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> reason))
+</pre><p>
+
+<a name="NWD40utgl-S">Предикат </a><code><a href="#NWD40utgl-S">failed?</a></code> проверяет&nbsp;— возникла ли ошибка во время
+выполнения предыдущего действия?
+<p>
+<pre><a name="NW40utgl-1CXBRu-A" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-R">&lt;-</a>D<a href="#NWD40utgl-T">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-S">failed?</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-failed?"><code>failed?</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-H" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-G">&lt;-</a>D<a href="#NW40utgl-A32Df-I">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-S">failed?</a> ::download [dload]
+  (:failed dload))
+</pre><p>
+
+<a name="NWD40utgl-T">Селектор </a><code><a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a></code> возвращает исключение которое было брошено
+при возникновении ошибки в предыдущем действии.
+<p>
+<pre><a name="NW40utgl-1CXBRu-B" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-S">&lt;-</a>D<a href="#NWD40utgl-U">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-fail-reason"><code>fail-reason</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-I" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-H">&lt;-</a>D<a href="#NW40utgl-A32Df-J">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> ::download [dload]
+  (:<a href="#NWD40utgl-R">fail</a><a href="#NWD40utgl-T">-reason</a> dload))
+</pre><p>
+
+<a name="NWD40utgl-U">Действие </a><code><a href="#NWD40utgl-U">die</a></code> убивает агент.
+<p>
+<pre><a name="NW40utgl-1CXBRu-C" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-T">&lt;-</a>D<a href="#NWD40utgl-V">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-U">die</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-die"><code>die</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-J" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-I">&lt;-</a>D<a href="#NW40utgl-A32Df-K">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-U">die</a> ::download [dload]
+  (assoc dload :alive false))
+</pre><p>
+
+<a name="NWD40utgl-V">Функция </a><code><a href="#NWD40utgl-V">represent</a></code> наглядно представляет агент в виде строки.
+<p>
+<pre><a name="NW40utgl-1CXBRu-D" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-U">&lt;-</a>D<a href="#NWD40utgl-W">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-V">represent</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-represent"><code>represent</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-K" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-J">&lt;-</a>D<a href="#NW40utgl-A32Df-L">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-V">represent</a> ::download [{:as dload :keys [name link]}]
+  (str &quot;&lt;Download &quot; (apply str (take 30 (or name link))) \&gt;))
+</pre><p>
+
+<a name="NWD40utgl-W">Функция </a><code><a href="#NWD40utgl-W">performance</a></code> вычисляет характеристики производительности
+агента, например, процент загруженного файла, скорость загрузки и
+прочее.
+<p>
+<pre><a name="NW40utgl-1CXBRu-E" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-V">&lt;-</a>D<a href="#NWD40utgl-X">-&gt;</a>]</b>
+(defmulti <a href="#NWD40utgl-W">performance</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-performance"><code>performance</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-L" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-K">&lt;-</a>D<a href="#NW40utgl-A32Df-M">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-W">performance</a> ::download
+  [{:as dload :keys [total-<a href="#NWD40utgl-X">file-length</a>]}]
+  (let [<a href="#NWD40utgl-X">file-length</a> (<a href="#NWD40utgl-X">file-length</a> dload)
+        load-percent (when (and (number? total-<a href="#NWD40utgl-X">file-length</a>) (number? <a href="#NWD40utgl-X">file-length</a>)
+                                (pos? total-<a href="#NWD40utgl-X">file-length</a>) (pos? <a href="#NWD40utgl-X">file-length</a>))
+                       (int (Math/floor (* 100 (/ <a href="#NWD40utgl-X">file-length</a> total-<a href="#NWD40utgl-X">file-length</a>)))))]
+    (merge {} (when load-percent {:load-percent load-percent}))))
+</pre><p>
+
+<a name="NWD40utgl-X">Селектор </a><code><a href="#NWD40utgl-X">file-length</a></code> возвращает длину в байтах уже скачанного на
+компьютер файла, если такой ключ <tt>:file-length-atom</tt> имеет
+место быть в теле агента.
+<p>
+<pre><a name="NW40utgl-1CXBRu-F" href="#NWD40utgl-I"><dfn>&lt;multimethods&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-W">&lt;-</a>D]</b>
+(defmulti <a href="#NWD40utgl-X">file-length</a> <a href="#NW40utgl-1cbKs8-1">type-dispatch</a>)
+</pre><blockquote>Defines <a href="#NWI-file-length"><code>file-length</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-A32Df-M" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-L">&lt;-</a>D<a href="#NW40utgl-A32Df-N">-&gt;</a>]</b>
+(defmethod <a href="#NWD40utgl-X">file-length</a> ::download
+  [{:as dload <a href="#NWD40utgl-X">file-length</a>-atom :<a href="#NWD40utgl-X">file-length</a>-atom}]
+  (when <a href="#NWD40utgl-X">file-length</a>-atom
+    (deref <a href="#NWD40utgl-X">file-length</a>-atom)))
+</pre><p>
+
+<h2>Планировщик загрузок</h2>
+<p>
+Планировщик загрузок это агент который обеспечивает совместную работу
+загрузок друг с другом.
+<p>
+Планировщик представлен глобальной переменной <code><a href="#NW40utgl-A32Df-N">download-scheduler*</a></code>
+в которой хранится агент, тело которого&nbsp;— хэш с набором ключей
+определяющих алгоритм работы планировщика. Большая часть этих ключей
+используется для отладки планировщика и загрузок. Среди них
+<p>
+<dl>
+<dt>:active<dd>включает о отключает планировщик. Ключ используется для
+отладки программы.
+<p>
+<dt>:schedule-with-callback<dd>включает и отключает «callback» —
+отправку загрузкам специального сообщения
+<code><a href="#NW40utgl-A32Df-P">callback-download-scheduler</a></code> для вызова планировщика после
+завершения выполнения загрузкой действия. Ключ используется для
+отладки программы.
+<p>
+<dt><a name="NWD40utgl-Y">:last-scheduled</a><dd>это список загрузок которые были запущены
+последними. Изменяется после каждого запуска планировщика.
+<p>
+<dt>:when-done<dd>этот ключ устанавливается перед запуском
+планировщика и содержит функцию которая вызывается если нет никаких
+загрузок которые планировщик мог бы запустить в будущем. Обычно это
+функция завершения работы программы.
+</dl>
+<p>
+<pre><a name="NW40utgl-2AzSph-9" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-M">&lt;-</a>D<a href="#NWD40utgl-Z">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-N">download-scheduler*</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-N" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-M">&lt;-</a>D<a href="#NW40utgl-A32Df-O">-&gt;</a>]</b>
+(def <a href="#NW40utgl-A32Df-N">download-scheduler*</a>
+     (agent {:active true
+             :when-done nil ;; <a href="#NWD40utgl-I">run</a> when there are no more scheduling job
+             :schedule-with-callback true
+             :last-scheduled ()}))
+</pre><blockquote>Defines <a href="#NWI-download-scheduler*"><code>download-scheduler*</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-Z">Основная задача планировщика&nbsp;— определить, с учетом всевозможных</a>
+ресурсных ограничений, какие загрузки нужно запустить; а затем
+отправить им сообщение запуска <code><a href="#NWD40utgl-I">run</a></code> и сообщение
+<code><a href="#NW40utgl-A32Df-P">callback-download-scheduler</a></code>, предписывающее загрузке вызвать
+планировщик после завершения её работы. Все это осуществляет
+единственная функция <code><a href="#NW40utgl-A32Df-O">schedule-downloads</a></code>. Опциональный аргумент
+<tt>callback</tt> используется агентом который запускает
+планировщик для указания себя.
+<p>
+<pre><a name="NW40utgl-2AzSph-A" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-Y">&lt;-</a>D<a href="#NWD40utgl-f">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-O">schedule-downloads</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-O" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-N">&lt;-</a>D<a href="#NW40utgl-A32Df-P">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-O">schedule-downloads</a> 
+  [{:as scheduler :keys [active when-done schedule-with-callback last-scheduled]}
+   &amp; {:keys [callback]}]
+
+  {:pre [(when-<a href="#NWD40utgl-E">supplied</a><a href="#NWD40utgl-g"> callback (</a><a href="#NW40utgl-A32Df-Q">agent?</a> callback))]}
+
+  (cond
+   <a name="NW40utgl-A32Df-O-u1" href="#NWD40utgl-a"><i>&lt;when scheduler is deactivated then do not schedule&gt;</i></a>
+   <a name="NW40utgl-A32Df-O-u2" href="#NWD40utgl-b"><i>&lt;when there are nothing to shcedule ever then leave&gt;</i></a>   
+
+   :otherwise
+   (let [successors <a name="NW40utgl-A32Df-O-u3" href="#NWD40utgl-c"><i>&lt;list of downloads to launch&gt;</i></a>]
+     <a name="NW40utgl-A32Df-O-u4" href="#NWD40utgl-d"><i>&lt;launch every download successor&gt;</i></a>)))
+</pre><blockquote>Defines <a href="#NWI-schedule-downloads"><code>schedule-downloads</code></a> (links are to index).<p>
+</blockquote><p>
+<ol>
+<li><a name="NWD40utgl-a">Сперва планировщик проверяет, активен ли он; если нет, то на</a>
+этом его работа завершается.
+<p>
+<pre><a name="NW40utgl-Qhqkf-1" href="#NWD40utgl-a"><dfn>&lt;when scheduler is deactivated then do not schedule&gt;=</dfn></a> <b>(<a href="#NW40utgl-A32Df-O">&lt;-U</a>)</b>
+(not active) ;; then
+(assoc scheduler :last-scheduled ())
+</pre><p>
+
+<li><a name="NWD40utgl-b">Если нет ни одной загрузки которую когда-нибудь можно будет</a>
+запустить&nbsp;— все они мертвы или множество загрузок <code><a href="#NW40utgl-A32Df-4">downloads*</a></code>
+пусто, то следует завершить работу планировщика и вызвать функцию
+when-done, если она есть.
+<p>
+<pre><a name="NW40utgl-3CWcWp-1" href="#NWD40utgl-b"><dfn>&lt;when there are nothing to shcedule ever then leave&gt;=</dfn></a> <b>(<a href="#NW40utgl-A32Df-O">&lt;-U</a>)</b>
+(or (not (seq @downloads*))
+    (every?  (comp <a href="#NWD40utgl-Q">dead?</a> deref) @downloads*))
+(<a href="#NWD40utgl-D">with-return</a> (assoc scheduler :last-scheduled ())
+  (when when-done (when-done)))
+</pre><p>
+
+<li><a name="NWD40utgl-c">Составляется список загрузок для запуска&nbsp;— </a><tt>successors</tt>. Для этого множество всех загрузок <code><a href="#NW40utgl-A32Df-4">downloads*</a></code>
+разбивается на группы по типу; каждая группа загрузок сортируется в
+порядке появления каждой из загрузок в программе; все это
+сохраняется в хэше <tt>groups</tt>. Для каждой группы в
+<tt>groups</tt> определяются загрузки которые будут запущены; затем
+все они объединяются в один список.
+<p>
+<pre><a name="NW40utgl-vV49W-1" href="#NWD40utgl-c"><dfn>&lt;list of downloads to launch&gt;=</dfn></a> <b>(<a href="#NW40utgl-A32Df-O">&lt;-U</a>)</b>
+(let [groups
+      (into {} (for [[dloads-type dloads] (group-by (comp type deref) @downloads*)]
+                 {dloads-type (sort-by (comp :precedence deref) dloads)}))]
+(flatten
+(for [[dloads-type dloads] groups
+      :let [max-running-dloads ;; maximum amount of running
+      ;; downloads for this type of downloads
+      (:max-running-downloads (dloads-type @download-prototypes*))
+      running-dloads (filter (comp <a href="#NWD40utgl-J">running?</a> deref) dloads)
+      count-of-running-dloads (count running-dloads)
+      <a href="#NWD40utgl-N">idle</a>-dloads (filter (comp <a href="#NWD40utgl-N">idle</a><a href="#NWD40utgl-O">?</a> deref) dloads)
+      failed-dloads (filter (comp <a href="#NWD40utgl-S">failed?</a> deref) dloads)
+      count-of-dloads-to-launch (- max-running-dloads count-of-running-dloads)]]
+  (cond
+    ;; if no downloads in group then leave
+    (not (seq dloads)) ()
+
+    ;; if all downloads in group is dead then leave
+    (every? (comp <a href="#NWD40utgl-Q">dead?</a> deref) dloads) ()
+
+    ;; if there are more running downloads then it might be for
+    ;; that group then leave
+    (&lt;= count-of-dloads-to-launch 0) ()
+
+    ;; schedule downloads from scratch
+    (not callback)
+    (take count-of-dloads-to-launch (concat <a href="#NWD40utgl-N">idle</a>-dloads failed-dloads))
+
+    ;; some download ask to schedule downloads
+    callback
+    (take count-of-dloads-to-launch
+          (concat <a href="#NWD40utgl-N">idle</a>-dloads (<a href="#NW40utgl-A32Df-R">take-entirely-after</a> callback failed-dloads)))))))
+</pre><p>
+
+<li><a name="NWD40utgl-d">Каждой загрузке из списка на запуск </a><tt>successors</tt>
+отсылается сообщение запуска <code><a href="#NWD40utgl-I">run</a></code> и в зависимости от значения
+ключа <tt>schedule-with-callback</tt>, сообщение для запуска
+планировщика после того как загрузка выполнит действие.
+<p>
+<pre><a name="NW40utgl-HCNcm-1" href="#NWD40utgl-d"><dfn>&lt;launch every download successor&gt;=</dfn></a> <b>(<a href="#NW40utgl-A32Df-O">&lt;-U</a>)</b>
+(<a href="#NWD40utgl-D">with-return</a> (assoc scheduler :last-scheduled successors)
+  (doseq [successor successors]
+    (send-off successor <a href="#NWD40utgl-I">run</a>)
+    (when schedule-with-callback
+      (send-off successor <a href="#NW40utgl-A32Df-P">callback-download-scheduler</a>))))
+</pre><p>
+</ol>
+
+<a name="NWD40utgl-e">*</a>
+<a name="NWD40utgl-f">Функция </a><code><a href="#NW40utgl-A32Df-P">callback-download-scheduler</a></code> запускает планировщик
+загрузок «от лица» загрузочного агента.
+<p>
+<pre><a name="NW40utgl-2AzSph-B" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-Z">&lt;-</a>D<a href="#NWD40utgl-h">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-P">callback-download-scheduler</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-P" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-O">&lt;-</a>D<a href="#NW40utgl-A32Df-Q">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-P">callback-download-scheduler</a> [dload]
+  (<a href="#NWD40utgl-D">with-return</a> dload
+    (when *agent*
+      (send-off <a href="#NW40utgl-A32Df-N">download-scheduler*</a> <a href="#NW40utgl-A32Df-O">schedule-downloads</a> :callback *agent*))))
+</pre><blockquote>Defines <a href="#NWI-callback-download-scheduler"><code>callback-download-scheduler</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-g">Макрос </a><code>when-<a href="#NWD40utgl-E">supplied</a></code> проверяет опциональные аргументы, если они
+заданы.
+<p>
+<pre><a name="NW40utgl-1VvxMr-4" href="#NWD40utgl-D"><dfn>&lt;macros&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-1VvxMr-3">&lt;-</a>D<a href="#NWD40utgl-l">-&gt;</a>]</b>
+<a href="#NWD40utgl-g">(defmacro when-</a><a href="#NWD40utgl-E">supplied</a><a href="#NWD40utgl-g"> [&amp; clauses]</a>
+  (if-not clauses true
+          `(and (or (nil? ~(first clauses))
+                    (do ~(second clauses)))
+                (when-<a href="#NWD40utgl-E">supplied</a><a href="#NWD40utgl-g"> ~@(next (next clauses))))))</a>
+</pre><blockquote>Defines <a href="#NWI-when-supplied"><code>when-supplied</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-h">Предикат </a><code><a href="#NW40utgl-A32Df-Q">agent?</a></code> проверяет&nbsp;— является ли его аргумент агентом?
+<p>
+<pre><a name="NW40utgl-2AzSph-C" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-f">&lt;-</a>D<a href="#NWD40utgl-i">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-Q">agent?</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-Q" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-P">&lt;-</a>D<a href="#NW40utgl-A32Df-R">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-Q">agent?</a> [x]
+  (instance? clojure.lang.Agent x))
+</pre><blockquote>Defines <a href="#NWI-agent?"><code>agent?</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-i">Функции семейства </a><tt>take-</tt> выбирают элементы
+последовательности перед заданным элементом&nbsp;— <code><a href="#NW40utgl-A32Df-R">take-before</a></code>, после
+заданного элемента&nbsp;— <code><a href="#NW40utgl-A32Df-R">take-after</a></code> и все элементы после и перед
+элементом включая и сам элемент&nbsp;— <code><a href="#NW40utgl-A32Df-R">take-entirely-after</a></code> (наивная
+реализация).
+<p>
+<pre><a name="NW40utgl-2AzSph-D" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-h">&lt;-</a>D<a href="#NWD40utgl-j">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-R">take-after</a> <a href="#NW40utgl-A32Df-R">take-before</a> <a href="#NW40utgl-A32Df-R">take-entirely-after</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-R" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-Q">&lt;-</a>D<a href="#NW40utgl-A32Df-S">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-R">take-after</a> [item coll]
+  (rest (drop-while (partial not= item) coll)))
+
+(defn <a href="#NW40utgl-A32Df-R">take-before</a> [item coll]
+  (take-while (partial not= item) coll))
+
+(defn <a href="#NW40utgl-A32Df-R">take-entirely-after</a> [item coll]
+  (let [after (<a href="#NW40utgl-A32Df-R">take-after</a> item coll)
+        before (<a href="#NW40utgl-A32Df-R">take-before</a> item coll)]
+    (concat after before
+            (when-not (= (count before) (count coll))
+              (list item)))))
+</pre><blockquote>Defines <a href="#NWI-take-after"><code>take-after</code></a>, <a href="#NWI-take-before"><code>take-before</code></a>, <a href="#NWI-take-entirely-after"><code>take-entirely-after</code></a> (links are to index).<p>
+</blockquote><p>
+<h2>Монитор прогресса</h2>
+<p>
+<a name="NWD40utgl-j">Монитор это агент который наглядно отображает ход работы программы. Он</a>
+определен в глобальной переменной <code><a href="#NW40utgl-A32Df-S">progress-monitor*</a></code>. Тело агента
+представлено хэшем с расчетом на будущее расширение; оно содержит
+единственный ключ <tt>:agents</tt>, его значением является
+множество агентов которые в данный момент отображаются в полоске
+прогресса в консоли. Для добавления и удаления агентов из этого
+множества используются функции <code><a href="#NW40utgl-A32Df-T">begin-monitor-progress</a></code> и
+<code><a href="#NW40utgl-A32Df-T">cease-monitor-progress</a></code>.
+<p>
+<pre><a name="NW40utgl-2AzSph-E" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-i">&lt;-</a>D<a href="#NW40utgl-2AzSph-F">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-S">progress-monitor*</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-S" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-R">&lt;-</a>D<a href="#NW40utgl-A32Df-T">-&gt;</a>]</b>
+(def <a href="#NW40utgl-A32Df-S">progress-monitor*</a> (agent {:agents #{}}))
+</pre><blockquote>Defines <a href="#NWI-progress-monitor*"><code>progress-monitor*</code></a> (links are to index).<p>
+</blockquote><p>
+<pre><a name="NW40utgl-2AzSph-F" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-j">&lt;-</a>D<a href="#NWD40utgl-m">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-T">begin-monitor-progress</a> <a href="#NW40utgl-A32Df-T">cease-monitor-progress</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-T" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-S">&lt;-</a>D<a href="#NW40utgl-A32Df-U">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-T">begin-monitor-progress</a> [{:as progress-monitor agents :agents} agnt]
+  {:pre (<a href="#NW40utgl-A32Df-Q">agent?</a> agnt)}
+  (assoc progress-monitor :agents (union agents (hash-set agnt))))
+
+(defn <a href="#NW40utgl-A32Df-T">cease-monitor-progress</a> [{:as progress-monitor agents :agents} agnt]
+  {:pre (<a href="#NW40utgl-A32Df-Q">agent?</a> agnt)}
+  (.print System/out (str &quot;\r&quot; <a name="NW40utgl-A32Df-T-u1" href="#NWD40utgl-k"><i>&lt;eighty-spaces&gt;</i></a> &quot;\r&quot;))
+  (assoc progress-monitor :agents (difference agents (hash-set agnt))))
+</pre><blockquote>Defines <a href="#NWI-begin-monitor-progress"><code>begin-monitor-progress</code></a>, <a href="#NWI-cease-monitor-progress"><code>cease-monitor-progress</code></a> (links are to index).<p>
+</blockquote><p>
+<tt><a name="NWD40utgl-k">eighty-spaces</a></tt> это просто 80 пробелов в ширину консоли. 
+<p>
+<pre><a name="NW40utgl-2B8S4m-1" href="#NWD40utgl-k"><dfn>&lt;eighty-spaces&gt;=</dfn></a> <b>(<a href="#NW40utgl-A32Df-T">&lt;-U</a>)</b>
+&quot;                                                                                &quot;
+</pre><p>
+
+<a name="NWD40utgl-l">Включение и отключение отображения прогресса загрузочного агента</a>
+обычно происходит в одном его действии, поэтому имеет смысл
+использовать для этого макрос <code><a href="#NWD40utgl-l">with-progress-monitoring</a></code> который об
+этом позаботится.
+<p>
+<pre><a name="NW40utgl-1VvxMr-5" href="#NWD40utgl-D"><dfn>&lt;macros&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-g">&lt;-</a>D]</b>
+(defmacro <a href="#NWD40utgl-l">with-progress-monitoring</a> [agnt &amp; body]
+  `(let [agnt?# (<a href="#NW40utgl-A32Df-Q">agent?</a> ~agnt)]
+     (try (when agnt?# (send-off <a href="#NW40utgl-A32Df-S">progress-monitor*</a> <a href="#NW40utgl-A32Df-T">begin-monitor-progress</a> ~agnt))
+          (do ~@body)
+          (finally (when agnt?# (send-off <a href="#NW40utgl-A32Df-S">progress-monitor*</a> <a href="#NW40utgl-A32Df-T">cease-monitor-progress</a> ~agnt))))))
+</pre><blockquote>Defines <a href="#NWI-with-progress-monitoring"><code>with-progress-monitoring</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-m">Для отрисовки полосы прогресса в консоли нужно отослать монитору</a>
+прогресса <code><a href="#NW40utgl-A32Df-S">progress-monitor*</a></code> сообщение <code><a href="#NW40utgl-A32Df-U">show-progress</a></code>. Отправка
+этого сообщения во время выполнения загрузочным агентом действия
+должна сопровождаться вызовом функции <tt>release-pending-sends</tt> из-за того что агенты в Clojure задерживают все
+отправляемые во время действия сообщения до завершения действия.
+<p>
+<pre><a name="NW40utgl-2AzSph-G" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-2AzSph-F">&lt;-</a>D<a href="#NWD40utgl-n">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-U">show-progress</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-U" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-T">&lt;-</a>D<a href="#NW40utgl-A32Df-V">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-U">show-progress</a> [{:as progress-monitor agents :agents}]
+  (<a href="#NWD40utgl-D">with-return</a> progress-monitor
+    (.print System/out \return)
+    (doseq [abody (map deref agents)
+            :let [name (:name abody)
+                  name-length (if (string? name) (count name) nil)
+                  perf (<a href="#NWD40utgl-W">performance</a> abody)
+                  load-percent (:load-percent perf)]]
+      (.print System/out (str \[ (cond (not name) \-
+                                       (&lt; name-length 12) name
+                                       :longer (str (.substring name 0 5) \. \.
+                                                    (.substring name (- name-length 7) name-length)))
+                              \space (or load-percent \0) \% \])))
+    (.print System/out \return)))
+</pre><blockquote>Defines <a href="#NWI-show-progress"><code>show-progress</code></a> (links are to index).<p>
+</blockquote><p>
+<h2>Прототипы загрузок для конкретных сервисов</h2>
+<p>
+Ниже идут определения прототипов и программ загрузок для скачивания
+<a name="NWD40utgl-n">файлов с конкретных адресов и файлообменников.</a>
+<p>
+Сетевой код довольно уродливый. Я использую родную для Java библиотеку
+Apache HTTP Client за неимением лучшего. Все родные для Clojure
+HTTP-клиенты гораздо менее качественны.
+<p>
+В большинстве HTTP-запросов я использую заранее определенные величины
+таймаутов соединений и размера буфера.
+<p>
+<pre><a name="NW40utgl-2AzSph-H" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-m">&lt;-</a>D<a href="#NWD40utgl-o">-&gt;</a>]</b>
+timeout-after-<a href="#NWD40utgl-R">fail</a><a href="#NW40utgl-A32Df-V">*</a> <a href="#NW40utgl-A32Df-V">connection-timeout*</a> <a href="#NW40utgl-A32Df-V">get-request-timeout*</a> <a href="#NW40utgl-A32Df-V">head-request-timeout*</a> <a href="#NW40utgl-A32Df-V">buffer-size*</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-V" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-U">&lt;-</a>D<a href="#NW40utgl-A32Df-W">-&gt;</a>]</b>
+(def timeout-after-<a href="#NWD40utgl-R">fail</a><a href="#NW40utgl-A32Df-V">*</a> 3000)
+(def <a href="#NW40utgl-A32Df-V">connection-timeout*</a> 15000)
+(def <a href="#NW40utgl-A32Df-V">get-request-timeout*</a> 30000)
+(def <a href="#NW40utgl-A32Df-V">head-request-timeout*</a> 30000)
+(def <a href="#NW40utgl-A32Df-V">buffer-size*</a> 65536)
+</pre><blockquote>Defines <a href="#NWI-buffer-size*"><code>buffer-size*</code></a>, <a href="#NWI-connection-timeout*"><code>connection-timeout*</code></a>, <a href="#NWI-get-request-timeout*"><code>get-request-timeout*</code></a>, <a href="#NWI-head-request-timeout*"><code>head-request-timeout*</code></a>, <a href="#NWI-timeout-after-fail*"><code>timeout-after-fail*</code></a> (links are to index).<p>
+</blockquote><p>
+<h3>files*.dsv.*.data.cod.ru</h3>
+<p>
+Прототипы загрузок файлов по прямым ссылкам с местного
+файлообменника. С каждого из адресов можно качать в один поток.
+<p>
+Алгоритм программы загрузки очень прост:
+<p>
+<ol>
+<li>Функция <code>files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-X">-get-head</a></code>
+отправляет на файлообменник запрос HEAD, из него узнается размер и имя
+файла.
+<p>
+<li><a name="NWD40utgl-o">Функция </a><code><a href="#NW40utgl-A32Df-Y">get-local-file</a></code> выбирает локальный файл в
+который она будет загружать файл с сервера.
+<p>
+<li>Если файл уже полностью загружен или на диске для него нет
+места&nbsp;— загрузка умирает, если все в порядке&nbsp;— функция <code><a href="#NW40utgl-A32Df-b">begin-download</a></code> начинает
+загрузку.
+</ol>
+<p>
+<pre><a name="NW40utgl-2AzSph-I" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-n">&lt;-</a>D<a href="#NWD40utgl-p">-&gt;</a>]</b>
+files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-W" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-V">&lt;-</a>D<a href="#NW40utgl-A32Df-X">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-W">(defn files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a>
+<a href="#NW40utgl-A32Df-W">  [{:as dload :keys [link name file path total-</a><a href="#NWD40utgl-X">file-length</a>]}]
+  (cond (not link) <a href="#NWD40utgl-U">die</a>
+        (not (and name total-<a href="#NWD40utgl-X">file-length</a>)) files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-X">-get-head</a>
+        (not file) <a href="#NW40utgl-A32Df-Y">get-local-file</a>
+        (or (<a href="#NW40utgl-A32Df-Z">out-of-space-on-path?</a> dload) (<a href="#NW40utgl-A32Df-a">fully-loaded?</a> dload)) <a href="#NWD40utgl-U">die</a>
+        :requirements-ok <a href="#NW40utgl-A32Df-b">begin-download</a>))
+</pre><blockquote>Defines <a href="#NWI-files*-dsv-*-data-cod-ru-download-program"><code>files*-dsv-*-data-cod-ru-download-program</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-p">Функция </a><code>files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-X">-get-head</a></code> отправляет на
+файлообменник запрос HEAD, из него узнается размер и имя файла.
+<p>
+<pre><a name="NW40utgl-2AzSph-J" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-o">&lt;-</a>D<a href="#NWD40utgl-q">-&gt;</a>]</b>
+files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-X">-get-head</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-X" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-W">&lt;-</a>D<a href="#NW40utgl-A32Df-Y">-&gt;</a>]</b>
+(defn files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-X">-get-head</a> [{:as dload :keys [link name]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> link)]}
+  (let [client (new HttpClient)
+        head (new HeadMethod link)]
+    (.. client getHttpConnectionManager getParams 
+        (setConnectionTimeout <a href="#NW40utgl-A32Df-V">connection-timeout*</a>))
+    (.. head getParams (setSoTimeout <a href="#NW40utgl-A32Df-V">head-request-timeout*</a>))
+    (try (let [status (.executeMethod client head)]
+           (if (= status HttpStatus/SC_OK)
+             (let [content-length (.. head (getResponseHeader &quot;Content-Length&quot;))
+                   content-disposition (.. head (getResponseHeader &quot;Content-Disposition&quot;))]
+               (if-not (or content-length content-disposition) (<a href="#NWD40utgl-U">die</a> dload)
+                 (let [length (Integer/parseInt (.getValue content-length))
+                       filename (URLDecoder/decode (second (re-find #&quot;; filename=\&quot;(.*)\&quot;&quot; (.getValue content-disposition))))]
+                   (if-not (and length filename) (<a href="#NWD40utgl-U">die</a> dload)
+                     (assoc dload
+                       :total-<a href="#NWD40utgl-X">file-length</a> length
+                       :<a href="#NWD40utgl-X">file-length</a>-atom (atom 0)
+                       :name (or name filename))))))
+             (throw (Exception. &quot;HEAD request failed.&quot;))))
+         (finally (.releaseConnection head)))))
+</pre><blockquote>Defines <a href="#NWI-files*-dsv-*-data-cod-ru-get-head"><code>files*-dsv-*-data-cod-ru-get-head</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-q">Функция </a><code><a href="#NW40utgl-A32Df-Y">get-local-file</a></code> выбирает локальный файл в который она будет
+загружать файл с сервера.
+<p>
+<pre><a name="NW40utgl-2AzSph-K" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-p">&lt;-</a>D<a href="#NWD40utgl-r">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-Y">get-local-file</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-Y" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-X">&lt;-</a>D<a href="#NW40utgl-A32Df-Z">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-Y">get-local-file</a> [{:as dload :keys [name path]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> name path)]}
+  (assoc dload :file (new File path name)))
+</pre><blockquote>Defines <a href="#NWI-get-local-file"><code>get-local-file</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-r">Предикат </a><code><a href="#NW40utgl-A32Df-Z">out-of-space-on-path?</a></code> проверяет&nbsp;— хватает ли места на
+локальном диске для загрузки файла?
+<p>
+<pre><a name="NW40utgl-2AzSph-L" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-q">&lt;-</a>D<a href="#NWD40utgl-s">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-Z">out-of-space-on-path?</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-Z" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-Y">&lt;-</a>D<a href="#NW40utgl-A32Df-a">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-Z">out-of-space-on-path?</a> [{:as dload :keys [path file total-<a href="#NWD40utgl-X">file-length</a>]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> path file total-<a href="#NWD40utgl-X">file-length</a>)]}
+  (if (.exists file)
+    (&lt; (.getUsableSpace path) (- total-<a href="#NWD40utgl-X">file-length</a> (.length file)))
+    (= (.getUsableSpace path) 0)))
+</pre><blockquote>Defines <a href="#NWI-out-of-space-on-path?"><code>out-of-space-on-path?</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-s">Предикат </a><code><a href="#NW40utgl-A32Df-a">fully-loaded?</a></code> проверяет&nbsp;— загружен ли файл полностью?
+<p>
+<pre><a name="NW40utgl-2AzSph-M" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-r">&lt;-</a>D<a href="#NWD40utgl-t">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-a">fully-loaded?</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-a" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-Z">&lt;-</a>D<a href="#NW40utgl-A32Df-b">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-a">fully-loaded?</a> [{:as dload :keys [file total-<a href="#NWD40utgl-X">file-length</a>]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> file total-<a href="#NWD40utgl-X">file-length</a>)]}
+  (boolean (and (.exists file) (&lt;= total-<a href="#NWD40utgl-X">file-length</a> (.length file)))))
+</pre><blockquote>Defines <a href="#NWI-fully-loaded?"><code>fully-loaded?</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-t">Функция </a><code><a href="#NW40utgl-A32Df-b">begin-download</a></code> скачивает файл.
+<p>
+<pre><a name="NW40utgl-2AzSph-N" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-s">&lt;-</a>D<a href="#NWD40utgl-u">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-b">begin-download</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-b" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-a">&lt;-</a>D<a href="#NW40utgl-A32Df-c">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-b">begin-download</a>
+  [{:as dload :keys [name link file total-<a href="#NWD40utgl-X">file-length</a> <a href="#NWD40utgl-X">file-length</a>-atom]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> name link file total-<a href="#NWD40utgl-X">file-length</a>)]}
+  (let [client (HttpClient.)
+        get (GetMethod. link)]
+    (try
+      (.. client getHttpConnectionManager getParams 
+          (setConnectionTimeout <a href="#NW40utgl-A32Df-V">connection-timeout*</a>))
+      (.. get getParams (setSoTimeout <a href="#NW40utgl-A32Df-V">get-request-timeout*</a>))
+      (.setRequestHeader get &quot;Range&quot; (str &quot;bytes=&quot; (actual-<a href="#NWD40utgl-X">file-length</a><a href="#NW40utgl-A32Df-c"> file) \-))</a>
+      (.executeMethod client get)
+      (let [content-length (.getResponseContentLength get)]
+        (cond (not content-length)
+              (throw (Exception. &quot;Cannot check file length before download.&quot;))
+
+              (not= content-length (- total-<a href="#NWD40utgl-X">file-length</a> (actual-<a href="#NWD40utgl-X">file-length</a><a href="#NW40utgl-A32Df-c"> file)))</a>
+              (throw (Exception. &quot;Downloading file size mismatch.&quot;))
+
+              :else
+              (<a href="#NWD40utgl-D">with-return</a> dload
+                (with-open [#^InputStream input (.getResponseBodyAsStream get)
+                            #^FileOutputStream output (FileOutputStream. file true)]
+                  (info &quot;Begin download &quot; name)
+                  (<a href="#NWD40utgl-l">with-progress-monitoring</a> *agent*
+                    (let [buffer (make-array Byte/TYPE <a href="#NW40utgl-A32Df-V">buffer-size*</a>)]
+                      (loop [file-size (actual-<a href="#NWD40utgl-X">file-length</a><a href="#NW40utgl-A32Df-c"> file)]</a>
+                        (let [read-size (.read input buffer)]
+                          (when (pos? read-size)
+                            (let [new-size (+ file-size read-size)]
+                              (.write output buffer 0 read-size)
+                              (reset! <a href="#NWD40utgl-X">file-length</a>-atom new-size)
+                              (when *agent*
+                                (send-off <a href="#NW40utgl-A32Df-S">progress-monitor*</a> <a href="#NW40utgl-A32Df-U">show-progress</a>)
+                                (release-pending-sends))
+                              (when-not (<a href="#NWD40utgl-L">stopped?</a> dload)
+                                (recur new-size))))))))
+                  (.flush output)
+                  (info &quot;End download &quot; name)))))
+      (finally (.releaseConnection get)))))
+</pre><blockquote>Defines <a href="#NWI-begin-download"><code>begin-download</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-u">Функция </a><code>actual-<a href="#NWD40utgl-X">file-length</a></code> просто возвращает размер файла в байтах
+если он есть и 0&nbsp;— если его нет.
+<p>
+<pre><a name="NW40utgl-2AzSph-O" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-t">&lt;-</a>D<a href="#NWD40utgl-v">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-c">actual-</a><a href="#NWD40utgl-X">file-length</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-c" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-b">&lt;-</a>D<a href="#NW40utgl-A32Df-d">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-c">(defn actual-</a><a href="#NWD40utgl-X">file-length</a><a href="#NW40utgl-A32Df-c"> [file]</a>
+  (if (.exists file) (.length file) 0))
+</pre><blockquote>Defines <a href="#NWI-actual-file-length"><code>actual-file-length</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-v">Прототипы загрузок.</a>
+<p>
+<pre><a name="NW40utgl-2AzSph-P" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-u">&lt;-</a>D<a href="#NWD40utgl-w">-&gt;</a>]</b>
+files*-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> files3?-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> files2-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">files3?-dsv-region-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> files2-dsv-region-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-d" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-c">&lt;-</a>D<a href="#NW40utgl-A32Df-e">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-d">(def files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">     {:program files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a>
+<a href="#NW40utgl-A32Df-W">      :max-running-downloads 1</a>
+      :link nil
+      :name nil
+      :path nil
+      :file nil
+      :total-<a href="#NWD40utgl-X">file-length</a> nil})
+
+(<a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> files3?-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">  (assoc files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> :link-pattern #&quot;http://files3?.dsv.*.data.cod.ru/.+&quot;))</a>
+
+(<a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> files2-dsv-*-<a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">  (assoc files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> :link-pattern #&quot;http://files2.dsv.*.data.cod.ru/.+&quot;))</a>
+
+(<a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> files3?-dsv-region-<a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">  (assoc files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> :link-pattern #&quot;http://files3?.dsv-region.data.cod.ru/.+&quot;))</a>
+
+(<a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> files2-dsv-region-<a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+<a href="#NW40utgl-A32Df-d">  (assoc files*-dsv-*-</a><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-d"> :link-pattern #&quot;http://files2.dsv-region.data.cod.ru/.+&quot;))</a>
+</pre><blockquote>Defines <a href="#NWI-files*-dsv-*-data-cod-ru"><code>files*-dsv-*-data-cod-ru</code></a>, <a href="#NWI-files2-dsv-*-data-cod-ru"><code>files2-dsv-*-data-cod-ru</code></a>, <a href="#NWI-files2-dsv-region-data-cod-ru"><code>files2-dsv-region-data-cod-ru</code></a>, <a href="#NWI-files3?-dsv-*-data-cod-ru"><code>files3?-dsv-*-data-cod-ru</code></a>, <a href="#NWI-files3?-dsv-region-data-cod-ru"><code>files3?-dsv-region-data-cod-ru</code></a> (links are to index).<p>
+</blockquote><p>
+<h3><a name="NWD40utgl-w">data.cod.ru</a></h3>
+<p>
+Прототип загрузки для пользовательской страницы файлообменников data.cod.ru.
+<p>
+Программа загрузки предельно проста: она вырезает из страницы
+файлообменника прямую ссылку на файл и создает дочернюю загрузку с
+прямой ссылкой.
+<p>
+<pre><a name="NW40utgl-2AzSph-Q" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-v">&lt;-</a>D<a href="#NWD40utgl-x">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-e" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-d">&lt;-</a>D<a href="#NW40utgl-A32Df-f">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a> [{:as dload :keys [link child-link child]}]
+  (cond (not link) <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-f">-parse-page</a>
+        (not child) <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-g">-make-child-download</a>
+        :finally <a href="#NWD40utgl-U">die</a>))
+</pre><blockquote>Defines <a href="#NWI-data-cod-ru-download-program"><code>data-cod-ru-download-program</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-x">Функция </a><code><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-f">-parse-page</a></code> вырезает из страницы прямую ссылку
+на файл.
+<p>
+<pre><a name="NW40utgl-2AzSph-R" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-w">&lt;-</a>D<a href="#NWD40utgl-y">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-f">-parse-page</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-f" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-e">&lt;-</a>D<a href="#NW40utgl-A32Df-g">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-f">-parse-page</a> [{:as dload :keys [link]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> link)]}
+  (let [client (new HttpClient)
+        get (new GetMethod link)]
+    (.. client getHttpConnectionManager getParams 
+        (setConnectionTimeout <a href="#NW40utgl-A32Df-V">connection-timeout*</a>))
+    (.. get getParams (setSoTimeout <a href="#NW40utgl-A32Df-V">get-request-timeout*</a>))
+    (try (let [status (.executeMethod client get)]
+           (if (= status HttpStatus/SC_OK)
+             (let [child-link (re-find #&quot;http://files[-\d\w\.]*data.cod.ru/[^\&quot;]+&quot;
+                                       (slurp* (.getResponseBodyAsStream get)))]
+               (if child-link
+                 (assoc dload :child-link child-link)
+                 (<a href="#NWD40utgl-U">die</a> dload)))
+             (throw (Exception. &quot;Fail to parse page.&quot;))))
+         (finally (.releaseConnection get)))))
+</pre><blockquote>Defines <a href="#NWI-data-cod-ru-parse-page"><code>data-cod-ru-parse-page</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-y">Функция </a><code><a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-g">-make-child-download</a></code> создает дочернюю загрузку
+если загрузки с такой ссылкой еще нет.
+<p>
+<pre><a name="NW40utgl-2AzSph-S" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-x">&lt;-</a>D<a href="#NWD40utgl-z">-&gt;</a>]</b>
+<a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-g">-make-child-download</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-g" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-f">&lt;-</a>D<a href="#NW40utgl-A32Df-h">-&gt;</a>]</b>
+(defn <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-g">-make-child-download</a> [{:as dload :keys [link child child-link path]}]
+  {:pre [(<a href="#NWD40utgl-E">supplied</a> link child-link path)]}
+  (if child dload
+    (let [child (or (first (for [dl @downloads* :when (= child-link (:link @dl))] dl))
+                (<a href="#NW40utgl-A32Df-3">make-download</a> child-link :path path))]
+      (if-not child (<a href="#NWD40utgl-U">die</a> dload)
+        (assoc dload :child child)))))
+</pre><blockquote>Defines <a href="#NWI-data-cod-ru-make-child-download"><code>data-cod-ru-make-child-download</code></a> (links are to index).<p>
+</blockquote><p>
+<a name="NWD40utgl-z">Объявление прототипа.</a>
+<p>
+<pre><a name="NW40utgl-2AzSph-T" href="#NW40utgl-2AzSph-1"><dfn>&lt;names&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NWD40utgl-y">&lt;-</a>D]</b>
+<a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+</pre><p>
+
+<pre><a name="NW40utgl-A32Df-h" href="#NW40utgl-A32Df-1"><dfn>&lt;definitions&gt;+=</dfn></a> <b>(<a href="#NWD40utgl-6">&lt;-U</a>)</b> <b>[<a href="#NW40utgl-A32Df-g">&lt;-</a>D]</b>
+(<a href="#NW40utgl-1VvxMr-3">def-download-prototype</a> <a href="#NW40utgl-A32Df-h">data-cod-ru</a>
+  {:link-pattern #&quot;http://[\w\-]*.data.cod.ru/\d+&quot;
+   :program <a href="#NW40utgl-A32Df-h">data-cod-ru</a><a href="#NW40utgl-A32Df-e">-download-program</a>
+   :link nil
+   :path nil
+   :child-link nil
+   :child nil})
+</pre><blockquote>Defines <a href="#NWI-data-cod-ru"><code>data-cod-ru</code></a> (links are to index).<p>
+</blockquote><p>
+<h2><a name="NWD40utgl-10">Послесловие</a></h2>
+<p>
+Поздравляю. Надеюсь, вы не зря потратили свое время, если смогли
+дочитать до этого места. Не стесняйтесь использовать и дополнять эту
+программу своим кодом, она хранится на гитхабе в репозитории http://github.com/zahardzhan/leica.
+<p>
+
+
+
+<ul>
+<li><a href="#NW40utgl-A32Df-1"><i>&lt;definitions&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NW40utgl-A32Df-1">D2</a>, <a href="#NW40utgl-A32Df-2">D3</a>, <a href="#NW40utgl-A32Df-3">D4</a>, <a href="#NW40utgl-A32Df-4">D5</a>, <a href="#NW40utgl-A32Df-5">D6</a>, <a href="#NW40utgl-A32Df-6">D7</a>, <a href="#NW40utgl-A32Df-7">D8</a>, <a href="#NW40utgl-A32Df-8">D9</a>, <a href="#NW40utgl-A32Df-9">D10</a>, <a href="#NW40utgl-A32Df-A">D11</a>, <a href="#NW40utgl-A32Df-B">D12</a>, <a href="#NW40utgl-A32Df-C">D13</a>, <a href="#NW40utgl-A32Df-D">D14</a>, <a href="#NW40utgl-A32Df-E">D15</a>, <a href="#NW40utgl-A32Df-F">D16</a>, <a href="#NW40utgl-A32Df-G">D17</a>, <a href="#NW40utgl-A32Df-H">D18</a>, <a href="#NW40utgl-A32Df-I">D19</a>, <a href="#NW40utgl-A32Df-J">D20</a>, <a href="#NW40utgl-A32Df-K">D21</a>, <a href="#NW40utgl-A32Df-L">D22</a>, <a href="#NW40utgl-A32Df-M">D23</a>, <a href="#NW40utgl-A32Df-N">D24</a>, <a href="#NW40utgl-A32Df-O">D25</a>, <a href="#NW40utgl-A32Df-P">D26</a>, <a href="#NW40utgl-A32Df-Q">D27</a>, <a href="#NW40utgl-A32Df-R">D28</a>, <a href="#NW40utgl-A32Df-S">D29</a>, <a href="#NW40utgl-A32Df-T">D30</a>, <a href="#NW40utgl-A32Df-U">D31</a>, <a href="#NW40utgl-A32Df-V">D32</a>, <a href="#NW40utgl-A32Df-W">D33</a>, <a href="#NW40utgl-A32Df-X">D34</a>, <a href="#NW40utgl-A32Df-Y">D35</a>, <a href="#NW40utgl-A32Df-Z">D36</a>, <a href="#NW40utgl-A32Df-a">D37</a>, <a href="#NW40utgl-A32Df-b">D38</a>, <a href="#NW40utgl-A32Df-c">D39</a>, <a href="#NW40utgl-A32Df-d">D40</a>, <a href="#NW40utgl-A32Df-e">D41</a>, <a href="#NW40utgl-A32Df-f">D42</a>, <a href="#NW40utgl-A32Df-g">D43</a>, <a href="#NW40utgl-A32Df-h">D44</a>
+<li><a href="#NWD40utgl-k"><i>&lt;eighty-spaces&gt;</i></a>: <a href="#NW40utgl-A32Df-T">U1</a>, <a href="#NWD40utgl-k">D2</a>
+<li><a href="#NWD40utgl-5"><i>&lt;help-message&gt;</i></a>: <a href="#NWD40utgl-5">D1</a>, <a href="#NWD40utgl-9">U2</a>
+<li><a href="#NWD40utgl-d"><i>&lt;launch every download successor&gt;</i></a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-d">D2</a>
+<li><a href="#NWD40utgl-6"><i>&lt;leica.clj&gt;</i></a>: <a href="#NWD40utgl-6">D1</a>
+<li><a href="#NWD40utgl-c"><i>&lt;list of downloads to launch&gt;</i></a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-c">D2</a>
+<li><a href="#NWD40utgl-D"><i>&lt;macros&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NWD40utgl-D">D2</a>, <a href="#NWD40utgl-E">D3</a>, <a href="#NW40utgl-1VvxMr-3">D4</a>, <a href="#NWD40utgl-g">D5</a>, <a href="#NWD40utgl-l">D6</a>
+<li><a href="#NWD40utgl-9"><i>&lt;main procedure&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NWD40utgl-9">D2</a>
+<li><a href="#NW40utgl-1cbKs8-1"><i>&lt;multimethod dispatch functions&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NW40utgl-1cbKs8-1">D2</a>
+<li><a href="#NWD40utgl-I"><i>&lt;multimethods&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NWD40utgl-I">D2</a>, <a href="#NWD40utgl-J">D3</a>, <a href="#NWD40utgl-K">D4</a>, <a href="#NWD40utgl-L">D5</a>, <a href="#NWD40utgl-N">D6</a>, <a href="#NWD40utgl-O">D7</a>, <a href="#NWD40utgl-P">D8</a>, <a href="#NWD40utgl-Q">D9</a>, <a href="#NWD40utgl-R">D10</a>, <a href="#NWD40utgl-S">D11</a>, <a href="#NWD40utgl-T">D12</a>, <a href="#NWD40utgl-U">D13</a>, <a href="#NWD40utgl-V">D14</a>, <a href="#NWD40utgl-W">D15</a>, <a href="#NWD40utgl-X">D16</a>
+<li><a href="#NW40utgl-2AzSph-1"><i>&lt;names&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NW40utgl-2AzSph-1">D2</a>, <a href="#NWD40utgl-A">D3</a>, <a href="#NWD40utgl-B">D4</a>, <a href="#NWD40utgl-C">D5</a>, <a href="#NWD40utgl-F">D6</a>, <a href="#NWD40utgl-G">D7</a>, <a href="#NWD40utgl-H">D8</a>, <a href="#NWD40utgl-M">D9</a>, <a href="#NWD40utgl-Y">D10</a>, <a href="#NWD40utgl-Z">D11</a>, <a href="#NWD40utgl-f">D12</a>, <a href="#NWD40utgl-h">D13</a>, <a href="#NWD40utgl-i">D14</a>, <a href="#NWD40utgl-j">D15</a>, <a href="#NW40utgl-2AzSph-F">D16</a>, <a href="#NWD40utgl-m">D17</a>, <a href="#NWD40utgl-n">D18</a>, <a href="#NWD40utgl-o">D19</a>, <a href="#NWD40utgl-p">D20</a>, <a href="#NWD40utgl-q">D21</a>, <a href="#NWD40utgl-r">D22</a>, <a href="#NWD40utgl-s">D23</a>, <a href="#NWD40utgl-t">D24</a>, <a href="#NWD40utgl-u">D25</a>, <a href="#NWD40utgl-v">D26</a>, <a href="#NWD40utgl-w">D27</a>, <a href="#NWD40utgl-x">D28</a>, <a href="#NWD40utgl-y">D29</a>, <a href="#NWD40utgl-z">D30</a>
+<li><a href="#NWD40utgl-7"><i>&lt;namespace declaration&gt;</i></a>: <a href="#NWD40utgl-6">U1</a>, <a href="#NWD40utgl-7">D2</a>
+<li><a href="#NWD40utgl-a"><i>&lt;when scheduler is deactivated then do not schedule&gt;</i></a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-a">D2</a>
+<li><a href="#NWD40utgl-b"><i>&lt;when there are nothing to shcedule ever then leave&gt;</i></a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-b">D2</a>
+</ul>
+<ul>
+<li><a name="NWI--main" href="#NWD40utgl-9">-main</a>: <a href="#NWD40utgl-9">D1</a>
+<li><a name="NWI-actual-file-length" href="#NW40utgl-A32Df-c">actual-file-length</a>: <a href="#NW40utgl-A32Df-b">U1</a>, <a href="#NWD40utgl-u">U2</a>, <a href="#NW40utgl-A32Df-c">D3</a>
+<li><a name="NWI-add-to-downloads" href="#NW40utgl-A32Df-4">add-to-downloads</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NWD40utgl-C">U2</a>, <a href="#NW40utgl-A32Df-4">D3</a>
+<li><a name="NWI-agent?" href="#NW40utgl-A32Df-Q">agent?</a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-h">U2</a>, <a href="#NW40utgl-A32Df-Q">D3</a>, <a href="#NW40utgl-A32Df-T">U4</a>, <a href="#NWD40utgl-l">U5</a>
+<li><a name="NWI-alive?" href="#NWD40utgl-P">alive?</a>: <a href="#NW40utgl-A32Df-D">U1</a>, <a href="#NWD40utgl-P">D2</a>, <a href="#NW40utgl-A32Df-E">U3</a>, <a href="#NW40utgl-A32Df-F">U4</a>
+<li><a name="NWI-as-file" href="#NW40utgl-A32Df-2">as-file</a>: <a href="#NWD40utgl-9">U1</a>, <a href="#NWD40utgl-A">U2</a>, <a href="#NW40utgl-A32Df-2">D3</a>, <a href="#NW40utgl-A32Df-3">U4</a>
+<li><a name="NWI-begin-download" href="#NW40utgl-A32Df-b">begin-download</a>: <a href="#NW40utgl-A32Df-W">U1</a>, <a href="#NWD40utgl-t">U2</a>, <a href="#NW40utgl-A32Df-b">D3</a>
+<li><a name="NWI-begin-monitor-progress" href="#NW40utgl-A32Df-T">begin-monitor-progress</a>: <a href="#NW40utgl-2AzSph-F">U1</a>, <a href="#NW40utgl-A32Df-T">D2</a>, <a href="#NWD40utgl-l">U3</a>
+<li><a name="NWI-buffer-size*" href="#NW40utgl-A32Df-V">buffer-size*</a>: <a href="#NWD40utgl-n">U1</a>, <a href="#NW40utgl-A32Df-V">D2</a>, <a href="#NW40utgl-A32Df-b">U3</a>
+<li><a name="NWI-callback-download-scheduler" href="#NW40utgl-A32Df-P">callback-download-scheduler</a>: <a href="#NWD40utgl-d">U1</a>, <a href="#NWD40utgl-e">U2</a>, <a href="#NWD40utgl-f">U3</a>, <a href="#NW40utgl-A32Df-P">D4</a>
+<li><a name="NWI-cease-monitor-progress" href="#NW40utgl-A32Df-T">cease-monitor-progress</a>: <a href="#NW40utgl-2AzSph-F">U1</a>, <a href="#NW40utgl-A32Df-T">D2</a>, <a href="#NWD40utgl-l">U3</a>
+<li><a name="NWI-connection-timeout*" href="#NW40utgl-A32Df-V">connection-timeout*</a>: <a href="#NWD40utgl-n">U1</a>, <a href="#NW40utgl-A32Df-V">D2</a>, <a href="#NW40utgl-A32Df-X">U3</a>, <a href="#NW40utgl-A32Df-b">U4</a>, <a href="#NW40utgl-A32Df-f">U5</a>
+<li><a name="NWI-data-cod-ru" href="#NW40utgl-A32Df-h">data-cod-ru</a>: <a href="#NWD40utgl-o">U1</a>, <a href="#NW40utgl-A32Df-W">U2</a>, <a href="#NWD40utgl-p">U3</a>, <a href="#NW40utgl-A32Df-X">U4</a>, <a href="#NWD40utgl-v">U5</a>, <a href="#NW40utgl-A32Df-d">U6</a>, <a href="#NWD40utgl-w">U7</a>, <a href="#NW40utgl-A32Df-e">U8</a>, <a href="#NWD40utgl-x">U9</a>, <a href="#NW40utgl-A32Df-f">U10</a>, <a href="#NWD40utgl-y">U11</a>, <a href="#NW40utgl-A32Df-g">U12</a>, <a href="#NWD40utgl-z">U13</a>, <a href="#NW40utgl-A32Df-h">D14</a>
+<li><a name="NWI-data-cod-ru-download-program" href="#NW40utgl-A32Df-e">data-cod-ru-download-program</a>: <a href="#NWD40utgl-o">U1</a>, <a href="#NW40utgl-A32Df-W">U2</a>, <a href="#NW40utgl-A32Df-d">U3</a>, <a href="#NWD40utgl-w">U4</a>, <a href="#NW40utgl-A32Df-e">D5</a>, <a href="#NW40utgl-A32Df-h">U6</a>
+<li><a name="NWI-data-cod-ru-make-child-download" href="#NW40utgl-A32Df-g">data-cod-ru-make-child-download</a>: <a href="#NW40utgl-A32Df-e">U1</a>, <a href="#NWD40utgl-y">U2</a>, <a href="#NW40utgl-A32Df-g">D3</a>
+<li><a name="NWI-data-cod-ru-parse-page" href="#NW40utgl-A32Df-f">data-cod-ru-parse-page</a>: <a href="#NW40utgl-A32Df-e">U1</a>, <a href="#NWD40utgl-x">U2</a>, <a href="#NW40utgl-A32Df-f">D3</a>
+<li><a name="NWI-dead?" href="#NWD40utgl-Q">dead?</a>: <a href="#NW40utgl-A32Df-8">U1</a>, <a href="#NWD40utgl-Q">D2</a>, <a href="#NW40utgl-A32Df-F">U3</a>, <a href="#NWD40utgl-b">U4</a>, <a href="#NWD40utgl-c">U5</a>
+<li><a name="NWI-def-download-prototype" href="#NW40utgl-1VvxMr-3">def-download-prototype</a>: <a href="#NW40utgl-1VvxMr-3">D1</a>, <a href="#NW40utgl-A32Df-d">U2</a>, <a href="#NW40utgl-A32Df-h">U3</a>
+<li><a name="NWI-die" href="#NWD40utgl-U">die</a>: <a href="#NWD40utgl-U">D1</a>, <a href="#NW40utgl-A32Df-J">U2</a>, <a href="#NW40utgl-A32Df-W">U3</a>, <a href="#NW40utgl-A32Df-X">U4</a>, <a href="#NW40utgl-A32Df-e">U5</a>, <a href="#NW40utgl-A32Df-f">U6</a>, <a href="#NW40utgl-A32Df-g">U7</a>
+<li><a name="NWI-download-prototype-matching-address" href="#NW40utgl-A32Df-6">download-prototype-matching-address</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NWD40utgl-G">U2</a>, <a href="#NW40utgl-A32Df-6">D3</a>
+<li><a name="NWI-download-prototypes*" href="#NW40utgl-A32Df-5">download-prototypes*</a>: <a href="#NWD40utgl-F">U1</a>, <a href="#NW40utgl-A32Df-5">D2</a>, <a href="#NW40utgl-1VvxMr-3">U3</a>
+<li><a name="NWI-download-scheduler*" href="#NW40utgl-A32Df-N">download-scheduler*</a>: <a href="#NWD40utgl-9">U1</a>, <a href="#NWD40utgl-Y">U2</a>, <a href="#NW40utgl-A32Df-N">D3</a>, <a href="#NW40utgl-A32Df-P">U4</a>
+<li><a name="NWI-downloads*" href="#NW40utgl-A32Df-4">downloads*</a>: <a href="#NWD40utgl-C">U1</a>, <a href="#NW40utgl-A32Df-4">D2</a>
+<li><a name="NWI-downloads-precedence-counter" href="#NW40utgl-A32Df-3">downloads-precedence-counter</a>: <a href="#NWD40utgl-B">U1</a>, <a href="#NW40utgl-A32Df-3">D2</a>
+<li><a name="NWI-exit-program" href="#NW40utgl-A32Df-1">exit-program</a>: <a href="#NWD40utgl-8">U1</a>, <a href="#NWD40utgl-9">U2</a>, <a href="#NW40utgl-2AzSph-1">U3</a>, <a href="#NW40utgl-A32Df-1">D4</a>
+<li><a name="NWI-extract-url" href="#NW40utgl-A32Df-7">extract-url</a>: <a href="#NW40utgl-A32Df-6">U1</a>, <a href="#NWD40utgl-H">U2</a>, <a href="#NW40utgl-A32Df-7">D3</a>
+<li><a name="NWI-fail" href="#NWD40utgl-R">fail</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NW40utgl-A32Df-8">U2</a>, <a href="#NW40utgl-A32Df-C">U3</a>, <a href="#NWD40utgl-R">D4</a>, <a href="#NW40utgl-A32Df-G">U5</a>, <a href="#NWD40utgl-T">U6</a>, <a href="#NW40utgl-A32Df-I">U7</a>, <a href="#NWD40utgl-n">U8</a>, <a href="#NW40utgl-A32Df-V">U9</a>
+<li><a name="NWI-fail-reason" href="#NWD40utgl-T">fail-reason</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NW40utgl-A32Df-C">U2</a>, <a href="#NW40utgl-A32Df-G">U3</a>, <a href="#NWD40utgl-T">D4</a>, <a href="#NW40utgl-A32Df-I">U5</a>
+<li><a name="NWI-failed?" href="#NWD40utgl-S">failed?</a>: <a href="#NW40utgl-A32Df-D">U1</a>, <a href="#NWD40utgl-S">D2</a>, <a href="#NW40utgl-A32Df-H">U3</a>, <a href="#NWD40utgl-c">U4</a>
+<li><a name="NWI-file-length" href="#NWD40utgl-X">file-length</a>: <a href="#NW40utgl-A32Df-L">U1</a>, <a href="#NWD40utgl-X">D2</a>, <a href="#NW40utgl-A32Df-M">U3</a>, <a href="#NW40utgl-A32Df-W">U4</a>, <a href="#NW40utgl-A32Df-X">U5</a>, <a href="#NW40utgl-A32Df-Z">U6</a>, <a href="#NW40utgl-A32Df-a">U7</a>, <a href="#NW40utgl-A32Df-b">U8</a>, <a href="#NWD40utgl-u">U9</a>, <a href="#NW40utgl-A32Df-c">U10</a>, <a href="#NW40utgl-A32Df-d">U11</a>
+<li><a name="NWI-files*-dsv-*-data-cod-ru" href="#NW40utgl-A32Df-d">files*-dsv-*-data-cod-ru</a>: <a href="#NWD40utgl-o">U1</a>, <a href="#NW40utgl-A32Df-W">U2</a>, <a href="#NWD40utgl-p">U3</a>, <a href="#NW40utgl-A32Df-X">U4</a>, <a href="#NWD40utgl-v">U5</a>, <a href="#NW40utgl-A32Df-d">D6</a>
+<li><a name="NWI-files*-dsv-*-data-cod-ru-download-program" href="#NW40utgl-A32Df-W">files*-dsv-*-data-cod-ru-download-program</a>: <a href="#NWD40utgl-o">U1</a>, <a href="#NW40utgl-A32Df-W">D2</a>, <a href="#NW40utgl-A32Df-d">U3</a>
+<li><a name="NWI-files*-dsv-*-data-cod-ru-get-head" href="#NW40utgl-A32Df-X">files*-dsv-*-data-cod-ru-get-head</a>: <a href="#NW40utgl-A32Df-W">U1</a>, <a href="#NWD40utgl-p">U2</a>, <a href="#NW40utgl-A32Df-X">D3</a>
+<li><a name="NWI-files2-dsv-*-data-cod-ru" href="#NW40utgl-A32Df-d">files2-dsv-*-data-cod-ru</a>: <a href="#NWD40utgl-v">U1</a>, <a href="#NW40utgl-A32Df-d">D2</a>
+<li><a name="NWI-files2-dsv-region-data-cod-ru" href="#NW40utgl-A32Df-d">files2-dsv-region-data-cod-ru</a>: <a href="#NWD40utgl-v">U1</a>, <a href="#NW40utgl-A32Df-d">D2</a>
+<li><a name="NWI-files3?-dsv-*-data-cod-ru" href="#NW40utgl-A32Df-d">files3?-dsv-*-data-cod-ru</a>: <a href="#NWD40utgl-v">U1</a>, <a href="#NW40utgl-A32Df-d">D2</a>
+<li><a name="NWI-files3?-dsv-region-data-cod-ru" href="#NW40utgl-A32Df-d">files3?-dsv-region-data-cod-ru</a>: <a href="#NWD40utgl-v">U1</a>, <a href="#NW40utgl-A32Df-d">D2</a>
+<li><a name="NWI-fully-loaded?" href="#NW40utgl-A32Df-a">fully-loaded?</a>: <a href="#NW40utgl-A32Df-W">U1</a>, <a href="#NWD40utgl-s">U2</a>, <a href="#NW40utgl-A32Df-a">D3</a>
+<li><a name="NWI-get-local-file" href="#NW40utgl-A32Df-Y">get-local-file</a>: <a href="#NW40utgl-A32Df-W">U1</a>, <a href="#NWD40utgl-q">U2</a>, <a href="#NW40utgl-A32Df-Y">D3</a>
+<li><a name="NWI-get-request-timeout*" href="#NW40utgl-A32Df-V">get-request-timeout*</a>: <a href="#NWD40utgl-n">U1</a>, <a href="#NW40utgl-A32Df-V">D2</a>, <a href="#NW40utgl-A32Df-b">U3</a>, <a href="#NW40utgl-A32Df-f">U4</a>
+<li><a name="NWI-head-request-timeout*" href="#NW40utgl-A32Df-V">head-request-timeout*</a>: <a href="#NWD40utgl-n">U1</a>, <a href="#NW40utgl-A32Df-V">D2</a>, <a href="#NW40utgl-A32Df-X">U3</a>
+<li><a name="NWI-idle" href="#NWD40utgl-N">idle</a>: <a href="#NW40utgl-A32Df-8">U1</a>, <a href="#NWD40utgl-N">D2</a>, <a href="#NW40utgl-A32Df-C">U3</a>, <a href="#NWD40utgl-O">U4</a>, <a href="#NW40utgl-A32Df-D">U5</a>, <a href="#NWD40utgl-c">U6</a>
+<li><a name="NWI-idle?" href="#NWD40utgl-O">idle?</a>: <a href="#NWD40utgl-O">D1</a>, <a href="#NW40utgl-A32Df-D">U2</a>, <a href="#NWD40utgl-c">U3</a>
+<li><a name="NWI-leica" href="#NWD40utgl-7">leica</a>: <a href="#NWD40utgl-5">U1</a>, <a href="#NWD40utgl-7">D2</a>
+<li><a name="NWI-let-return" href="#NWD40utgl-D">let-return</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NWD40utgl-D">D2</a>
+<li><a name="NWI-make-download" href="#NW40utgl-A32Df-3">make-download</a>: <a href="#NWD40utgl-9">U1</a>, <a href="#NWD40utgl-B">U2</a>, <a href="#NW40utgl-A32Df-3">D3</a>, <a href="#NW40utgl-A32Df-g">U4</a>
+<li><a name="NWI-out-of-space-on-path?" href="#NW40utgl-A32Df-Z">out-of-space-on-path?</a>: <a href="#NW40utgl-A32Df-W">U1</a>, <a href="#NWD40utgl-r">U2</a>, <a href="#NW40utgl-A32Df-Z">D3</a>
+<li><a name="NWI-performance" href="#NWD40utgl-W">performance</a>: <a href="#NWD40utgl-W">D1</a>, <a href="#NW40utgl-A32Df-L">U2</a>, <a href="#NW40utgl-A32Df-U">U3</a>
+<li><a name="NWI-progress-monitor*" href="#NW40utgl-A32Df-S">progress-monitor*</a>: <a href="#NWD40utgl-j">U1</a>, <a href="#NW40utgl-A32Df-S">D2</a>, <a href="#NWD40utgl-l">U3</a>, <a href="#NW40utgl-A32Df-b">U4</a>
+<li><a name="NWI-remove-from-downloads" href="#NW40utgl-A32Df-4">remove-from-downloads</a>: <a href="#NWD40utgl-C">U1</a>, <a href="#NW40utgl-A32Df-4">D2</a>
+<li><a name="NWI-represent" href="#NWD40utgl-V">represent</a>: <a href="#NW40utgl-A32Df-8">U1</a>, <a href="#NW40utgl-A32Df-G">U2</a>, <a href="#NWD40utgl-V">D3</a>, <a href="#NW40utgl-A32Df-K">U4</a>
+<li><a name="NWI-run" href="#NWD40utgl-I">run</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NWD40utgl-I">D2</a>, <a href="#NW40utgl-A32Df-8">U3</a>, <a href="#NW40utgl-A32Df-9">U4</a>, <a href="#NW40utgl-A32Df-N">U5</a>, <a href="#NWD40utgl-d">U6</a>
+<li><a name="NWI-running?" href="#NWD40utgl-J">running?</a>: <a href="#NW40utgl-A32Df-8">U1</a>, <a href="#NWD40utgl-J">D2</a>, <a href="#NW40utgl-A32Df-9">U3</a>, <a href="#NW40utgl-A32Df-D">U4</a>, <a href="#NWD40utgl-c">U5</a>
+<li><a name="NWI-schedule-downloads" href="#NW40utgl-A32Df-O">schedule-downloads</a>: <a href="#NWD40utgl-9">U1</a>, <a href="#NWD40utgl-Z">U2</a>, <a href="#NW40utgl-A32Df-O">D3</a>, <a href="#NW40utgl-A32Df-P">U4</a>
+<li><a name="NWI-show-progress" href="#NW40utgl-A32Df-U">show-progress</a>: <a href="#NWD40utgl-m">U1</a>, <a href="#NW40utgl-A32Df-U">D2</a>, <a href="#NW40utgl-A32Df-b">U3</a>
+<li><a name="NWI-stop" href="#NWD40utgl-K">stop</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NW40utgl-A32Df-8">U2</a>, <a href="#NWD40utgl-K">D3</a>, <a href="#NW40utgl-A32Df-A">U4</a>, <a href="#NW40utgl-A32Df-B">U5</a>
+<li><a name="NWI-stopped?" href="#NWD40utgl-L">stopped?</a>: <a href="#NW40utgl-A32Df-8">U1</a>, <a href="#NWD40utgl-L">D2</a>, <a href="#NW40utgl-A32Df-B">U3</a>, <a href="#NW40utgl-A32Df-D">U4</a>, <a href="#NW40utgl-A32Df-b">U5</a>
+<li><a name="NWI-supplied" href="#NWD40utgl-E">supplied</a>: <a href="#NW40utgl-A32Df-3">U1</a>, <a href="#NWD40utgl-E">D2</a>, <a href="#NW40utgl-A32Df-O">U3</a>, <a href="#NWD40utgl-g">U4</a>, <a href="#NW40utgl-A32Df-X">U5</a>, <a href="#NW40utgl-A32Df-Y">U6</a>, <a href="#NW40utgl-A32Df-Z">U7</a>, <a href="#NW40utgl-A32Df-a">U8</a>, <a href="#NW40utgl-A32Df-b">U9</a>, <a href="#NW40utgl-A32Df-f">U10</a>, <a href="#NW40utgl-A32Df-g">U11</a>
+<li><a name="NWI-take-after" href="#NW40utgl-A32Df-R">take-after</a>: <a href="#NWD40utgl-i">U1</a>, <a href="#NW40utgl-A32Df-R">D2</a>
+<li><a name="NWI-take-before" href="#NW40utgl-A32Df-R">take-before</a>: <a href="#NWD40utgl-i">U1</a>, <a href="#NW40utgl-A32Df-R">D2</a>
+<li><a name="NWI-take-entirely-after" href="#NW40utgl-A32Df-R">take-entirely-after</a>: <a href="#NWD40utgl-c">U1</a>, <a href="#NWD40utgl-i">U2</a>, <a href="#NW40utgl-A32Df-R">D3</a>
+<li><a name="NWI-timeout-after-fail*" href="#NW40utgl-A32Df-V">timeout-after-fail*</a>: <a href="#NWD40utgl-n">U1</a>, <a href="#NW40utgl-A32Df-V">D2</a>
+<li><a name="NWI-type-dispatch" href="#NW40utgl-1cbKs8-1">type-dispatch</a>: <a href="#NWD40utgl-I">U1</a>, <a href="#NWD40utgl-J">U2</a>, <a href="#NWD40utgl-K">U3</a>, <a href="#NWD40utgl-L">U4</a>, <a href="#NWD40utgl-M">U5</a>, <a href="#NW40utgl-1cbKs8-1">D6</a>, <a href="#NWD40utgl-N">U7</a>, <a href="#NWD40utgl-O">U8</a>, <a href="#NWD40utgl-P">U9</a>, <a href="#NWD40utgl-Q">U10</a>, <a href="#NWD40utgl-R">U11</a>, <a href="#NWD40utgl-S">U12</a>, <a href="#NWD40utgl-T">U13</a>, <a href="#NWD40utgl-U">U14</a>, <a href="#NWD40utgl-V">U15</a>, <a href="#NWD40utgl-W">U16</a>, <a href="#NWD40utgl-X">U17</a>
+<li><a name="NWI-when-supplied" href="#NWD40utgl-g">when-supplied</a>: <a href="#NW40utgl-A32Df-O">U1</a>, <a href="#NWD40utgl-g">D2</a>
+<li><a name="NWI-with-progress-monitoring" href="#NWD40utgl-l">with-progress-monitoring</a>: <a href="#NWD40utgl-l">D1</a>, <a href="#NW40utgl-A32Df-b">U2</a>
+<li><a name="NWI-with-return" href="#NWD40utgl-D">with-return</a>: <a href="#NWD40utgl-D">D1</a>, <a href="#NWD40utgl-b">U2</a>, <a href="#NWD40utgl-d">U3</a>, <a href="#NW40utgl-A32Df-P">U4</a>, <a href="#NW40utgl-A32Df-U">U5</a>, <a href="#NW40utgl-A32Df-b">U6</a>
+</ul>
