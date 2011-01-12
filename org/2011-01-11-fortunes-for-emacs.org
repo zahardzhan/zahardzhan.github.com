@@ -1,0 +1,93 @@
+#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
+#+STARTUP: SHOWALL INDENT
+#+STARTUP: HIDESTARS
+#+BEGIN_HTML
+---
+layout: post
+title: Фортунки для Emacs
+---
+#+END_HTML
+
+Не сочтите этот пост продолжением Поповщины на Руси, но тем не
+менее;... каждый раз запуская Эмакс я вижу в /*scratch*/-буфере один и
+тот же скучный текст — снова и снова уже много лет:
+
+#+begin_src emacs-lisp
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+#+end_src
+
+Как вариант я мог бы отключить появление текста насовсем, но это было
+бы совсем уныло. Запуск Emacs — событие относительно редкое и когда
+оно происходит вместе с ним должно происходить что-нибудь хорошее,
+настраивающее на рабочий лад, или иронично-смешное — когда предстоит
+набрать в редакторе текст в защиту лиспа в очередном бессмысленном и
+беспощадном флейме, кои сопровождают этот замечательный язык со времен
+его появления.
+
+Задача проста — заменить стандартный стартовый текст на что-нибудь
+этакое. Решение старо как мир — фортунки из мира UNIX.
+
+#+BEGIN_HTML
+  <div class="figure">
+    <p><a href="/images/emacs-fortune.png">
+        <img src="/images/emacs-fortune.png"
+             alt="Фортунка"></a>
+      Фортунка</p></div>
+#+END_HTML
+
+Кладете [[https://github.com/zahardzhan/emacs-starter-kit/raw/haru/fortunes][большой файл с цитатами]] (от Билла Клементсона) по имени
+=fortunes= в директорию =.emacs.d=
+
+#+begin_src emacs-lisp
+(defvar fortune-file "/home/haru/.emacs.d/fortunes"
+  "The file that fortunes come from.")
+#+end_src
+
+Функция =fortune= выбирает из файла случайную фортунку.
+
+#+begin_src emacs-lisp
+(defvar fortune-strings nil
+  "The fortunes in the fortune file.")
+
+(defun open-fortune-file (file)
+  (find-file file)
+  (if (null fortune-strings)
+      (let ((strings nil)
+        (prev 1))
+    (goto-char (point-min))
+    (while (re-search-forward "^%$" (point-max) t)
+      (push (buffer-substring-no-properties prev (- (point) 1))
+            strings)
+      (setq prev (1+ (point))))
+    (push (buffer-substring-no-properties prev (point-max)) strings)
+    (setq fortune-strings (apply 'vector strings)))))
+
+(defun fortune ()
+  "Get a fortune to display."
+  (interactive)
+  (when (null fortune-strings)
+    (open-fortune-file fortune-file)
+    (kill-buffer (current-buffer)))
+  (let* ((n (random (length fortune-strings)))
+     (string (aref fortune-strings n)))
+    (if (interactive-p)
+    (message (format "%s" string))
+      string)))
+#+end_src
+
+Заменяем функцию, показывающую при запуске текст в /*scratch*/-буфере
+на собственную
+
+#+begin_src emacs-lisp
+(defun startup-echo-area-message ()
+  (interactive)
+  (let ((start (point))
+        (buffer-was-modified? (buffer-modified-p)))
+    (insert (fortune))
+    (comment-region start (point))
+    (newline)
+    (unless buffer-was-modified?
+      (not-modified))))
+#+end_src
