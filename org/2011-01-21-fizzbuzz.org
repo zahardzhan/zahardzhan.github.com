@@ -122,5 +122,5 @@ black;">three and five) (print «FizzBuzz»))</span>.  </p>
  (print number))
 #+end_src
 
-Если есть желание, можете привести реализацию функции =multiples= и
+Если есть желание, можете привести реализацию функции =multiples-of= и
 драйвера =for do=.
