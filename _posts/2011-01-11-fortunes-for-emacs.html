@@ -4,8 +4,7 @@ title: Фортунки для Emacs
 ---
 
 <p>
-Не сочтите этот пост продолжением Поповщины на Руси, но тем не
-менее;&hellip; каждый раз запуская Эмакс я вижу в <i>*scratch*</i>-буфере один и
+Каждый раз запуская Эмакс я вижу в <i>*scratch*</i>-буфере один и
 тот же скучный текст — снова и снова уже много лет:
 </p>
 
@@ -46,8 +45,8 @@ title: Фортунки для Emacs
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">fortune-file</span> <span style="color: #8b2252;">"/home/haru/.emacs.d/fortunes"</span>
-  <span style="color: #8b2252;">"The file that fortunes come from."</span><span style="color: #8c8c8c;">)</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defvar</span> <span style="color: #b8860b;">fortune-file</span> <span style="color: #bc8f8f;">"/home/haru/.emacs.d/fortunes"</span>
+  <span style="color: #bc8f8f;">"The file that fortunes come from."</span><span style="color: #8c8c8c;">)</span>
 </pre>
 
 
@@ -58,8 +57,8 @@ title: Фортунки для Emacs
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">fortune-strings</span> nil
-  <span style="color: #8b2252;">"The fortunes in the fortune file."</span><span style="color: #8c8c8c;">)</span>
+<pre class="src src-emacs-lisp"><span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defvar</span> <span style="color: #b8860b;">fortune-strings</span> nil
+  <span style="color: #bc8f8f;">"The fortunes in the fortune file."</span><span style="color: #8c8c8c;">)</span>
 
 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">open-fortune-file</span> <span style="color: #8c8c8c;">(</span>file<span style="color: #8c8c8c;">)</span>
   <span style="color: #8c8c8c;">(</span>find-file file<span style="color: #8c8c8c;">)</span>
@@ -67,7 +66,7 @@ title: Фортунки для Emacs
       <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let</span> <span style="color: #8c8c8c;">((</span>strings nil<span style="color: #8c8c8c;">)</span>
         <span style="color: #8c8c8c;">(</span>prev 1<span style="color: #8c8c8c;">))</span>
     <span style="color: #8c8c8c;">(</span>goto-char <span style="color: #8c8c8c;">(</span>point-min<span style="color: #8c8c8c;">))</span>
-    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">while</span> <span style="color: #8c8c8c;">(</span>re-search-forward <span style="color: #8b2252;">"^%$"</span> <span style="color: #8c8c8c;">(</span>point-max<span style="color: #8c8c8c;">)</span> t<span style="color: #8c8c8c;">)</span>
+    <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">while</span> <span style="color: #8c8c8c;">(</span>re-search-forward <span style="color: #bc8f8f;">"^%$"</span> <span style="color: #8c8c8c;">(</span>point-max<span style="color: #8c8c8c;">)</span> t<span style="color: #8c8c8c;">)</span>
       <span style="color: #8c8c8c;">(</span>push <span style="color: #8c8c8c;">(</span>buffer-substring-no-properties prev <span style="color: #8c8c8c;">(</span>- <span style="color: #8c8c8c;">(</span>point<span style="color: #8c8c8c;">)</span> 1<span style="color: #8c8c8c;">))</span>
             strings<span style="color: #8c8c8c;">)</span>
       <span style="color: #8c8c8c;">(</span>setq prev <span style="color: #8c8c8c;">(</span>1+ <span style="color: #8c8c8c;">(</span>point<span style="color: #8c8c8c;">))))</span>
@@ -75,7 +74,7 @@ title: Фортунки для Emacs
     <span style="color: #8c8c8c;">(</span>setq fortune-strings <span style="color: #8c8c8c;">(</span>apply 'vector strings<span style="color: #8c8c8c;">)))))</span>
 
 <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">fortune</span> <span style="color: #8c8c8c;">()</span>
-  <span style="color: #8b2252;">"Get a fortune to display."</span>
+  <span style="color: #bc8f8f;">"Get a fortune to display."</span>
   <span style="color: #8c8c8c;">(</span>interactive<span style="color: #8c8c8c;">)</span>
   <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">when</span> <span style="color: #8c8c8c;">(</span>null fortune-strings<span style="color: #8c8c8c;">)</span>
     <span style="color: #8c8c8c;">(</span>open-fortune-file fortune-file<span style="color: #8c8c8c;">)</span>
@@ -83,7 +82,7 @@ title: Фортунки для Emacs
   <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">let*</span> <span style="color: #8c8c8c;">((</span>n <span style="color: #8c8c8c;">(</span>random <span style="color: #8c8c8c;">(</span>length fortune-strings<span style="color: #8c8c8c;">)))</span>
      <span style="color: #8c8c8c;">(</span>string <span style="color: #8c8c8c;">(</span>aref fortune-strings n<span style="color: #8c8c8c;">)))</span>
     <span style="color: #8c8c8c;">(</span><span style="color: #a020f0;">if</span> <span style="color: #8c8c8c;">(</span>interactive-p<span style="color: #8c8c8c;">)</span>
-    <span style="color: #8c8c8c;">(</span>message <span style="color: #8c8c8c;">(</span>format <span style="color: #8b2252;">"%s"</span> string<span style="color: #8c8c8c;">))</span>
+    <span style="color: #8c8c8c;">(</span>message <span style="color: #8c8c8c;">(</span>format <span style="color: #bc8f8f;">"%s"</span> string<span style="color: #8c8c8c;">))</span>
       string<span style="color: #8c8c8c;">)))</span>
 </pre>
 
