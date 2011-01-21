@@ -1,0 +1,146 @@
+---
+layout: post
+title: Проблема «Fizz Buzz»
+---
+
+<p>
+Чуть больше года назад, в то безнадежно далекое по меркам развития
+интернета время, я обитал на местном файлообменнике. Тогда же, для
+облегчения процесса обитания, я написал «лейку», которую вы можете
+созерцать в благопристойном виде в блогпосте по соседству.
+</p>
+<p>
+Дальний Восток сам по себе невелик, но тот ресурс был довольно
+популярен и прикладным программированием в помощь файлокачанию туда и
+обратно занималось, по моим прикидкам, один-два десятка
+человек. Большинство из них писало свои программы под винду,
+большинство же под виндой их и использовало. Некоторые даже развернули
+маленький бизнес и продавали свою проприетарщину за посильную сумму в
+пару сотен рублей.
+</p>
+<p>
+Разумеется, были среди них и приверженцы опен сорса, такие как я,
+например. Были даже линуксоиды, точнее был — из пишущих под линукс —
+всего один; студент из ДВГУ. Долго ли коротко ли, завязалось
+знакомство. Несколько интересных вечеров в чате, а затем пришел
+твиттер.
+</p>
+<p>
+Первые шаги в твиттере даются с большим трудом. Отрешенный от
+приближенного к жизненным реалиям фотографиями и анкетами
+информационного изобилия фейсбука он требует много времени чтобы
+прочесать социальную сеть и найти правильные связи.
+</p>
+<p>
+Первым «кластером» (говоря по-русски — сильно связным графом)
+образовавшихся соц.сетевых связей оказалась, как ни странно, группа
+студентов ДВГУ. Думаю это может свидетельствовать о суровой ошибке,
+допущеной мной после выпуска из школы: я поступил в отстойный
+Уссурийский ВУЗ, в котором вообще не было правильных людей (впрочем, я
+исправил эту ошибку благополучно из него вылетев :).
+</p>
+<p>
+Владивосток — город маленький, все друг друга знают. Оказалось, что
+два моих сетевых знакомых (из «кластера», само собой, и это при его
+небольшом размере) работали в одной и той же программерской фирме, не
+буду называть её — все и так знают. И вот, посреди лета, они уговорили
+меня отправить резюме и пройти собеседование.
+</p>
+<p>
+Тогда, сейчас — нет ничего такого что я мог бы написать в своем
+резюме. Я отправил пустое. Через неделю мне пришло письмо с десятком
+заданий. Бóльшая их часть была посвящена проблемам типа рефакторинга
+странного процедурного PHP-кода, рефакторинга С++-кода с
+использованием паттернов объектно-ориентированого программирования (о
+богомерзкие ООП-паттерны!) и пара простых алгоритмических вопросов
+среди которых был знаменитый «Fizz Buzz». С заданиями я по всей
+видимости не справился; или мои ответы были неожиданной форме — кто
+знает? В общем, это был провал.
+</p>
+<p>
+Казалось бы — причем здесь моя жизнь? История о том как примитивная
+задача для программистов встретилась на моем пути — ну и&hellip;?
+</p>
+<p>
+«Fizz Buzz» — это не просто глупая задача. Это <i>мем-индикатор минимально адекватного программиста</i>, родившийся в сборниках
+собеседных задач, размножившийся на просторах сети и вернувшийся
+обратно в сборники компаний по всему миру.
+</p>
+<p>
+Говорят, в хорошо поставленном вопросе содержится половина
+ответа. Вопрос «Fizz Buzz» поставлен настолько хорошо, что он по сути и
+является ответом для самого себя:
+</p>
+<blockquote>
+
+<p>Write a program that prints the numbers from 1 to 100. 
+But for multiples of three print «Fizz» instead of the number and
+for the multiples of five print «Buzz». 
+For numbers which are multiples of both three and five print «FizzBuzz».
+</p>
+</blockquote>
+
+
+<p>
+Продемонстрировать последнее утверждение поможет решение задачи
+Ъ-лисперским способом — с помощью правильной расстановки скобочек
+прямо в определении задачи:
+</p>
+
+
+<blockquote> <p style="color: gray;"> Write a program that <span
+style="color: black;">(prints</span> the <span style="color:
+black;">numbers)</span> <span style="color: black;">(from 1 to
+100)</span>.  But <span style="color: black;">(for (multiples of
+three) (print «Fizz»))</span> instead of the number and <span
+style="color: black;">(for</span> the <span style="color:
+black;">(multiples of five) (print «Buzz»))</span>. <span
+style="color: black;">(For</span> numbers which are <span
+style="color: black;">(multiples of </span>both <span style="color:
+black;">three and five) (print «FizzBuzz»))</span>.  </p>
+</blockquote>
+
+<p>
+Мы выделили скобочками явно заданные данные, усовия и инструкции и
+отныне имеем дело с машинным языком. Решение, записанное на нем может
+допускать, для красоты и читабельности, немного выкрутасов
+естественной речи, но все же нельзя обойтись без необходимости
+выбросить словесный мусор.
+</p>
+
+
+
+<pre class="src src-lisp"><span style="color: #8c8c8c;">(</span>from 1 to 100<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>print numbers<span style="color: #8c8c8c;">)</span>
+<span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples of three<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"Fizz"</span><span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples of five<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"Buzz"</span><span style="color: #8c8c8c;">))</span>
+<span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples of three and five<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"FizzBuzz"</span><span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+<p>
+Это очень декларативный код. В самом деле, лисп не сильно отличается
+от пролога, но декларативный стиль не уместен для решения явно
+итеративной задачи, тем более что для реализации получившегося кода
+идеально подходит средство Iterate из мира Common Lisp'а. Осталось
+лишь перетосовать условия, добавить пару императивных фишек — и
+решение готово.
+</p>
+
+
+
+<pre class="src src-lisp"><span style="color: #8c8c8c;">(</span>iterate
+ <span style="color: #8c8c8c;">(</span>for number from 1 to 100<span style="color: #8c8c8c;">)</span>
+ <span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples-of 3 5 number<span style="color: #8c8c8c;">)</span> do <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"FizzBuzz"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>continue<span style="color: #8c8c8c;">))</span>
+ <span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples-of 3 number<span style="color: #8c8c8c;">)</span> do <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"Fizz"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>continue<span style="color: #8c8c8c;">))</span>
+ <span style="color: #8c8c8c;">(</span>for <span style="color: #8c8c8c;">(</span>multiples-of 5 number<span style="color: #8c8c8c;">)</span> do <span style="color: #8c8c8c;">(</span>print <span style="color: #bc8f8f;">"Buzz"</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">(</span>continue<span style="color: #8c8c8c;">))</span>
+ <span style="color: #8c8c8c;">(</span>print number<span style="color: #8c8c8c;">))</span>
+</pre>
+
+
+
+<p>
+Если есть желание, можете привести реализацию функции <code>multiples</code> и
+драйвера <code>for do</code>.
+</p>
