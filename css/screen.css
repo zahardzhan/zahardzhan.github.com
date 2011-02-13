@@ -20,13 +20,17 @@ div.container {
     width: 980px;
 }
 
+div.title {
+    margin-top: 15px; 
+    margin-bottom: 15px;
+    float: right;
+    padding-right: 30px;
+}
 div.title a, 
 div.title a:hover,
 div.title a:visited, 
 div.title a:visited:hover, 
 div.title a:focus {
-    float: right;
-    padding-right: 30px;
     font-size: 42px; 
     font-variant: small-caps; 
     color: white; 
@@ -39,16 +43,28 @@ div.figure a:visited,
 div.figure a:visited:hover, 
 div.figure a:focus {text-decoration: none;}
 
-table.site {text-align: center;}
+div#site {
+    width: 100%;
+    padding: 0; 
+    margin: 0; 
+    border: 0;
+    text-align: center;
+    border-collapse: collapse; 
+    display: block;
+}
 
-table.site.header {background: black;}
+div#site.body {background: white; color: #111;}
 
-table.site.body {background: white; color #111;}
+div#site.header {background: black;}
 
-table.site.footer {color: #CCC;}
-table.site.footer a {color: white;}
-table.site.footer strong {color: white;}
-table.site.footer div.bar {font-family: helvetica, arial, sans-serif; font-size: 14px; margin: 20px 0;}
+div#site.footer {background: black; color: #CCC;}
+div#site.footer a {color: white;}
+div#site.footer strong {color: white;}
+div#site.footer div.bar {
+    font-family: helvetica, arial, sans-serif;
+    font-size: 14px; 
+    margin: 20px 0;
+}
 
 div.left {float: left; text-align: left; width: 400px;}
 div.left h1 {font-family: helvetica, arial; font-weight: bold; font-size: 35px;}
@@ -68,7 +84,11 @@ div.right h1 {
     text-align: left;
 }
 
-div.right div.divider {border-top: 1px solid #CCC; clear: both; margin: 0 0 15px 0;}
+div.right div.divider {
+    border-top: 1px solid #CCC; 
+    clear: both; 
+    margin: 0 0 15px 0;
+}
 
 div.projects {
     float: left;
