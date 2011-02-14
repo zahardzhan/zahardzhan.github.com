@@ -44,12 +44,18 @@
 <body>
 
 <div id="site" class="header">
+  <div class="blackstring"></div>
   <div class="container">
     <div class="title">
-      <a href="/">Bullshit mode on</a>
+      <div class="link"><a href="/">Bullshit mode on</a></div>
     </div>
+    {% if page.image != null %}
+    <div class="image">
+      <img src="{{ page.image }}">
+    </div>
+    {% endif %}
   </div>
-</div>
+</div> 
 
 <div id="site" class="body">
   {{ content }}
@@ -59,11 +65,10 @@
   <div class="container">
     <div class="bar">
       <strong>Будь в курсе </strong>&mdash; 
-      следи за мной
-      в <a href="http://twitter.com/zahardzhan">твиттере</a>,
+      следи за мной в <a href="http://twitter.com/zahardzhan">твиттере</a>,
       на <a href="http://github.com/zahardzhan">гитхабе</a>
-      и 
-      подпишись на <a href="http://feeds.feedburner.com/bullshit-mode-on">RSS-канал этого блога</a>.
+      и подпишись на 
+      <a href="http://feeds.feedburner.com/bullshit-mode-on">RSS-канал этого блога</a>.
     </div>
   </div>
 </div>

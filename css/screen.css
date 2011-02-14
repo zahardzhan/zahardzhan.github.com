@@ -1,4 +1,4 @@
-html, body {margin: 0 auto; padding: 0; background: black;}
+html, body {margin: 0 auto; padding: 0; background: transparent;}
 html, body, div { display: block;}
 
 strong, b {font-weight: bolder;}
@@ -11,7 +11,13 @@ a:visited       {color: #909;}
 a:visited:hover {color: #C00;}
 a:focus         {outline: none;}
 
-div.container {
+.figure a, 
+.figure a:hover,
+.figure a:visited, 
+.figure a:visited:hover, 
+.figure a:focus {text-decoration: none;}
+
+.container {
     clear: both; 
     overflow: hidden; 
     margin: 0 auto; 
@@ -20,30 +26,7 @@ div.container {
     width: 980px;
 }
 
-div.title {
-    margin-top: 15px; 
-    margin-bottom: 15px;
-    float: right;
-    padding-right: 30px;
-}
-div.title a, 
-div.title a:hover,
-div.title a:visited, 
-div.title a:visited:hover, 
-div.title a:focus {
-    font-size: 42px; 
-    font-variant: small-caps; 
-    color: white; 
-    text-decoration: none;
-}
-
-div.figure a, 
-div.figure a:hover,
-div.figure a:visited, 
-div.figure a:visited:hover, 
-div.figure a:focus {text-decoration: none;}
-
-div#site {
+#site {
     width: 100%;
     padding: 0; 
     margin: 0; 
@@ -53,26 +36,74 @@ div#site {
     display: block;
 }
 
-div#site.body {background: white; color: #111;}
+#site.header {
+   background: transparent; 
+   min-height: 70px; 
+   position: relative;
+   background: black;
+}
 
-div#site.header {background: black;}
+#site.header .blackstring {
+   background: black;
+   height: 70px;
+   width: 100%;
+   position: absolute; 
+   z-index: 100;
+}
 
-div#site.footer {background: black; color: #CCC;}
-div#site.footer a {color: white;}
-div#site.footer strong {color: white;}
-div#site.footer div.bar {
+#site.header .container {position: relative;}
+
+#site.header .container .image {
+   position: relative;
+   margin-top: -1;
+   z-index: 110;
+}
+
+#site.header .container .title {
+   position: relative;
+   float: right;
+   z-index: 120;
+}
+
+#site.header .container .title .link {
+   height: 70px;
+   display: table-cell; 
+   vertical-align: middle;
+   padding-right: 20px;
+   padding-left: 20px;
+   background: black;
+   filter:alpha(opacity=60);
+   opacity:0.6;
+}
+#site.header .container .title a, 
+#site.header .container .title a:hover,
+#site.header .container .title a:visited, 
+#site.header .container .title a:visited:hover, 
+#site.header .container .title a:focus {
+    font-size: 42px; 
+    font-variant: small-caps;
+    color: white; 
+    text-decoration: none;
+}
+
+#site.body {background: white; color: #111;}
+
+#site.footer {background: black; color: #CCC;}
+#site.footer a {color: white;}
+#site.footer strong {color: white;}
+#site.footer .bar {
     font-family: helvetica, arial, sans-serif;
     font-size: 14px; 
     margin: 20px 0;
 }
 
-div.left {float: left; text-align: left; width: 400px;}
-div.left h1 {font-family: helvetica, arial; font-weight: bold; font-size: 35px;}
-div.left ul {list-style: none outside; padding-left: 0;}
-div.left ul li {padding-bottom: 0.7em;}
+.left {float: left; text-align: left; width: 400px;}
+.left h1 {font-family: helvetica, arial; font-weight: bold; font-size: 35px;}
+.left ul {list-style: none outside; padding-left: 0;}
+.left ul li {padding-bottom: 0.7em;}
 
-div.right {float: right; width: 530px;}
-div.right h1 {
+.right {float: right; width: 530px;}
+.right h1 {
     color: #222;
     font-family: georgia, times;
     font-size: 22px;
@@ -84,13 +115,13 @@ div.right h1 {
     text-align: left;
 }
 
-div.right div.divider {
+.right .divider {
     border-top: 1px solid #CCC; 
     clear: both; 
     margin: 0 0 15px 0;
 }
 
-div.projects {
+.projects {
     float: left;
     font-family: Georgia, serif;
     font-size: 14px;
@@ -100,20 +131,20 @@ div.projects {
     text-align: left;
     width: 480px;
 }
-div.project {margin-bottom: 35px;}
-div.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
-div.project a.project.title {text-decoration: none;}
+.project {margin-bottom: 35px;}
+.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
+.project a.project.title {text-decoration: none;}
 
-div.post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
-div.post div.header {padding-top: 40px; padding-bottom: 15px;}
-div.post div.header h1 {font-size: 150%;}
-div.post p {margin: 1em 0em; line-height: 130%;}
-div.post ul {list-style: square outside;}
-div.post li p {margin-top: 0.5em; margin-bottom: 0em;}
-div.post li + li {margin-top: 0.7em;}
-div.post dd p {margin-top: 0.5em; margin-bottom: 0em;}
-div.post dd + dt {margin-top: 0.7em;}
-div.post pre {
+.post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
+.post .header {padding-top: 40px; padding-bottom: 15px;}
+.post .header h1 {font-size: 150%;}
+.post p {margin: 1em 0em; line-height: 130%;}
+.post ul {list-style: square outside;}
+.post li p {margin-top: 0.5em; margin-bottom: 0em;}
+.post li + li {margin-top: 0.7em;}
+.post dd p {margin-top: 0.5em; margin-bottom: 0em;}
+.post dd + dt {margin-top: 0.7em;}
+.post pre {
     background-color: #F5F5EA; 
     padding-top: 0.7em; 
     padding-bottom: 0.7em;
@@ -125,8 +156,8 @@ div.post pre {
     min-width: 552px; 
     max-width: 820px;
 }
-div.post li pre, div.post dd pre {margin-top: 0.5em;}
-div.post div.figure {margin: 1em 0em; text-align: center;}
-div.post div.figure p {text-align: center; font-style: italic; font-size: smaller; text-indent: 0;}
-div.post div.figure img {max-width: 820px;}
-div.post div#disqus_thread {padding-top: 20px;}
+.post li pre, .post dd pre {margin-top: 0.5em;}
+.post .figure {margin: 1em 0em; text-align: center;}
+.post .figure p {text-align: center; font-style: italic; font-size: smaller; text-indent: 0;}
+.post .figure img {max-width: 820px;}
+.post #disqus_thread {padding-top: 20px;}
