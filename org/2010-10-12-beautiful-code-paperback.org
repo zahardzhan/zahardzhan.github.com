@@ -5,6 +5,7 @@
 ---
 layout: post
 title: Бумажный «Идеальный код»
+image: /images/beautiful-code-birds.jpg
 ---
 #+END_HTML
 
