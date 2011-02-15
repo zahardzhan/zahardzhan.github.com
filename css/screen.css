@@ -37,32 +37,20 @@ a:focus         {outline: none;}
 }
 
 #site.header {
-   background: transparent; 
    min-height: 70px; 
-   position: relative;
    background: black;
 }
 
-#site.header .blackstring {
-   background: black;
-   height: 70px;
-   width: 100%;
-   position: absolute; 
-   z-index: 100;
-}
-
-#site.header .container {position: relative;}
-
-#site.header .container .image {
+#site.header .container {
    position: relative;
-   margin-top: -1;
-   z-index: 110;
+   min-height: 70px;
 }
+
+#site.header .container .image img {display: block;}
 
 #site.header .container .title {
-   position: relative;
-   float: right;
-   z-index: 120;
+   position: absolute;
+   right: 10px;
 }
 
 #site.header .container .title .link {
