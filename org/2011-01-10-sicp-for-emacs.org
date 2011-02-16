@@ -5,6 +5,7 @@
 ---
 layout: post
 title: SICP для Emacs
+image: /images/part-of-sicp-cover.jpg
 ---
 #+END_HTML
 
