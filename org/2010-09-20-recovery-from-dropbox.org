@@ -5,6 +5,7 @@
 ---
 layout: post
 title: Восстановление из Dropbox
+image: /images/recovery-from-dropbox.jpg
 ---
 #+end_html
 

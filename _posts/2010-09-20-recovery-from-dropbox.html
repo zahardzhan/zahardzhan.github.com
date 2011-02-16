@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Восстановление из Dropbox
+image: /images/recovery-from-dropbox.jpg
 ---
 
 <p>
@@ -74,8 +75,8 @@ svn-репозитории :). Мусор и прочие медиа разма�
 </p>
 
 
-<pre class="src src-makefile"><span style="color: #a0522d;">HOME</span>=$(<span style="color: #a0522d;">shell</span> echo $$HOME)
-<span style="color: #a0522d;">DOTFILES</span>=$(<span style="color: #a0522d;">HOME</span>)/Dropbox/Dotfiles
+<pre class="src src-makefile"><span style="color: #b8860b;">HOME</span>=$(<span style="color: #b8860b;">shell</span> echo $$HOME)
+<span style="color: #b8860b;">DOTFILES</span>=$(<span style="color: #b8860b;">HOME</span>)/Dropbox/Dotfiles
 </pre>
 
 
@@ -86,8 +87,8 @@ svn-репозитории :). Мусор и прочие медиа разма�
 </p>
 
 
-<pre class="src src-makefile"><span style="color: #a0522d;">UNIVERSAL</span>=universal
-<span style="color: #a0522d;">NODE</span>=$(<span style="color: #a0522d;">shell</span> uname --nodename)
+<pre class="src src-makefile"><span style="color: #b8860b;">UNIVERSAL</span>=universal
+<span style="color: #b8860b;">NODE</span>=$(<span style="color: #b8860b;">shell</span> uname --nodename)
 </pre>
 
 
@@ -130,24 +131,24 @@ svn-репозитории :). Мусор и прочие медиа разма�
 
 
 <pre class="src src-makefile"><span style="color: #0000ff;">all</span>:
-        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.config/user-dirs.dirs
-        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.face
-        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.gitconfig
-        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.fonts
-        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.ssh
-        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.mplayer
-        rm -fRv $(<span style="color: #a0522d;">HOME</span>)/.m2
-        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.Xdefaults
-        rm -f   $(<span style="color: #a0522d;">HOME</span>)/.zshrc
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/config/user-dirs.dirs $(<span style="color: #a0522d;">HOME</span>)/.config/user-dirs.dirs
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/face       $(<span style="color: #a0522d;">HOME</span>)/.face
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/gitconfig  $(<span style="color: #a0522d;">HOME</span>)/.gitconfig
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/fonts      $(<span style="color: #a0522d;">HOME</span>)/.fonts
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/ssh        $(<span style="color: #a0522d;">HOME</span>)/.ssh
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/m2         $(<span style="color: #a0522d;">HOME</span>)/.m2
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">NODE</span>)/mplayer         $(<span style="color: #a0522d;">HOME</span>)/.mplayer
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/Xdefaults  $(<span style="color: #a0522d;">HOME</span>)/.Xdefaults
-        ln -fs $(<span style="color: #a0522d;">DOTFILES</span>)/$(<span style="color: #a0522d;">UNIVERSAL</span>)/zshrc      $(<span style="color: #a0522d;">HOME</span>)/.zshrc
+        rm -f   $(<span style="color: #b8860b;">HOME</span>)/.config/user-dirs.dirs
+        rm -f   $(<span style="color: #b8860b;">HOME</span>)/.face
+        rm -f   $(<span style="color: #b8860b;">HOME</span>)/.gitconfig
+        rm -fRv $(<span style="color: #b8860b;">HOME</span>)/.fonts
+        rm -fRv $(<span style="color: #b8860b;">HOME</span>)/.ssh
+        rm -fRv $(<span style="color: #b8860b;">HOME</span>)/.mplayer
+        rm -fRv $(<span style="color: #b8860b;">HOME</span>)/.m2
+        rm -f   $(<span style="color: #b8860b;">HOME</span>)/.Xdefaults
+        rm -f   $(<span style="color: #b8860b;">HOME</span>)/.zshrc
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/config/user-dirs.dirs $(<span style="color: #b8860b;">HOME</span>)/.config/user-dirs.dirs
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/face       $(<span style="color: #b8860b;">HOME</span>)/.face
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/gitconfig  $(<span style="color: #b8860b;">HOME</span>)/.gitconfig
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/fonts      $(<span style="color: #b8860b;">HOME</span>)/.fonts
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/ssh        $(<span style="color: #b8860b;">HOME</span>)/.ssh
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/m2         $(<span style="color: #b8860b;">HOME</span>)/.m2
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">NODE</span>)/mplayer         $(<span style="color: #b8860b;">HOME</span>)/.mplayer
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/Xdefaults  $(<span style="color: #b8860b;">HOME</span>)/.Xdefaults
+        ln -fs $(<span style="color: #b8860b;">DOTFILES</span>)/$(<span style="color: #b8860b;">UNIVERSAL</span>)/zshrc      $(<span style="color: #b8860b;">HOME</span>)/.zshrc
 </pre>
 
 
