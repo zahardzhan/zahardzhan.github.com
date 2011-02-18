@@ -5,6 +5,7 @@
 ---
 layout: post
 title: Яблочная клавиатура
+image: /images/apple.jpg
 ---
 #+END_HTML
 
