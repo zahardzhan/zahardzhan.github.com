@@ -5,8 +5,7 @@
 ---
 layout: post
 title: 404
-permalink: 404
-published: true
+permalink: /404.html
 ---
 #+END_HTML
 
