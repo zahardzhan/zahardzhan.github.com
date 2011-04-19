@@ -119,7 +119,7 @@ a:focus         {outline: none;}
     text-align: left;
     width: 480px;
 }
-.project {margin-bottom: 35px;}
+.project {margin-bottom: 35px; min-height: 200px;}
 .project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
 .project a.project.title {text-decoration: none;}
 
