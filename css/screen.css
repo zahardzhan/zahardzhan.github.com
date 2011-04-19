@@ -119,9 +119,11 @@ a:focus         {outline: none;}
     text-align: left;
     width: 480px;
 }
-.project {margin-bottom: 35px; min-height: 200px;}
-.project h2 {line-height: 1,3em; color: #222; font-weight: normal;}
-.project a.project.title {text-decoration: none;}
+.project {margin-left:-14px; margin-right:36px; margin-bottom:35px;
+   padding-left:22px; float:left;
+   display:table; text-align:center;}
+.project div.desc {text-align:left; display:table-row;}
+.project div.desc p {width:300px;}
 
 .post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
 .post .header {padding-top: 40px; padding-bottom: 15px;}
