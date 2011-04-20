@@ -122,7 +122,7 @@ a:focus         {outline: none;}
 .project {margin-left:-14px; margin-right:36px; margin-bottom:35px;
    padding-left:22px; float:left;
    display:table; text-align:center;}
-.project div.desc {text-align:left; display:table-row;}
+.project div.desc {text-align:center; display:table-row;}
 .project div.desc p {width:300px;}
 
 .post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
