@@ -10,10 +10,14 @@ title: Символьное древо ранних лисперов
 
 #+begin_html
 <div style="background-color: black; padding: 0px; margin: 0px; 
-            text-align: center; border-collapse; display:  table;
+            text-align: center; display: table;
             width: 100%; border: 0px; border-spacing: 0px;
-            border-collapse: collapse;"> 
-<img src="/images/symbolic-tree-of-early-lispers.png" 
+            border-collapse: collapse;">
+
+<a href="/images/symbolic-tree-of-early-lispers.png">
+<img src="/images/symbolic-tree-of-early-lispers.png"
+     style="max-width: 100%;"
      alt="Symbolic Tree of Early Lispers">
+</a>
 </div>
 #+end_html

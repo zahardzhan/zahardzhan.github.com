@@ -116,10 +116,9 @@ title: Информационный пост
 
 #+BEGIN_HTML
 <div class="figure">
-<p><a href="http://xkcd.com/862/">
-<img src="/images/xkcd-let-go.png">
-</a>
-</p>
+  <a href="http://xkcd.com/862/">
+    <img src="/images/xkcd-let-go.png">
+  </a>
 </div>
 #+END_HTML
 

@@ -26,10 +26,11 @@ image: /images/part-of-sicp-cover.jpg
 
 #+begin_html
 <div class="figure">
-<p><a href="/images/sicp-for-emacs.png">
-   <img src="/images/sicp-for-emacs.png"
-        alt="SICP для Emacs"></a></p>
-<p> Псевдографика в «SICP» иллюстрирует природу языка программирования</p>
+  <a href="/images/sicp-for-emacs.png">
+    <img src="/images/sicp-for-emacs.png"
+         alt="SICP для Emacs">
+  </a>
+  <p>Псевдографика в «SICP» иллюстрирует природу языка программирования</p>
 </div>
 #+end_html
 

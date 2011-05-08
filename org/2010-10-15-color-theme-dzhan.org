@@ -1,3 +1,13 @@
+#+OPTIONS: H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:t tags:not-in-toc
+#+STARTUP: SHOWALL INDENT
+#+STARTUP: HIDESTARS
+#+BEGIN_HTML
+---
+layout: plain-post
+title: Цветовая тема «Dzhan»
+---
+#+END_HTML
+
 В те безнадежно далекие времена, когда я еще сидел на винде и никогда
 не слышал обо всяких-там линуксах, мне попался на глаза диск журнала
 «Хакер», на котором я нашел один интересный текстовый редактор. Как
@@ -5,213 +15,222 @@
 глубины души поразила его цветовая тема. Она мне так понравилась, что
 я решил оставить её на будущее. Как следует заскриншотил, повыдирал
 цвета «пипеткой» и с тех пор эта тема кочевала вместе со мной с одного
-инструмента на другой — я использовал её в Visual Studio (это было, но
-когда? я уже не помню...), vim (первый курс педагогического [чур
-меня!] института — паскаль, дельфи и иже с ними). На втором курсе я
+инструмента на другой — я использовал её в Visual Studio (это было, но
+когда? я уже не помню...), vim (первый курс педагогического (чур
+меня!) института — паскаль, дельфи и иже с ними). На втором курсе я
 узнал про Emacs, открыл для себя SICP, и благополучно покинул
 институт. Конечно же, я позаботился о переносе своей любимой темы в
 Emacs.
-
+ 
 Я пользовался ею до тех пор, пока не набрел на Emacs Starter
 Kit. Теперь я использую тему эмакса по-умолчанию, другими словами, не
 использую никаких тем вообще. Причиной тому служит обычный
-пользовательский прагматизм: если что-то работает, то ну его наxyz —
+пользовательский прагматизм: если что-то работает, то ну его наxyz —
 пускай себе работает и дальше. Мне просто перестало нравиться ковырять
 хоть какие бы то ни было настройки.
-
-Но что делать с темой? Не пропадать же добру почём зря? Конечно! —
+ 
+Но что делать с темой? Не пропадать же добру почём зря? Конечно! —
 подумал я. Весь этот пост подсвечен моей темой; если она вам
-понравилась, но вы не пользуетесь эмаксом — возьмите значения цветов
+понравилась, но вы не пользуетесь эмаксом — возьмите значения цветов
 из HTML-кода этой страницы.
-
-Я назвал тему «dzhan» [dʒʌn], что в центрально-азиатских языках
+ 
+Я назвал тему «dzhan» (dʒʌn), что в центрально-азиатских языках
 означает «душа в поисках счастья».
+ 
+Вот исходник темы, положите его в свой .emacs и включайте командой =M-x
+color-theme-dzhan= или вызывайте функцией =(color-theme-dzhan)=.
 
-Вот исходник темы, положите его в свой .emacs и включайте командой M-x
-color-theme-dzhan или вызывайте функцией (color-theme-dzhan)
-
-#+begin_src emacs-lisp
-(require 'color-theme)
-
-(setq dzhan-fore-color    "#b0b0b0"
-      dzhan-back-color    "#303058"
-      dzhan-orange-color  "#f09a71"
-      dzhan-comment-color "#10a5b7")
-
-(defun color-theme-dzhan ()
-  "Color theme by Roman Zaharov <zahardzhan@gmail.com>"
-  (Interactive)
-  (Color-theme-install
-   `(color-theme-dzhan
-     ((foreground-color . ,dzhan-fore-color)
-      (background-color . ,dzhan-back-color)
-      (mouse-color      . ,dzhan-fore-color)
-      (cursor-color     . ,dzhan-fore-color)
-      (border-color     . "#405088")
-      (background-mode  . dark))
-
-     ((help-highlight-face . underline)
-      (list-matching-lines-face . bold)
-      (widget-mouse-face . highlight))
-
-     (default ((t (:height normal :width normal
-                           :background ,dzhan-back-color
-                           :foreground ,dzhan-fore-color
-                           :inverse-video nil :box nil :strike-through nil
-                           :overline nil :stipple nil :underline nil
-                           :slant normal :weight normal))))
-
-     (bold ((t (:bold t :weight bold))))
-     (bold-italic ((t (:italic t :bold t :slant italic :weight bold))))
-     (border ((t (:background "#25254d"))))
-     (comint-highlight-input ((t (:bold t :weight bold))))
-     (comint-highlight-prompt ((t (:foreground "cyan"))))
-     (cursor ((t (:foreground "#303058" :background "#b0b0b0"))))
+#+BEGIN_HTML
+<div style="color: #b0b0b0; background-color: #303058; padding: 0px;
+            margin: 0px; text-align: left;"> 
+<pre style="color: #b0b0b0; background-color: #303058; padding-left:
+            10px; padding-top: 10px; padding-bottom: 10px; margin:
+            0px; text-align: left;"> 
+<span style="color: #10a5b7;">#+begin_src emacs-lisp</span> 
+<span style="color: #7f7f7f;">(</span><span style="color: #f09a71;">require</span> '<span style="color: 13c1d5;">color-theme</span><span style="color: #7f7f7f;">)</span> 
+ 
+<span style="color: #7f7f7f;">(</span>setq dzhan-fore-color    <span style="color: #4aa5ff;">"#b0b0b0"</span> 
+      dzhan-back-color    <span style="color: #4aa5ff;">"#303058"</span> 
+      dzhan-orange-color  <span style="color: #4aa5ff;">"#f09a71"</span> 
+      dzhan-comment-color <span style="color: #4aa5ff;">"#10a5b7"</span><span style="color: #7f7f7f;">)</span> 
+ 
+<span style="color: #7f7f7f;">(</span><span style="color: #f09a71;">defun</span> <span style="color: #8dbafc;">color-theme-dzhan</span> <span style="color: #7f7f7f;">()</span> 
+  <span style="color: #10a5b7;">"Color theme by Roman Zaharov &lt;<a href="mailto:zahardzhan&#64;gmail.com">zahardzhan&#64;gmail.com</a>&gt;"</span> 
+  <span style="color: #7f7f7f;">(</span>Interactive<span style="color: #7f7f7f;">)</span> 
+  <span style="color: #7f7f7f;">(</span>Color-theme-install
+   `<span style="color: #7f7f7f;">(</span>color-theme-dzhan
+     <span style="color: #7f7f7f;">((</span>foreground-color . ,dzhan-fore-color<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>background-color . ,dzhan-back-color<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>mouse-color      . ,dzhan-fore-color<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>cursor-color     . ,dzhan-fore-color<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>border-color     . <span style="color: #4aa5ff;">"#405088"</span><span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>background-mode  . dark<span style="color: #7f7f7f;">))</span> 
+ 
+     <span style="color: #7f7f7f;">((</span>help-highlight-face . underline<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>list-matching-lines-face . bold<span style="color: #7f7f7f;">)</span> 
+      <span style="color: #7f7f7f;">(</span>widget-mouse-face . highlight<span style="color: #7f7f7f;">))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>default <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:height</span> normal <span style="color: #899cff;">:width</span> normal
+                           <span style="color: #899cff;">:background</span> ,dzhan-back-color
+                           <span style="color: #899cff;">:foreground</span> ,dzhan-fore-color
+                           <span style="color: #899cff;">:inverse-video</span> nil <span style="color: #899cff;">:box</span> nil <span style="color: #899cff;">:strike-through</span> nil
+                           <span style="color: #899cff;">:overline</span> nil <span style="color: #899cff;">:stipple</span> nil <span style="color: #899cff;">:underline</span> nil
+                           <span style="color: #899cff;">:slant</span> normal <span style="color: #899cff;">:weight</span> normal<span style="color: #7f7f7f;">))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>bold <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:bold</span> t <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>bold-italic <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:italic</span> t <span style="color: #899cff;">:bold</span> t <span style="color: #899cff;">:slant</span> italic <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>border <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#25254d"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>comint-highlight-input <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:bold</span> t <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>comint-highlight-prompt <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"cyan"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>cursor <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#303058"</span> <span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#b0b0b0"</span><span style="color: #7f7f7f;">))))</span> 
      
-     (fixed-pitch ((t (:family "courier"))))
-
-     (font-lock-builtin-face ((t (:foreground "#899cff"))))
-     (font-lock-comment-face ((t (:foreground ,dzhan-comment-color))))
-     (font-lock-constant-face ((t (:foreground "13c1d5"))))
-     (font-lock-doc-face ((t (:foreground ,dzhan-comment-color))))
-     (font-lock-doc-string-face ((t (:foreground ,dzhan-comment-color))))
-     (font-lock-function-name-face ((t (:foreground "#8dbafc"))))
-     (font-lock-keyword-face ((t (:foreground ,dzhan-orange-color))))
-     (font-lock-preprocessor-face ((t (:foreground ,dzhan-orange-color))))
-     (font-lock-reference-face ((t (:underline t))))
-     (font-lock-string-face ((t (:foreground "#4aa5ff"))))
-     (font-lock-type-face ((t (:foreground ,dzhan-orange-color))))
-     (font-lock-variable-name-face ((t (:foreground "#44c573"))))
-     (font-lock-warning-face ((t (:bold t :foreground "#d04d63" :weight bold))))
+     <span style="color: #7f7f7f;">(</span>fixed-pitch <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:family</span> <span style="color: #4aa5ff;">"courier"</span><span style="color: #7f7f7f;">))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>font-lock-builtin-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#899</span><span style="color: #ff4500; font-weight: bold; text-decoration: underline;">cff</span><span style="color: #4aa5ff;">"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-comment-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-comment-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-constant-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"13c1d5"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-doc-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-comment-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-doc-string-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-comment-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-function-name-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#8dbafc"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-keyword-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-preprocessor-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-reference-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:underline</span> t<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-string-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#4aa5ff"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-type-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-variable-name-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#44c573"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>font-lock-warning-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:bold</span> t <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#d04d63"</span> <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
      
-     (fringe ((t (:background "#222251" :foreground "#b0b0b0"))))
-     (header-line ((t (:box (:line-width -1 :style released-button) 
-                       :background "grey20" :foreground "grey90" :box nil))))
-     (highlight ((t (:background "#222251"))))
-     (horizontal-divider ((t (:background "gray16" :foreground "#00ff00"))))
+     <span style="color: #7f7f7f;">(</span>fringe <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#222251"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#b0b0b0"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>header-line <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> -1 <span style="color: #899cff;">:style</span> released-button<span style="color: #7f7f7f;">)</span> 
+                       <span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"grey20"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"grey90"</span> <span style="color: #899cff;">:box</span> nil<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>highlight <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#222251"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>horizontal-divider <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"gray16"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#00ff00"</span><span style="color: #7f7f7f;">))))</span> 
      
-     (ido-first-match ((t (:foreground ,dzhan-orange-color))))
-     (ido-only-match ((t (:foreground ,dzhan-orange-color :bold t))))
-     (ido-subdir ((t (:foreground ,dzhan-orange-color))))
+     <span style="color: #7f7f7f;">(</span>ido-first-match <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>ido-only-match <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:bold</span> t<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>ido-subdir <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
      
-     (isearch ((t (:box (:line-width -1) :foreground ,dzhan-orange-color :background ,dzhan-back-color :underline nil))))
-     (isearch-fail ((t (:background ,dzhan-back-color :foreground ,dzhan-orange-color :weight bold :inverse-video t))))
-     (isearch-lazy-highlight-face ((t  (:background ,dzhan-back-color :foreground ,dzhan-orange-color :underline t))))
+     <span style="color: #7f7f7f;">(</span>isearch <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> -1<span style="color: #7f7f7f;">)</span> <span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:background</span> ,dzhan-back-color <span style="color: #899cff;">:underline</span> nil<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>isearch-fail <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> ,dzhan-back-color <span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:weight</span> bold <span style="color: #899cff;">:inverse-video</span> t<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>isearch-lazy-highlight-face <span style="color: #7f7f7f;">((</span>t  <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> ,dzhan-back-color <span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:underline</span> t<span style="color: #7f7f7f;">))))</span> 
      
-     (italic ((t (:italic t :slant italic))))
-     (menu ((t (:background "gray16" :foreground "green"))))
+     <span style="color: #7f7f7f;">(</span>italic <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:italic</span> t <span style="color: #899cff;">:slant</span> italic<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>menu <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"gray16"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"green"</span><span style="color: #7f7f7f;">))))</span> 
      
-     (modeline ((t (:background "grey75" :foreground "grey15" :box (:line-width -1 :style flat)))))
-     (modeline-highlight ((t (:bold t))))
-     (mode-line-inactive ((t (:background "grey60" :foreground "grey15" :box (:line-width -1 :style flat)))))
+     <span style="color: #7f7f7f;">(</span>modeline <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"grey75"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"grey15"</span> <span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> -1 <span style="color: #899cff;">:style</span> flat<span style="color: #7f7f7f;">)))))</span> 
+     <span style="color: #7f7f7f;">(</span>modeline-highlight <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:bold</span> t<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>mode-line-inactive <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"grey60"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"grey15"</span> <span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> -1 <span style="color: #899cff;">:style</span> flat<span style="color: #7f7f7f;">)))))</span> 
      
-     (minibuffer-prompt ((t (:foreground ,dzhan-orange-color))))
+     <span style="color: #7f7f7f;">(</span>minibuffer-prompt <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
      
-     (mouse ((t (:background "yellow"))))
-     (primary-selection ((t (:background "#4a4a67"))))
-     (region ((t (:background "#444478"))))
-     (scroll-bar ((t (:background "gray16" :foreground "#00ff00"))))
-     (secondary-selection ((t (:background "#00ff00" :foreground "black"))))
-
-     (show-paren-match    ((t (:foreground ,dzhan-orange-color :weight bold))))
-     (show-paren-mismatch ((t (:foreground ,dzhan-orange-color :weight bold :inverse-video t
-                                           :box (:line-width -1)))))
-
-     (slime-repl-inputed-output-face ((((class color) (background dark)) (:foreground "#4aa5ff"))))
-
-     (font-latex-verbatim-face ((t (:foreground ,dzhan-comment-color))))
-
-     (speedbar-button-face ((t (:foreground "#00ff00"))))
-     (speedbar-directory-face ((t (:foreground ,dzhan-orange-color))))
-     (speedbar-file-face ((t (:foreground ,dzhan-fore-color))))
-     (speedbar-highlight-face ((t (:background "#4a4a67" :foreground "#eeeeee"))))
-     (speedbar-selected-face ((t (:foreground ,dzhan-orange-color :underline t))))
-     (speedbar-tag-face ((t (:foreground "yellow"))))
-     (tool-bar ((t (:background "gray16" :foreground "green" :box (:line-width 1 :style released-button)))))
-     (tooltip ((t (:background "#303058" :foreground "#13c1d5"))))
-     (trailing-whitespace ((t (:background "red"))))
-     ;;(underline ((t (:underline t))))
-     (variable-pitch ((t (:family "helv"))))
-     (vertical-divider ((t (:background "gray16" :foreground "#00ff00"))))
-     (widget-button-face ((t (:bold t :weight bold))))
-     (widget-button-pressed-face ((t (:foreground "red"))))
-     (widget-documentation-face ((t (:foreground "lime green"))))
-     (widget-field-face ((t (:background "dim gray"))))
-     (widget-inactive-face ((t (:foreground "light gray"))))
-     (widget-single-line-field-face ((t (:background "dim gray"))))
-     (zmacs-region ((t (:background "steelblue" :foreground "white")))))))
-
-(provide 'color-theme-dzhan)
-#+end_src
-
-Пример подсветки синтаксиса для C:
-
-#+begin_src c
-#include <stdio.h>
-#include <stdlib.h> /* atoi() */
-
-static unsigned int calls;
-
-unsigned int naive_ackermann(unsigned int m, unsigned int n) {
+     <span style="color: #7f7f7f;">(</span>mouse <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"yellow"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>primary-selection <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#4a4a67"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>region <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#444478"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>scroll-bar <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"gray16"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#00ff00"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>secondary-selection <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#00ff00"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"black"</span><span style="color: #7f7f7f;">))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>show-paren-match    <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>show-paren-mismatch <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:weight</span> bold <span style="color: #899cff;">:inverse-video</span> t
+                                           <span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> -1<span style="color: #7f7f7f;">)))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>slime-repl-inputed-output-face <span style="color: #7f7f7f;">((((</span>class color<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>background dark<span style="color: #7f7f7f;">))</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#4aa5ff"</span><span style="color: #7f7f7f;">))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>font-latex-verbatim-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-comment-color<span style="color: #7f7f7f;">))))</span> 
+ 
+     <span style="color: #7f7f7f;">(</span>speedbar-button-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#00ff00"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>speedbar-directory-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>speedbar-file-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-fore-color<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>speedbar-highlight-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#4a4a67"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#eeeeee"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>speedbar-selected-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> ,dzhan-orange-color <span style="color: #899cff;">:underline</span> t<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>speedbar-tag-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"yellow"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>tool-bar <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"gray16"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"green"</span> <span style="color: #899cff;">:box</span> <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:line-width</span> 1 <span style="color: #899cff;">:style</span> released-button<span style="color: #7f7f7f;">)))))</span> 
+     <span style="color: #7f7f7f;">(</span>tooltip <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"#303058"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#13c1d5"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>trailing-whitespace <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"red"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #10a5b7;">;;</span><span style="color: #10a5b7;">(underline ((t (:underline t))))
+</span>     <span style="color: #7f7f7f;">(</span>variable-pitch <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:family</span> <span style="color: #4aa5ff;">"helv"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>vertical-divider <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"gray16"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"#00ff00"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-button-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:bold</span> t <span style="color: #899cff;">:weight</span> bold<span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-button-pressed-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"red"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-documentation-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"lime green"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-field-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"dim gray"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-inactive-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"light gray"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>widget-single-line-field-face <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"dim gray"</span><span style="color: #7f7f7f;">))))</span> 
+     <span style="color: #7f7f7f;">(</span>zmacs-region <span style="color: #7f7f7f;">((</span>t <span style="color: #7f7f7f;">(</span><span style="color: #899cff;">:background</span> <span style="color: #4aa5ff;">"steelblue"</span> <span style="color: #899cff;">:foreground</span> <span style="color: #4aa5ff;">"white"</span><span style="color: #7f7f7f;">)))))))</span> 
+ 
+<span style="color: #7f7f7f;">(</span><span style="color: #f09a71;">provide</span> '<span style="color: 13c1d5;">color-theme-dzhan</span><span style="color: #7f7f7f;">)
+</span><span style="color: #10a5b7;">#+end_src
+</span> 
+&#1055;&#1088;&#1080;&#1084;&#1077;&#1088; &#1087;&#1086;&#1076;&#1089;&#1074;&#1077;&#1090;&#1082;&#1080; &#1089;&#1080;&#1085;&#1090;&#1072;&#1082;&#1089;&#1080;&#1089;&#1072; &#1076;&#1083;&#1103; C:
+ 
+<span style="color: #10a5b7;">#+begin_src c</span> 
+<span style="color: #f09a71;">#include</span> <span style="color: #4aa5ff;">&lt;stdio.h&gt;</span> 
+<span style="color: #f09a71;">#include</span> <span style="color: #4aa5ff;">&lt;stdlib.h&gt;</span> <span style="color: #10a5b7;">/* </span><span style="color: #10a5b7;">atoi() </span><span style="color: #10a5b7;">*/</span> 
+ 
+<span style="color: #f09a71;">static</span> <span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">calls</span>;
+ 
+<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #8dbafc;">naive_ackermann</span>(<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">m</span>, <span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">n</span>) {
     calls++;
-    if (m == 0)
-        return n + 1;
-    else if (n == 0)
-        return naive_ackermann(m - 1, 1);
-    else
-        return naive_ackermann(m - 1, naive_ackermann(m, n - 1));
+    <span style="color: #f09a71;">if</span> (m == 0)
+        <span style="color: #f09a71;">return</span> n + 1;
+    <span style="color: #f09a71;">else</span> <span style="color: #f09a71;">if</span> (n == 0)
+        <span style="color: #f09a71;">return</span> naive_ackermann(m - 1, 1);
+    <span style="color: #f09a71;">else</span> 
+        <span style="color: #f09a71;">return</span> naive_ackermann(m - 1, naive_ackermann(m, n - 1));
 }
-
-unsigned int iterative_ackermann(unsigned int m, unsigned int n) {
+ 
+<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #8dbafc;">iterative_ackermann</span>(<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">m</span>, <span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">n</span>) {
     calls++;
-    while (m != 0) {
-        if (n == 0) {
+    <span style="color: #f09a71;">while</span> (m != 0) {
+        <span style="color: #f09a71;">if</span> (n == 0) {
             n = 1;
-        } else {
+        } <span style="color: #f09a71;">else</span> {
             n = iterative_ackermann(m, n - 1);
         }
         m--;
     }
-    return n + 1;
+    <span style="color: #f09a71;">return</span> n + 1;
 }
-
-unsigned int formula_ackermann(unsigned int m, unsigned int n) {
+ 
+<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #8dbafc;">formula_ackermann</span>(<span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">m</span>, <span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">n</span>) {
     calls++;
-    while(1) {
-        switch(m) {
-        case 0:  return n + 1;
-        case 1:  return n + 2;
-        case 2:  return (n << 1) + 3;
-        case 3:  return (1 << (n+3)) - 3;
-        default:
-            if (n == 0) {
+    <span style="color: #f09a71;">while</span>(1) {
+        <span style="color: #f09a71;">switch</span>(m) {
+        <span style="color: #f09a71;">case</span> 0:  <span style="color: #f09a71;">return</span> n + 1;
+        <span style="color: #f09a71;">case</span> 1:  <span style="color: #f09a71;">return</span> n + 2;
+        <span style="color: #f09a71;">case</span> 2:  <span style="color: #f09a71;">return</span> (n &lt;&lt; 1) + 3;
+        <span style="color: #f09a71;">case</span> 3:  <span style="color: #f09a71;">return</span> (1 &lt;&lt; (n+3)) - 3;
+        <span style="color: #f09a71;">default</span>:
+            <span style="color: #f09a71;">if</span> (n == 0) {
                 n = 1;
-            } else {
+            } <span style="color: #f09a71;">else</span> {
                 n = formula_ackermann(m, n - 1);
             }
             m--;
-            break;
+            <span style="color: #f09a71;">break</span>;
         }
     }
 }
-
-int main(int argc, char* argv[]) {
-    unsigned int m, n, result;
-    m = (unsigned)atoi(argv[1]);
-    n = (unsigned)atoi(argv[2]);
-
+ 
+<span style="color: #f09a71;">int</span> <span style="color: #8dbafc;">main</span>(<span style="color: #f09a71;">int</span> <span style="color: #44c573;">argc</span>, <span style="color: #f09a71;">char</span>* <span style="color: #cdad00; font-weight: bold; text-decoration: underline;">argv</span>[]) {
+    <span style="color: #f09a71;">unsigned</span> <span style="color: #f09a71;">int</span> <span style="color: #44c573;">m</span>, <span style="color: #44c573;">n</span>, <span style="color: #44c573;">result</span>;
+    m = (<span style="color: #f09a71;">unsigned</span>)atoi(argv[1]);
+    n = (<span style="color: #f09a71;">unsigned</span>)atoi(argv[2]);
+ 
     calls = 0;
     result = naive_ackermann(m, n);
-    printf("Naive:     %u (%u calls)\n", result, calls);
-
+    printf(<span style="color: #4aa5ff;">"Naive:     %u (%u calls)\n"</span>, result, calls);
+ 
     calls = 0;
     result = iterative_ackermann(m, n);
-    printf("Iterative: %u (%u calls)\n", result, calls);
-
+    printf(<span style="color: #4aa5ff;">"Iterative: %u (%u calls)\n"</span>, result, calls);
+ 
     calls = 0;
     result = formula_ackermann(m, n);
-    printf("Formula:   %u (%u calls)\n", result, calls);
-
-    return 0;
+    printf(<span style="color: #4aa5ff;">"Formula:   %u (%u calls)\n"</span>, result, calls);
+ 
+    <span style="color: #f09a71;">return </span>0;
 }
-#+end_src
+<span style="color: #10a5b7;">#+end_src
+</span></pre> 
+</div> 
+#+END_HTML

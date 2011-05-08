@@ -31,9 +31,10 @@ image: /images/beautiful-code-birds.jpg
 
 #+BEGIN_HTML
 <div class="figure">
-<p><a href="/images/beautiful-code-paperback.jpg">
-   <img src="/images/beautiful-code-paperback.jpg"
-        alt="Обложка «Идеального кода»"></a></p>
+  <a href="/images/beautiful-code-paperback.jpg">
+    <img src="/images/beautiful-code-paperback.jpg"
+         alt="Обложка «Идеального кода»">
+  </a>
 </div>
 #+END_HTML
 

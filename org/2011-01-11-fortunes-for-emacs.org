@@ -29,11 +29,12 @@ title: Фортунки для Emacs
 этакое. Решение старо как мир — фортунки из мира UNIX.
 
 #+BEGIN_HTML
-  <div class="figure">
-    <p><a href="/images/emacs-fortune.png">
-        <img src="/images/emacs-fortune.png"
-             alt="Фортунка"></a>
-      Фортунка</p></div>
+<div class="figure">
+  <a href="/images/emacs-fortune.png">
+    <img src="/images/emacs-fortune.png"
+         alt="Фортунка">
+  </a>
+</div>
 #+END_HTML
 
 Кладете [[https://github.com/zahardzhan/emacs-starter-kit/raw/haru/fortunes][большой файл с цитатами]] (от Билла Клементсона) по имени

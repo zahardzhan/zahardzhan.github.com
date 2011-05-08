@@ -8,7 +8,7 @@ title: Emacs 23 в Ubuntu
 ---
 #+END_HTML
 
-*Недавно* все стало сильно проще:
+*Сейчас* все стало сильно проще:
 
 : sudo add-apt-repository ppa:ubuntu-elisp/ppa
 : sudo apt-get update
@@ -22,9 +22,10 @@ title: Emacs 23 в Ubuntu
 
 #+BEGIN_HTML
 <div class="figure">
-<p><a href="/images/emacs23-font-in-ubuntu.png">
-   <img src="/images/emacs23-font-in-ubuntu.png"
-        alt="Шрифты Emacs 23 в Ubuntu"></a></p>
+  <a href="/images/emacs23-font-in-ubuntu.png">
+     <img src="/images/emacs23-font-in-ubuntu.png" alt="Шрифты Emacs 23
+                                                      в Ubuntu">
+  </a>
 </div>
 #+END_HTML
 
