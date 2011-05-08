@@ -1,4 +1,4 @@
-html, body {margin: 0 auto; padding: 0; background: black;}
+html, body {margin: 0 auto; padding: 0; background: black; overflow: auto;}
 html, body, div { display: block;}
 
 strong, b {font-weight: bolder;}
@@ -17,45 +17,53 @@ a:focus         {outline: none;}
 .figure a:visited:hover, 
 .figure a:focus {text-decoration: none;}
 
-.container {
-    clear: both; 
-    overflow: hidden; 
-    margin: 0 auto; 
-    padding: 0 10px;
-    text-align: center;
-    width: 980px;
+div.vspace, 
+div.hrule {
+   clear: both; overflow: hidden; display: block; width: 100%;
 }
 
-#site {
-    width: 100%;
-    padding: 0; 
-    margin: 0; 
-    border: 0;
-    text-align: center;
-    border-collapse: collapse; 
-    display: block;
+div.vspace {margin: 1em 0;}
+div.hrule {margin: 0; height: 1px; background: grey;}
+
+header#site, 
+footer#site,
+div#site.body, 
+div.container {
+   clear: both; 
+   overflow: hidden; 
+   margin: 0 auto; 
+   padding: 0 auto;
+   text-align: center;
+   width: 100%;
+   border: 0;
+   border-collapse: collapse; 
+   display: block;
+   background: none;
 }
 
-#site.header {
-   min-height: 70px; 
-   background: black;
-}
+div#site.body {background: white;}
 
-#site.header .container {
+header#site div.container#site,
+footer#site div.container#site {
+   padding: 0 10px;
+   width: 980px;
    position: relative;
    min-height: 70px;
 }
 
-#site.header .container .image img {display: block;}
+header#site, footer#site {background: black;}
+header#site {min-height: 70px;}
 
-#site.header .container .title {
+header#site div.image img {display: block;}
+
+header#site div.title {
    position: absolute;
    right: 10px;
 }
 
-#site.header .container .title .link {
+header#site div.title div.link {
    height: 70px;
-   display: table-cell; 
+   display: table-cell;
    vertical-align: middle;
    padding-right: 20px;
    padding-left: 20px;
@@ -63,91 +71,96 @@ a:focus         {outline: none;}
    filter:alpha(opacity=60);
    opacity:0.6;
 }
-#site.header .container .title a, 
-#site.header .container .title a:hover,
-#site.header .container .title a:visited, 
-#site.header .container .title a:visited:hover, 
-#site.header .container .title a:focus {
-    font-size: 42px; 
+
+header#site div.title a,
+header#site div.title a:hover,
+header#site div.title a:visited,
+header#site div.title a:visited:hover,
+header#site div.title a:focus {
+    font-size: 42px;
     font-variant: small-caps;
-    color: white; 
+    color: white;
     text-decoration: none;
 }
 
-#site.body {background: white; color: #111;}
-
-#site.footer {background: black; color: #CCC;}
-#site.footer a {color: white;}
-#site.footer strong {color: white;}
-#site.footer .bar {
+footer#site {background: black; color: #CCC;}
+footer#site a {color: white;}
+footer#site strong {color: white;}
+footer#site .bar {
     font-family: helvetica, arial, sans-serif;
-    font-size: 14px; 
+    font-size: 14px;
     margin: 20px 0;
 }
 
-.left {float: left; text-align: left; width: 400px;}
-.left h1 {font-family: helvetica, arial; font-weight: bold; font-size: 35px;}
-.left ul {list-style: none outside; padding-left: 0;}
-.left ul li {padding-bottom: 0.7em;}
+article {}
 
-.right {float: right; width: 530px;}
-.right h1 {
-    color: #222;
-    font-family: georgia, times;
-    font-size: 22px;
-    font-weight: normal;
-    letter-spacing: normal;
-    line-height: 1,2em;
-    margin: 21px 0px 30px;
-    padding: 0px;
-    text-align: left;
+article.post {background: white; color: #111; line-height: 130%;}
+
+article.post footer #disqus_thread {padding-top: 20px; padding-bottom: 20px;}
+
+article.post header div#title,
+article.post footer #disqus_thread, 
+article.post h1,
+article.post h2,
+article.post h3,
+article.post h4,
+article.post p,
+article.post ul,
+article.post dl,
+article.post ol,
+article.post blockquote,
+article.post pre,
+article.post label {
+   display: block; text-align: left; margin-left: 16%; margin-right: 18%;
 }
 
-.right .divider {
-    border-top: 1px solid #CCC; 
-    clear: both; 
-    margin: 0 0 15px 0;
+article.post header a,
+article.post header a:link,
+article.post header a:hover,
+article.post header a:visited,
+article.post header a:visited:hover,
+article.post header a:focus {
+   color: black;
 }
 
-.projects {
-    float: left;
-    font-family: Georgia, serif;
-    font-size: 14px;
-    line-height: 1,3em;
-    margin-bottom: 25px;
-    margin-top: 15px;
-    text-align: left;
-    width: 480px;
+article.post header div#title {
+   font-size: 150%; font-weight: bold; padding-top: 40px; padding-bottom: 15px;
 }
-.project {margin-left:-14px; margin-right:36px; margin-bottom:35px;
-   padding-left:22px; float:left;
-   display:table; text-align:center;}
-.project div.desc {text-align:center; display:table-row;}
-.project div.desc p {width:300px;}
 
-.post {line-height: 130%; text-align: left; width: 570px; padding-left: 110px;}
-.post .header {padding-top: 40px; padding-bottom: 15px;}
-.post .header h1 {font-size: 150%;}
-.post p {margin: 1em 0em; line-height: 130%;}
-.post ul {list-style: square outside;}
-.post li p {margin-top: 0.5em; margin-bottom: 0em;}
-.post li + li {margin-top: 0.7em;}
-.post dd p {margin-top: 0.5em; margin-bottom: 0em;}
-.post dd + dt {margin-top: 0.7em;}
-.post pre {
-    background-color: #F5F5EA; 
-    padding-top: 0.7em; 
-    padding-bottom: 0.7em;
-    padding-left: 0.7em;
-    padding-right: 1.4em;
-    margin: 0; 
-    overflow: auto; 
-    display: inline-block; 
-    min-width: 552px; 
-    max-width: 820px;
+article.post footer #disqus_thread {padding-top: 20px; padding-bottom: 20px;}
+
+article.post p {margin-top: 1em; margin-bottom: 1em;}
+
+article.post pre {margin-right: none; padding: 0 1.4em 0 0.7em; overflow: auto;}
+
+article.post blockquote {padding-left: 40px; padding-right: 40px;}
+
+article.post ul {list-style: square outside;}
+
+article.post li + li, 
+article.post dd + dt {
+   margin-top: 0.7em;
 }
-.post li pre, .post dd pre {margin-top: 0.5em;}
-.post .figure {margin: 1em 0em; text-align: center;}
-.post .figure p {text-align: center; font-style: italic; font-size: smaller; text-indent: 0;}
-.post .figure img {max-width: 820px;}
-.post #disqus_thread {padding-top: 20px;}
+
+article.post li p,
+article.post dl p,
+article.post blockquote p,
+article.post li blockquote,
+article.post dl blockquote,
+article.post li pre,
+article.post dl pre,
+article.post li ul,
+article.post dl ul,
+article.post li ol,
+article.post dl ol,
+article.post li dl,
+article.post dl dl {
+   margin: 0.5em 0;
+}
+
+article.post div.figure {margin: 1em 5% 1em 5%;}
+article.post div.figure img {max-width: 100%;}
+article.post div.figure p {
+   text-align: center; font-style: italic; font-size: smaller; text-indent: 0;
+   margin: -1em 0 0 0; padding: 0;
+}

@@ -3,68 +3,49 @@ layout: default
 title: Bullshit mode on
 ---
 <div class="container">
-<div class="left">
-  <h1>Блог</h1>
-  <p>Основные темы — динамические языки и инструментарий для
-    программирования.</p>
-  <!-- <p>Автор — Роман Захаров, также известный как Zahardzhan [zʌhʌr'dʒʌn].</p> -->
-  <ul class="posts">
-    {% for post in site.posts %}
-    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+  {% if paginator.previous_page == 1 %}
+     <a href="/">Раньше</a>
+  {% elsif paginator.previous_page != null %}
+     <a href="/page{{ paginator.previous_page }}">Раньше</a>
+  {% endif %}
+  {% if paginator.next_page != null %}
+     <a href="/page{{ paginator.next_page }}">Позже</a>
+  {% endif %}
+    {% for post in paginator.posts %}
+       {% case post.layout %}
+       {% when 'post' %}
+          <div class="hrule"></div>
+          <article class="post">
+            <header>
+              <a href="{{ post.url }}">
+                <div id="title">
+                  {{ post.title }}
+                </div>
+              </a>
+            </header>
+            {{ post.content }}
+          </article>
+       {% when 'plain-post' %}
+          <div class="hrule"></div>
+          <article class="post">
+            <header>
+              <a href="{{ post.url }}">
+                <div id="title">
+                  {{ post.title }}
+                </div>
+              </a>
+            </header>
+            {{ post.content }}
+          </article>
+       {% endcase %}
     {% endfor %}
-  </ul>
-</div>
-
-<div class="right">
-  <!-- <h1>С недавних пор zahardzhan пишет здесь о жизни, программировании, и о том куда дует ветер.</h1> -->
-  
-  <!-- div class="divider" style="margin: 0 0 15px 0;"></div -->
-    
-  <div class="projects">
-    <div class="project">
-      <a href="http://zahardzhan.github.com/2011/lisp.html">
-        <img src="/images/projects/symbolic-tree-of-early-lispers/symbolic-tree-of-early-lispers-thumb.jpg"
-             alt="Символьное древо ранних лисперов" border="0"></a>
-      <div class="desc">
-        <p><a href="http://zahardzhan.github.com/2011/lisp.html">Символьное древо ранних лисперов</a></p>
-      </div>
-    </div>
-
-    <div class="project">
-      <a href="http://zahardzhan.github.com/2010/my-first-work.html">
-        <img src="/images/projects/app-story/app-story-thumb.jpg"
-             alt="App Story" border="0"></a>
-      <div class="desc">
-        <p><a href="http://zahardzhan.github.com/2010/my-first-work.html">Программа</a> для слежения за рейтингами приложений
-        в чартах Apple iTunes Store</p>
-      </div>
-    </div>
-
-    <div class="project">
-      <a href="http://zahardzhan.github.com/2010/leica.html">
-        <img src="/images/leica.jpg" alt="Лейка" border="0"></a>
-      <div class="desc">
-        <p>Многопоточная качалка
-        «<a href="http://zahardzhan.github.com/2010/leica.html">Лейка</a>»</p>
-      </div>
-    </div>
-
-    <div class="project">
-      <a href="http://zahardzhan.github.com/2010/emacs-starter-kit-the-program.html">
-        <img src="/images/emacs-logo.png" 
-             alt="Emacs Starter Kit"
-             width="128" height="128" border="0" style="text-decoration:none;">
-      </a>
-      <div class="desc">
-        <p>Русский литературный <a href="http://zahardzhan.github.com/2010/emacs-starter-kit-the-program.html">Emacs Starter Kit</a></p>
-      </div>
-    </div>
-    
-    <!--div class="project">
-        <img src=".png" alt="" align="left" width="115" height="100" border="0">
-        <h2>Head.</h2>
-        body
-    </div-->
-  </div>
-</div>
+  <div class="hrule"></div>
+  {% if paginator.previous_page == 1 %}
+     <a href="/">Раньше</a>
+  {% elsif paginator.previous_page != null %}
+     <a href="/page{{ paginator.previous_page }}">Раньше</a>
+  {% endif %}
+  {% if paginator.next_page != null %}
+     <a href="/page{{ paginator.next_page }}">Позже</a>
+  {% endif %}
 </div>

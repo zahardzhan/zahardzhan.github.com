@@ -1,2 +1,3 @@
 pygments: true
 permalink: /:year/:title.html
+paginate: 10
