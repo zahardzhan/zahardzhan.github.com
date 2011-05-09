@@ -40,12 +40,12 @@ title: Bullshit mode on
        {% endcase %}
     {% endfor %}
   <div class="hrule"></div>
-  {% if paginator.previous_page == 1 %}
-     <a href="/">Раньше</a>
-  {% elsif paginator.previous_page != null %}
-     <a href="/page{{ paginator.previous_page }}">Раньше</a>
-  {% endif %}
   {% if paginator.next_page != null %}
-     <a href="/page{{ paginator.next_page }}">Позже</a>
+     <a href="/page{{ paginator.next_page }}">↓ Старое</a>
+  {% endif %}
+  {% if paginator.previous_page == 1 %}
+     <a href="/">Новое ↑</a>
+  {% elsif paginator.previous_page != null %}
+     <a href="/page{{ paginator.previous_page }}">Новое ↑</a>
   {% endif %}
 </div>
