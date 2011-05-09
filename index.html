@@ -4,12 +4,12 @@ title: Bullshit mode on
 ---
 <div class="container">
   {% if paginator.next_page != null %}
-     <a href="/page{{ paginator.next_page }}">↓ Старое</a>
+     ↓ <a href="/page{{ paginator.next_page }}">Старый булшит</a>
   {% endif %}
   {% if paginator.previous_page == 1 %}
-     <a href="/">Новое ↑</a>
+     <a href="/">Новый булшит</a> ↑
   {% elsif paginator.previous_page != null %}
-     <a href="/page{{ paginator.previous_page }}">Новое ↑</a>
+     <a href="/page{{ paginator.previous_page }}">Новый булшит</a> ↑
   {% endif %}
     {% for post in paginator.posts %}
        {% case post.layout %}
@@ -41,11 +41,11 @@ title: Bullshit mode on
     {% endfor %}
   <div class="hrule"></div>
   {% if paginator.next_page != null %}
-     <a href="/page{{ paginator.next_page }}">↓ Старое</a>
+     ↓ <a href="/page{{ paginator.next_page }}">Старый булшит</a>
   {% endif %}
   {% if paginator.previous_page == 1 %}
-     <a href="/">Новое ↑</a>
+     <a href="/">Новый булшит</a> ↑
   {% elsif paginator.previous_page != null %}
-     <a href="/page{{ paginator.previous_page }}">Новое ↑</a>
+     <a href="/page{{ paginator.previous_page }}">Новый булшит</a> ↑
   {% endif %}
 </div>
