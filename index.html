@@ -3,9 +3,6 @@ layout: default
 title: Bullshit mode on
 ---
 <div class="container">
-  {% if paginator.next_page != null %}
-     ↓ <a href="/page{{ paginator.next_page }}">Старый булшит</a>
-  {% endif %}
   {% if paginator.previous_page == 1 %}
      <a href="/">Новый булшит</a> ↑
   {% elsif paginator.previous_page != null %}
@@ -39,13 +36,8 @@ title: Bullshit mode on
           </article>
        {% endcase %}
     {% endfor %}
-  <div class="hrule"></div>
   {% if paginator.next_page != null %}
+     <div class="hrule"></div>
      ↓ <a href="/page{{ paginator.next_page }}">Старый булшит</a>
-  {% endif %}
-  {% if paginator.previous_page == 1 %}
-     <a href="/">Новый булшит</a> ↑
-  {% elsif paginator.previous_page != null %}
-     <a href="/page{{ paginator.previous_page }}">Новый булшит</a> ↑
   {% endif %}
 </div>
