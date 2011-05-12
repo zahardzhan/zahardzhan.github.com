@@ -114,14 +114,14 @@ article.post label {
    display: block; text-align: left; margin-left: 16%; margin-right: 18%;
 }
 
-article.post header a,
-article.post header a:link,
-article.post header a:hover,
-article.post header a:visited,
-article.post header a:visited:hover,
-article.post header a:focus {
-   color: black;
-}
+/* article.post header a, */
+/* article.post header a:link, */
+/* article.post header a:hover, */
+/* article.post header a:visited, */
+/* article.post header a:visited:hover, */
+/* article.post header a:focus { */
+/*    color: black; */
+/* } */
 
 article.post header div#title {
    font-size: 150%; font-weight: bold; padding-top: 40px; padding-bottom: 15px;
