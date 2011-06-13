@@ -34,6 +34,7 @@ Pro]]. Нормальные такие наушники, легкие, хоро�
      alt="KOSS Porta Pro">
 </a>
 
+<br><div class="vspace"></div>
 <p>KOSS Porta Pro</p>
 </div>
 #+END_HTML
